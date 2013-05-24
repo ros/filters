@@ -79,6 +79,10 @@ install(TARGETS mean params increment median transfer_function
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+# Install headers
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
 # Install plugins xml file
 install(FILES default_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
