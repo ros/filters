@@ -5,7 +5,7 @@ project(filters)
 # Find dependencies
 ##############################################################################
 
-find_package(catkin REQUIRED COMPONENTS roslib roscpp rosconsole rostest)
+find_package(catkin REQUIRED COMPONENTS pluginlib roslib roscpp rosconsole rostest)
 find_package(Boost COMPONENTS system filesystem thread REQUIRED)
 
 include_directories(
@@ -62,7 +62,7 @@ add_rostest(test/test_params.launch)
 
 # Test plugin loading into filter chain
 catkin_add_gtest(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)
-target_link_libraries(chain_test ${Boost_libraries}) # Needed for OSX
+target_link_libraries(chain_test ${Boost_libraries} ${catkin_LIBRARIES}) # Needed for OSX
 add_rostest(test/test_chain.launch)
 
 # Test realtime safe buffer class
