@@ -41,28 +41,28 @@ add_library(transfer_function src/transfer_function.cpp)
 target_link_libraries(transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 # Test median filter
-catkin_add_gtest(median_test EXCLUDE_FROM_ALL test/test_median.cpp )
-target_link_libraries(median_test median ${catkin_LIBRARIES} ${Boost_LIBRARIES}) 
+add_executable(median_test EXCLUDE_FROM_ALL test/test_median.cpp )
+target_link_libraries(median_test median ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES}) 
 add_rostest(test/test_median.launch)
 
 # Test transfer function filter
-catkin_add_gtest(transfer_function_test EXCLUDE_FROM_ALL test/test_transfer_function.cpp)
-target_link_libraries(transfer_function_test transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(transfer_function_test EXCLUDE_FROM_ALL test/test_transfer_function.cpp)
+target_link_libraries(transfer_function_test transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
 add_rostest(test/test_transfer_function.launch)
 
 # Test mean filter
-catkin_add_gtest(mean_test EXCLUDE_FROM_ALL test/test_mean.cpp)
-target_link_libraries(mean_test mean ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(mean_test EXCLUDE_FROM_ALL test/test_mean.cpp)
+target_link_libraries(mean_test mean ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
 add_rostest(test/test_mean.launch)
 
 # Test params filter
-catkin_add_gtest(params_test EXCLUDE_FROM_ALL test/test_params.cpp)
-target_link_libraries(params_test params ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(params_test EXCLUDE_FROM_ALL test/test_params.cpp)
+target_link_libraries(params_test params ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
 add_rostest(test/test_params.launch)
 
 # Test plugin loading into filter chain
-catkin_add_gtest(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)
-target_link_libraries(chain_test ${Boost_libraries} ${catkin_LIBRARIES}) # Needed for OSX
+add_executable(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)
+target_link_libraries(chain_test increment ${Boost_libraries} ${catkin_LIBRARIES} ${GTEST_LIBRARIES}) # Needed for OSX
 add_rostest(test/test_chain.launch)
 
 # Test realtime safe buffer class
@@ -87,3 +87,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(FILES default_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
+if(TARGET tests)
+add_dependencies(tests median_test transfer_function_test mean_test params_test chain_test)
+endif()
