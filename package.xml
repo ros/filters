@@ -1,6 +1,6 @@
 <package>
   <name>filters</name>
-  <version>1.7.1</version>
+  <version>1.7.2</version>
   <description>
     This library provides a standardized interface for processing data as a sequence 
     of filters.  This package contains a base class upon which to build specific implementations
