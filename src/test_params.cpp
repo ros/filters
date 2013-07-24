@@ -31,10 +31,10 @@
 #include "filters/param_test.h"
 #include "pluginlib/class_list_macros.h"
 
-PLUGINLIB_DECLARE_CLASS(filters, ParamTestDouble, filters::ParamTest<double>, filters::FilterBase<double>)
-PLUGINLIB_DECLARE_CLASS(filters, ParamTestInt, filters::ParamTest<int>, filters::FilterBase<int>)
-PLUGINLIB_DECLARE_CLASS(filters, ParamTestUInt, filters::ParamTest<unsigned int>, filters::FilterBase<unsigned int>)
-PLUGINLIB_DECLARE_CLASS(filters, ParamTestString, filters::ParamTest<std::string>, filters::FilterBase<std::string>)
+PLUGINLIB_EXPORT_CLASS(filters::ParamTest<double>, filters::FilterBase<double>)
+PLUGINLIB_EXPORT_CLASS(filters::ParamTest<int>, filters::FilterBase<int>)
+PLUGINLIB_EXPORT_CLASS(filters::ParamTest<unsigned int>, filters::FilterBase<unsigned int>)
+PLUGINLIB_EXPORT_CLASS(filters::ParamTest<std::string>, filters::FilterBase<std::string>)
 
-PLUGINLIB_DECLARE_CLASS(filters, ParamTestDoubleVector, filters::ParamTest<std::vector<double> >, filters::FilterBase<std::vector<double> >)
-PLUGINLIB_DECLARE_CLASS(filters, ParamTestStringVector, filters::ParamTest<std::vector<std::string> >, filters::FilterBase<std::vector<std::string> >)
+PLUGINLIB_EXPORT_CLASS(filters::ParamTest<std::vector<double> >, filters::FilterBase<std::vector<double> >)
+PLUGINLIB_EXPORT_CLASS(filters::ParamTest<std::vector<std::string> >, filters::FilterBase<std::vector<std::string> >)
