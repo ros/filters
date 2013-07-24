@@ -32,6 +32,6 @@
 
 
 
-PLUGINLIB_DECLARE_CLASS(filters, IncrementFilterInt, filters::IncrementFilter<int>, filters::FilterBase<int>)
-PLUGINLIB_DECLARE_CLASS(filters, MultiChannelIncrementFilterInt, filters::MultiChannelIncrementFilter<int>, filters::MultiChannelFilterBase<int>)
+PLUGINLIB_EXPORT_CLASS(filters::IncrementFilter<int>, filters::FilterBase<int>)
+PLUGINLIB_EXPORT_CLASS(filters::MultiChannelIncrementFilter<int>, filters::MultiChannelFilterBase<int>)
 

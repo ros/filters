@@ -239,7 +239,7 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::FilterBase<T> > p(loader_.createUnmanagedInstance(config[i]["type"]));
+      boost::shared_ptr<filters::FilterBase<T> > p(loader_.createInstance(config[i]["type"]));
       if (p.get() == NULL)
         return false;
       result = result &&  p.get()->configure(config[i]);    
@@ -476,7 +476,7 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::MultiChannelFilterBase<T> > p(loader_.createUnmanagedInstance(config[i]["type"]));
+      boost::shared_ptr<filters::MultiChannelFilterBase<T> > p(loader_.createInstance(config[i]["type"]));
       if (p.get() == NULL)
         return false;
       result = result &&  p.get()->configure(size, config[i]);    
