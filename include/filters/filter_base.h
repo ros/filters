@@ -135,6 +135,27 @@ protected:
     return true;
   }
 
+  /** \brief Get a filter parameter as a boolean
+   * \param name The name of the parameter
+   * \param value The boolean to set with the value
+   * \return Whether or not the parameter of name/type was set */
+  bool getParam(const std::string& name, bool& value)
+  {
+    string_map_t::iterator it = params_.find(name);
+    if (it == params_.end())
+    {
+      return false;
+    }
+
+    if(it->second.getType() != XmlRpc::XmlRpcValue::TypeBoolean)
+    {
+      return false;
+    }
+
+    value = (bool)(it->second);
+    return true;
+  }
+
   /** \brief Get a filter parameter as a double
    * \param name The name of the parameter
    * \param value The double to set with the value
