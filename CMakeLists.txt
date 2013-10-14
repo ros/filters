@@ -40,33 +40,35 @@ target_link_libraries(median ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_library(transfer_function src/transfer_function.cpp)
 target_link_libraries(transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-# Test median filter
-add_executable(median_test EXCLUDE_FROM_ALL test/test_median.cpp )
-target_link_libraries(median_test median ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES}) 
-add_rostest(test/test_median.launch)
+if(CATKIN_ENABLE_TESTING)
+  # Test median filter
+  add_executable(median_test EXCLUDE_FROM_ALL test/test_median.cpp )
+  target_link_libraries(median_test median ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES}) 
+  add_rostest(test/test_median.launch)
 
-# Test transfer function filter
-add_executable(transfer_function_test EXCLUDE_FROM_ALL test/test_transfer_function.cpp)
-target_link_libraries(transfer_function_test transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
-add_rostest(test/test_transfer_function.launch)
+  # Test transfer function filter
+  add_executable(transfer_function_test EXCLUDE_FROM_ALL test/test_transfer_function.cpp)
+  target_link_libraries(transfer_function_test transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
+  add_rostest(test/test_transfer_function.launch)
 
-# Test mean filter
-add_executable(mean_test EXCLUDE_FROM_ALL test/test_mean.cpp)
-target_link_libraries(mean_test mean ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
-add_rostest(test/test_mean.launch)
+  # Test mean filter
+  add_executable(mean_test EXCLUDE_FROM_ALL test/test_mean.cpp)
+  target_link_libraries(mean_test mean ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
+  add_rostest(test/test_mean.launch)
 
-# Test params filter
-add_executable(params_test EXCLUDE_FROM_ALL test/test_params.cpp)
-target_link_libraries(params_test params ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
-add_rostest(test/test_params.launch)
+  # Test params filter
+  add_executable(params_test EXCLUDE_FROM_ALL test/test_params.cpp)
+  target_link_libraries(params_test params ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
+  add_rostest(test/test_params.launch)
 
-# Test plugin loading into filter chain
-add_executable(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)
-target_link_libraries(chain_test increment ${Boost_libraries} ${catkin_LIBRARIES} ${GTEST_LIBRARIES}) # Needed for OSX
-add_rostest(test/test_chain.launch)
+  # Test plugin loading into filter chain
+  add_executable(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)
+  target_link_libraries(chain_test increment ${Boost_libraries} ${catkin_LIBRARIES} ${GTEST_LIBRARIES}) # Needed for OSX
+  add_rostest(test/test_chain.launch)
 
-# Test realtime safe buffer class
-catkin_add_gtest(realtime_buffer_test EXCLUDE_FROM_ALL test/test_realtime_circular_buffer.cpp)
+  # Test realtime safe buffer class
+  catkin_add_gtest(realtime_buffer_test EXCLUDE_FROM_ALL test/test_realtime_circular_buffer.cpp)
+endif()
 
 ##############################################################################
 # Install
@@ -88,6 +90,8 @@ install(FILES default_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-if(TARGET tests)
-add_dependencies(tests median_test transfer_function_test mean_test params_test chain_test)
+if(CATKIN_ENABLE_TESTING)
+  if(TARGET tests)
+  add_dependencies(tests median_test transfer_function_test mean_test params_test chain_test)
+  endif()
 endif()

@@ -11,7 +11,7 @@
   <license>BSD</license>
   <url>http://ros.org/wiki/filters</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend version_gte="0.5.68">catkin</buildtool_depend>
 
   <build_depend>roslib</build_depend>
   <build_depend>rosconsole</build_depend>
