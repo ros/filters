@@ -5,7 +5,7 @@ project(filters)
 # Find dependencies
 ##############################################################################
 
-find_package(catkin REQUIRED COMPONENTS pluginlib roslib roscpp rosconsole rostest)
+find_package(catkin REQUIRED COMPONENTS pluginlib roslib roscpp rosconsole)
 find_package(Boost COMPONENTS system filesystem thread REQUIRED)
 
 include_directories(
@@ -41,6 +41,7 @@ add_library(transfer_function src/transfer_function.cpp)
 target_link_libraries(transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 if(CATKIN_ENABLE_TESTING)
+  find_package(rostest)
   # Test median filter
   add_executable(median_test EXCLUDE_FROM_ALL test/test_median.cpp )
   target_link_libraries(median_test median ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES}) 
