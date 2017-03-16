@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.7.5 (2017-03-16)
+------------------
 * make rostest in CMakeLists optional (`ros/rosdistro#3010 <https://github.com/ros/rosdistro/issues/3010>`_)
 * check for CATKIN_ENABLE_TESTING
 * Add support for boolean parameters (fix `#6 <https://github.com/ros/filters/issues/6>`_)
