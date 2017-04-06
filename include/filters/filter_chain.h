@@ -198,20 +198,10 @@ public:
         }
 
 
-	//CHeck for backwards compatible declarations
 	if (std::string(config[i]["type"]).find("/") == std::string::npos)
 	  {
-	    ROS_WARN("Deprecation Warning: No '/' detected in FilterType, Please update to 1.2 plugin syntax. ");
-	    std::vector<std::string> libs = loader_.getDeclaredClasses();
-	    for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
-	      {
-		size_t position =  it->find(std::string(config[i]["type"]));
-		if (position != std::string::npos)
-		  {
-		    ROS_WARN("Replaced %s with %s", std::string(config[i]["type"]).c_str(), it->c_str());
-		    config[i]["type"] = *it;
-		  }
-	      }
+	    ROS_ERROR("Bad filter type %s. Filter type must be of form <package_name>/<filter_name>", config[i]["type"]);
+        return false;
 	  }
 	//Make sure the filter chain has a valid type
 	std::vector<std::string> libs = loader_.getDeclaredClasses();
