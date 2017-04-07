@@ -2,6 +2,16 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
+* Remove promiscuous filter finding
+  When specifying filters, you must now include the package name and exact
+  filter name. Previously a workaround would search packages for any filter
+  with the specified string in the filter name. This has been deprecated for
+  a while, and here we're removing it. `#14 <https://github.com/ros/filters/issues/14>`
+* Contributors: Jon Binney
+
 1.7.5 (2017-03-16)
 ------------------
 * make rostest in CMakeLists optional (`ros/rosdistro#3010 <https://github.com/ros/rosdistro/issues/3010>`_)
