@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.0 (2017-04-07)
+------------------
 
 * Remove promiscuous filter finding
   When specifying filters, you must now include the package name and exact
