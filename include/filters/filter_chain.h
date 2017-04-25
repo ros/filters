@@ -200,7 +200,7 @@ public:
 
 	if (std::string(config[i]["type"]).find("/") == std::string::npos)
 	  {
-	    ROS_ERROR("Bad filter type %s. Filter type must be of form <package_name>/<filter_name>", config[i]["type"]);
+	    ROS_ERROR("Bad filter type %s. Filter type must be of form <package_name>/<filter_name>", std::string(config[i]["type"]).c_str());
         return false;
 	  }
 	//Make sure the filter chain has a valid type
