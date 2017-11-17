@@ -30,9 +30,15 @@
 #ifndef FILTERS_FILTER_CHAIN_H_
 #define FILTERS_FILTER_CHAIN_H_
 
-#include "ros/ros.h"
+#include "rclcpp/node.hpp"
+#include "xmlrpcpp/XmlRpc.h"
+
+#ifndef ROS_DEBUG
+#define ROS_DEBUG(...)
+#endif // !ROS_DEBUG
+
 #include "filters/filter_base.h"
-#include <pluginlib/class_loader.h>
+#include <pluginlib/class_loader.hpp>
 #include <sstream>
 #include <vector>
 #include "boost/shared_ptr.hpp"
@@ -67,26 +73,6 @@ public:
 
   };
 
-  /**@brief Configure the filter chain from a configuration stored on the parameter server
-   * @param param_name The name of the filter chain to load
-   * @param node The node handle to use if a different namespace is required
-   */
-  bool configure(std::string param_name, ros::NodeHandle node = ros::NodeHandle())
-  {
-    XmlRpc::XmlRpcValue config;
-    if(node.getParam(param_name + "/filter_chain", config))
-    {
-      std::string resolved_name = node.resolveName(param_name).c_str();
-      ROS_WARN("Filter chains no longer check implicit nested 'filter_chain' parameter.  This node is configured to look directly at '%s'.  Please move your chain description from '%s/filter_chain' to '%s'", resolved_name.c_str(), resolved_name.c_str(), resolved_name.c_str());
-    }
-    else if(!node.getParam(param_name, config))
-    {
-      ROS_DEBUG("Could not load the filter chain configuration from parameter %s, are you sure it was pushed to the parameter server? Assuming that you meant to leave it empty.", param_name.c_str());
-      configured_ = true;
-      return true;
-    }
-    return this->configure(config, node.getNamespace());
-  }
 
   /** \brief process data through each of the filters added sequentially */
   bool update(const T& data_in, T& data_out)
@@ -136,11 +122,20 @@ public:
   
 
 
+  /** \brief Configure the filter chain
+  * This will call configure on all filters which have been added */
+  bool configure(rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("filter_chain"))
+  {
+    // TODO: implement this
+    return true;
+  }
+
 
   /** \brief Configure the filter chain 
    * This will call configure on all filters which have been added */
-  bool configure(XmlRpc::XmlRpcValue& config, const std::string& filter_ns)
+  bool configure(std::string prefix, rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("filter_chain"))
   {
+#ifdef ROS2_SUPPORTS_PARAMETER_INPUT
     /*************************** Parse the XmlRpcValue ***********************************/
     //Verify proper naming and structure    
     if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
@@ -203,10 +198,10 @@ public:
 	    ROS_ERROR("Bad filter type %s. Filter type must be of form <package_name>/<filter_name>", std::string(config[i]["type"]).c_str());
         return false;
 	  }
-	//Make sure the filter chain has a valid type
-	std::vector<std::string> libs = loader_.getDeclaredClasses();
-	bool found = false;
-	for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
+  bool found = false;
+  //Make sure the filter chain has a valid type
+  std::vector<std::string> libs = loader_.getDeclaredClasses();
+  for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
 	  {
 	    if (*it == std::string(config[i]["type"]))
 	      {
@@ -219,7 +214,7 @@ public:
 	    ROS_ERROR("Couldn't find filter of type %s", std::string(config[i]["type"]).c_str());
 	    return false;
 	  }
-	
+
       }
     }
     
@@ -229,7 +224,7 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::FilterBase<T> > p(loader_.createInstance(config[i]["type"]));
+      std::shared_ptr<filters::FilterBase<T> > p(loader_.createInstance(config[i]["type"]));
       if (p.get() == NULL)
         return false;
       result = result &&  p.get()->configure(config[i]);    
@@ -245,11 +240,15 @@ public:
       configured_ = true;
     }
     return result;
+#else
+    // TODO: implement property hierarchy
+    return true;
+#endif // ROS2_SUPPORTS_PARAMETER_INPUT
   };
 
 private:
 
-  std::vector<boost::shared_ptr<filters::FilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
+  std::vector<std::shared_ptr<filters::FilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
 
   T buffer0_; ///<! A temporary intermediate buffer
   T buffer1_; ///<! A temporary intermediate buffer
@@ -267,7 +266,9 @@ private:
   pluginlib::ClassLoader<filters::MultiChannelFilterBase<T> > loader_;
 public:
   /** \brief Create the filter chain object */
-  MultiChannelFilterChain(std::string data_type): loader_("filters", std::string("filters::MultiChannelFilterBase<") + data_type + std::string(">")), configured_(false)
+  MultiChannelFilterChain(std::string data_type): 
+    loader_("filters", std::string("filters::MultiChannelFilterBase<") + data_type + std::string(">")),
+    configured_(false)
   {
     std::string lib_string = "";
     std::vector<std::string> libs = loader_.getDeclaredClasses();
@@ -282,9 +283,10 @@ public:
    * @param param_name The name of the filter chain to load
    * @param node The node handle to use if a different namespace is required
    */
-  bool configure(unsigned int size, std::string param_name, ros::NodeHandle node = ros::NodeHandle())
+  bool configure(unsigned int size, std::string param_name, rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("mutli_filter_chain"))
   {
     XmlRpc::XmlRpcValue config;
+#ifdef ROS2_SUPPORTS_PARAMETER_INPUT
     if(node.getParam(param_name + "/filter_chain", config))
     {
       std::string resolved_name = node.resolveName(param_name).c_str();
@@ -299,6 +301,11 @@ public:
       configured_ = true;
       return false;
     }
+#else
+
+    // TODO: implement property hierarchy
+
+#endif // ROS2_SUPPORTS_PARAMETER_INPUT
     return this->configure(size, config);
   }
 
@@ -363,8 +370,9 @@ public:
   /** \brief Configure the filter chain 
    * This will call configure on all filters which have been added
    * as well as allocate the buffers*/
-  bool configure(unsigned int size, XmlRpc::XmlRpcValue& config)
+  bool configure(unsigned int size, rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("multi_filter_chain"))
   {
+#ifdef ROS2_SUPPORTS_PARAMETER_INPUT
     /*************************** Parse the XmlRpcValue ***********************************/
     //Verify proper naming and structure    
     if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
@@ -425,7 +433,7 @@ public:
 	if (std::string(config[i]["type"]).find("/") == std::string::npos)
 	  {
 	    ROS_WARN("Deprecation Warning: No '/' detected in FilterType, Please update to 1.2 plugin syntax. ");
-	    std::vector<std::string> libs = loader_.getDeclaredClasses();
+		std::vector<std::string> libs = loader_.getDeclaredClasses();
 	    for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
 	      {
 		size_t position =  it->find(std::string(config[i]["type"]));
@@ -466,7 +474,7 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::MultiChannelFilterBase<T> > p(loader_.createInstance(config[i]["type"]));
+      std::shared_ptr<filters::MultiChannelFilterBase<T> > p(loader_.createInstance(config[i]["type"]));
       if (p.get() == NULL)
         return false;
       result = result &&  p.get()->configure(size, config[i]);    
@@ -482,11 +490,15 @@ public:
       configured_ = true;
     }
     return result;
+#else
+    // TODO: implement this
+    return true;
+#endif // ROS2_SUPPORTS_PARAMETER_INPUT
   };
 
 private:
 
-  std::vector<boost::shared_ptr<filters::MultiChannelFilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
+  std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
 
   std::vector<T> buffer0_; ///<! A temporary intermediate buffer
   std::vector<T> buffer1_; ///<! A temporary intermediate buffer
