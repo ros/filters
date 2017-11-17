@@ -1,32 +1,27 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>filters</name>
-  <version>1.8.1</version>
+  <version>1.8.2</version>
   <description>
-    This library provides a standardized interface for processing data as a sequence 
+    This library provides a standardized interface for processing data as a sequence
     of filters.  This package contains a base class upon which to build specific implementations
-    as well as an interface which dynamically loads filters based on runtime parameters.  
+    as well as an interface which dynamically loads filters based on runtime parameters.
   </description>
-
   <maintainer email="tfoote@willowgarage.com">Tully Foote</maintainer>
   <license>BSD</license>
   <url>http://ros.org/wiki/filters</url>
 
-  <buildtool_depend version_gte="0.5.68">catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>roslib</build_depend>
-  <build_depend>rosconsole</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>pluginlib</build_depend>
-  <build_depend>rostest</build_depend>
+  <depend>rclcpp</depend>
+  <depend>pluginlib</depend>
+  <depend>rcutils</depend>
+  <depend>xmlrpcpp</depend>
 
-  <run_depend>roslib</run_depend>
-  <run_depend>rosconsole</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>pluginlib</run_depend>
-
+  <exec_depend>ament_cmake</exec_depend>
 
   <export>
-    <filters plugin="${prefix}/default_plugins.xml" />
+    <build_type>ament_cmake</build_type>
   </export>
-
 </package>
