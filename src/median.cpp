@@ -29,7 +29,8 @@
 
 
 #include "filters/median.h"
-#include <pluginlib/class_list_macros.h>
+#include "pluginlib/class_list_macros.hpp"
+
 
 
 //Double precision
