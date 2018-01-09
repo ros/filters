@@ -17,7 +17,6 @@
   <depend>rclcpp</depend>
   <depend>pluginlib</depend>
   <depend>rcutils</depend>
-  <depend>xmlrpcpp</depend>
 
   <exec_depend>ament_cmake</exec_depend>
 
