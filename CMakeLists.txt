@@ -24,8 +24,6 @@ include_directories(
 # Build
 ##############################################################################
 
-add_definitions(-DROS2)
-
 # Plugins
 add_library(mean src/mean.cpp)
 target_link_libraries(mean ${rclcpp_LIBRARIES} ${rcutils_LIBRARIES})
