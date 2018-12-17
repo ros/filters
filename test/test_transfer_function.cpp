@@ -27,9 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ros/ros.h>
+//#include <ros/ros.h>
 #include <gtest/gtest.h>
 #include <sys/time.h>
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 #include <vector>
 #include "filters/transfer_function.h"
 
@@ -40,8 +42,9 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPass)
 {
   double epsilon = 1e-4;
   
+  auto node = rclcpp::Node::make_shared("LowPass");
   MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
-  EXPECT_TRUE(filter->configure(1, "LowPass" ));
+  EXPECT_TRUE(filter->configure(1, node));
   
 
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;
@@ -70,8 +73,9 @@ TEST(SingleChannelTransferFunctionDoubleFilter, SingleLowPass)
 {
   double epsilon = 1e-4;
   
+  auto node = rclcpp::Node::make_shared("LowPassSingle");
   FilterBase<double> * filter = new SingleChannelTransferFunctionFilter<double> ();
-  EXPECT_TRUE(filter->configure("LowPassSingle" ));
+  EXPECT_TRUE(filter->configure("LowPassSingle",node));
   
 
   double in1,in2,in3,in4,in5,in6,in7;
@@ -101,8 +105,9 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPassNonUnity)
 {
   double epsilon = 1e-4;
 
+  auto node = rclcpp::Node::make_shared("LowPassNonUnity");
   MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
-  EXPECT_TRUE(filter->configure(1, "LowPassNonUnity" ));
+  EXPECT_TRUE(filter->configure(1, node));
     
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;
   std::vector<double> out1;
@@ -130,8 +135,9 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPassMulti)
 {
   double epsilon = 1e-4;
 
+  auto node = rclcpp::Node::make_shared("LowPassMulti");
   MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
-  EXPECT_TRUE(filter->configure(3, "LowPassMulti" ));
+  EXPECT_TRUE(filter->configure(3, node));
 
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;
   std::vector<double> out1;
@@ -185,8 +191,9 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPassIrrational)
 {
   double epsilon = 1e-4;
  
+  auto node = rclcpp::Node::make_shared("LowPassIrrational");
   MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
-  EXPECT_TRUE(filter->configure(3, "LowPassIrrational" ));
+  EXPECT_TRUE(filter->configure(3, node));
  
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;
   std::vector<double> out1;
@@ -238,6 +245,7 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPassIrrational)
 
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_transfer_function");
+  rclcpp::init(argc, argv);
   return RUN_ALL_TESTS();
 }
+
