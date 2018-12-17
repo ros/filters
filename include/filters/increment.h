@@ -33,9 +33,14 @@
 #include <stdint.h>
 #include <cstring>
 #include <stdio.h>
-
+#include <iostream>
+#include "std_msgs/msg/string.hpp"
+#include <iterator>
+#include <vector>
+#include <map>
+#include <boost/algorithm/string.hpp>
 #include <boost/scoped_ptr.hpp>
-
+#include <memory>
 #include "filters/filter_base.h"
 
 namespace filters
@@ -55,7 +60,7 @@ public:
    */
   ~IncrementFilter();
 
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -72,7 +77,7 @@ IncrementFilter<T>::IncrementFilter()
 }
 
 template <typename T>
-bool IncrementFilter<T>::configure()
+bool IncrementFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
     
   return true;
@@ -106,7 +111,7 @@ public:
    */
   ~MultiChannelIncrementFilter();
 
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -115,9 +120,8 @@ public:
   virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
   
 protected:
-  using MultiChannelFilterBase<T>::number_of_channels_;           ///< Number of elements per observation
-
-  
+    
+  using MultiChannelFilterBase<T>::number_of_channels_;  //< Number of elements per observation
   
 };
 
@@ -128,7 +132,7 @@ MultiChannelIncrementFilter<T>::MultiChannelIncrementFilter()
 }
 
 template <typename T>
-bool MultiChannelIncrementFilter<T>::configure()
+bool MultiChannelIncrementFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
   
   return true;
@@ -143,8 +147,7 @@ MultiChannelIncrementFilter<T>::~MultiChannelIncrementFilter()
 template <typename T>
 bool MultiChannelIncrementFilter<T>::update(const std::vector<T> & data_in, std::vector<T>& data_out)
 {
-  //  ROS_ASSERT(data_in.size() == width_);
-  //ROS_ASSERT(data_out.size() == width_);
+  
   if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_)
   {
     ROS_ERROR("Configured with wrong size config:%d in:%d out:%d", number_of_channels_, (int)data_in.size(), (int)data_out.size());
