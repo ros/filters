@@ -33,14 +33,25 @@
 #define FILTERS_TRANSFER_FUNCTION_H_
 
 #include <stdint.h>
-#include <math.h>
+#include <cstring>
+#include <stdio.h>
+#include <iostream>
+#include "std_msgs/msg/string.hpp"
+#include <iterator>
 #include <vector>
+#include <map>
+#include <boost/algorithm/string.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <memory>
+#include "filters/filter_base.h"
+//#include "ros/assert.h"
+
+#include "filters/realtime_circular_buffer.h"
+
+#include <stdint.h>
+#include <math.h>
 #include <string>
 
-#include <boost/scoped_ptr.hpp>
-
-#include "filters/filter_base.h"
-#include "filters/realtime_circular_buffer.h"
 
 namespace filters
 {
@@ -71,7 +82,7 @@ namespace filters
 */
 /***************************************************/
 template <typename T>
-class SingleChannelTransferFunctionFilter: public filters::FilterBase <T>
+class SingleChannelTransferFunctionFilter: public FilterBase <T>
 {
 public:
   /**
@@ -87,7 +98,7 @@ public:
    * \param number_of_channels The number of inputs filtered.
    * \param config The xml that is parsed to configure the filter.
    */
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
@@ -120,20 +131,20 @@ SingleChannelTransferFunctionFilter<T>::~SingleChannelTransferFunctionFilter()
 };
 
 template <typename T>
-bool SingleChannelTransferFunctionFilter<T>::configure()
+bool SingleChannelTransferFunctionFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
 
   // Parse a and b into a std::vector<double>.
-  if (!FilterBase<T>::getParam("a", a_))
+  if (!node->get_parameter("params.a", a_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", FilterBase<T>::getName().c_str());
+    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", node->get_name());
     return false;
   }///\todo check length
 
 
-  if (!FilterBase<T>::getParam("b", b_))
+  if (!node->get_parameter("params.b", b_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", FilterBase<T>::getName().c_str());
+    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", node->get_name());
     return false;
   }///\todo check length
 
@@ -222,7 +233,7 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T  & data_in, T & data
 /***************************************************/
 
 template <typename T>
-class MultiChannelTransferFunctionFilter: public filters::MultiChannelFilterBase <T>
+class MultiChannelTransferFunctionFilter: public MultiChannelFilterBase <T>
 {
 public:
   /**
@@ -238,7 +249,7 @@ public:
    * \param number_of_channels The number of inputs filtered.
    * \param config The xml that is parsed to configure the filter.
    */
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
@@ -271,19 +282,19 @@ MultiChannelTransferFunctionFilter<T>::~MultiChannelTransferFunctionFilter()
 };
 
 template <typename T>
-bool MultiChannelTransferFunctionFilter<T>::configure()
+bool MultiChannelTransferFunctionFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
   // Parse a and b into a std::vector<double>.
-  if (!FilterBase<T>::getParam("a", a_))
+  if (!node->get_parameter("params.a", a_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", FilterBase<T>::getName().c_str());
+    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", node->get_name());
     return false;
   }///\todo check length
 
 
-  if (!FilterBase<T>::getParam("b", b_))
+  if (!node->get_parameter("params.b", b_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", FilterBase<T>::getName().c_str());
+    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", node->get_name());
     return false;
   }///\todo check length
 
