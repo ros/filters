@@ -34,10 +34,14 @@
 
 #include <stdint.h>
 #include <vector>
-
+#include <iostream>
+#include "std_msgs/msg/string.hpp"
+#include <iterator>
+#include <vector>
+#include <map>
 #include <algorithm>
 #include <boost/circular_buffer.hpp>
-
+//#include <functional>
 namespace filters
 {
 
@@ -99,7 +103,6 @@ public:
 private:
 
   unsigned int counter_; //<! special counter to keep track of first N times through
-
   boost::circular_buffer<T> cb_;
 };
 } //namespace filters
