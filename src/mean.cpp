@@ -28,12 +28,11 @@
  */
 
 #include "filters/mean.h"
-#include "pluginlib/class_list_macros.h"
-
+#include "pluginlib/class_list_macros.hpp"
+//#include "filters/filter_base.h"
 
 
 PLUGINLIB_EXPORT_CLASS(filters::MeanFilter<double>, filters::FilterBase<double>)
 PLUGINLIB_EXPORT_CLASS(filters::MeanFilter<float>, filters::FilterBase<float>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMeanFilter<double>, filters::MultiChannelFilterBase<double>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMeanFilter<float>, filters::MultiChannelFilterBase<float>)
+
 
