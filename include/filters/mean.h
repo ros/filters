@@ -33,11 +33,16 @@
 #include <stdint.h>
 #include <cstring>
 #include <stdio.h>
-
+#include <iostream>
+#include "std_msgs/msg/string.hpp"
+#include <iterator>
+#include <vector>
+#include <map>
+#include <boost/algorithm/string.hpp>
 #include <boost/scoped_ptr.hpp>
-
+#include <memory>
 #include "filters/filter_base.h"
-#include "ros/assert.h"
+//#include "ros/assert.h"
 
 #include "filters/realtime_circular_buffer.h"
 
@@ -47,18 +52,19 @@ namespace filters
 /** \brief A mean filter which works on doubles.
  *
  */
+
 template <typename T>
 class MeanFilter: public FilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
   MeanFilter();
-
+  
   /** \brief Destructor to clean up
    */
   ~MeanFilter();
-
-  virtual bool configure();
+   
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -67,33 +73,33 @@ public:
   virtual bool update( const T & data_in, T& data_out);
   
 protected:
-  boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_; ///< Storage for data between updates
-  uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
-  T temp_; /// Temporary storage
-  uint32_t number_of_observations_;             ///< Number of observations over which to filter
+  boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_; //< Storage for data between updates
   
+  uint32_t last_updated_row_;                     //< The last row to have been updated by the filter
+  T temp_; /// Temporary storage
+  uint32_t number_of_observations_;             //< Number of observations over which to filter
+  map <string, string> filter_param;
+  std::stringstream ss1;
 };
 
-
+rclcpp::Parameter parameter;
 template <typename T>
-MeanFilter<T>::MeanFilter():
-  number_of_observations_(0)
+MeanFilter<T>::MeanFilter():    
+number_of_observations_(0)
 {
 }
 
 template <typename T>
-bool MeanFilter<T>::configure()
+bool MeanFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
-  
-  if (!FilterBase<T>::getParam(std::string("number_of_observations"), number_of_observations_))
-  {
-    ROS_ERROR("MeanFilter did not find param number_of_observations");
-    return false;
-  }
-  
-  data_storage_.reset(new RealtimeCircularBuffer<T >(number_of_observations_, temp_));
-
-  return true;
+	if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+	{
+		ROS_ERROR("MeanFilter did not find param number_of_observations");
+		
+		return false;
+	}
+	data_storage_.reset(new RealtimeCircularBuffer<T>(number_of_observations_, temp_));
+	return true;
 }
 
 template <typename T>
@@ -105,7 +111,6 @@ MeanFilter<T>::~MeanFilter()
 template <typename T>
 bool MeanFilter<T>::update(const T & data_in, T& data_out)
 {
-  //update active row
   if (last_updated_row_ >= number_of_observations_ - 1)
     last_updated_row_ = 0;
   else
@@ -113,13 +118,11 @@ bool MeanFilter<T>::update(const T & data_in, T& data_out)
 
   data_storage_->push_back(data_in);
 
-
   unsigned int length = data_storage_->size();
-  
   data_out = 0;
   for (uint32_t row = 0; row < length; row ++)
   {
-    data_out += data_storage_->at(row);
+      data_out += data_storage_->at(row);
   }
   data_out /= length;
   
@@ -141,25 +144,25 @@ public:
    */
   ~MultiChannelMeanFilter();
 
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
    */
   virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
-  
+
 protected:
-  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_; ///< Storage for data between updates
-  uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
+  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_; //< Storage for data between updates
+  uint32_t last_updated_row_;       //< The last row to have been updated by the filter
 
   std::vector<T> temp;  //used for preallocation and copying from non vector source
 
-  uint32_t number_of_observations_;             ///< Number of observations over which to filter
-  using MultiChannelFilterBase<T>::number_of_channels_;           ///< Number of elements per observation
+  uint32_t number_of_observations_;           //< Number of observations over which to filter
+  using MultiChannelFilterBase<T>::number_of_channels_;       //< Number of elements per observation
 
-  
-  
+
+
 };
 
 
@@ -170,19 +173,19 @@ MultiChannelMeanFilter<T>::MultiChannelMeanFilter():
 }
 
 template <typename T>
-bool MultiChannelMeanFilter<T>::configure()
+bool MultiChannelMeanFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
-  
-  if (!FilterBase<T>::getParam("number_of_observations", number_of_observations_))
-  {
-    ROS_ERROR("MultiChannelMeanFilter did not find param number_of_observations");
-    return false;
-  }
-  
-  temp.resize(number_of_channels_);
-  data_storage_.reset(new RealtimeCircularBuffer<std::vector<T> >(number_of_observations_, temp));
+	if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+	{
+		ROS_ERROR("MultiChannelMeanFilter did not find param number_of_observations");
+		
+		return false;
+	}
 
-  return true;
+	temp.resize(number_of_channels_);
+	data_storage_.reset(new RealtimeCircularBuffer<std::vector<T> >(number_of_observations_, temp));
+
+	return true;
 }
 
 template <typename T>
@@ -190,12 +193,10 @@ MultiChannelMeanFilter<T>::~MultiChannelMeanFilter()
 {
 }
 
-
 template <typename T>
 bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vector<T>& data_out)
 {
-  //  ROS_ASSERT(data_in.size() == width_);
-  //ROS_ASSERT(data_out.size() == width_);
+  
   if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_)
   {
     ROS_ERROR("Configured with wrong size config:%d in:%d out:%d", number_of_channels_, (int)data_in.size(), (int)data_out.size());
@@ -212,7 +213,7 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
 
 
   unsigned int length = data_storage_->size();
-  
+
   //Return each value
   for (uint32_t i = 0; i < number_of_channels_; i++)
   {
@@ -226,6 +227,5 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
 
   return true;
 };
-
 }
-#endif// FILTERS_MEAN_H
+#endif // FILTERS_MEAN_H
