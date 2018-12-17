@@ -1,0 +1,21 @@
+MeanFilterDouble5:
+    ros__parameters:
+        name: mean_test
+        type: MeanFilterDouble
+        params: {number_of_observations: 5}
+
+MultiChannelMeanFilterDouble5:
+    ros__parameters:
+        name: mean_test
+        type: MultiChannelMeanFilterDouble
+        params: {number_of_observations: 5}
+
+MultiChannelMeanFilterFloat5:
+    ros__parameters:
+        name: mean_test
+        type: MultiChannelMeanFilterFloat
+        params: {number_of_observations: 5}
+
+
+
+

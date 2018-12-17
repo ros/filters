@@ -1,0 +1,13 @@
+MultiChannelMedianFilterFloat5:
+    ros__parameters:
+        name: median_test
+        type: MultiChannelMedianFilterFloat
+        params: {number_of_observations: 5}
+
+MultiChannelMedianFilterDouble5:
+    ros__parameters:
+        name: median_test
+        type: MultiChannelMedianFilterDouble
+        params: {number_of_observations: 5}
+
+        

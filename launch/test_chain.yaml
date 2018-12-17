@@ -1,0 +1,48 @@
+MultiChannelMedianFilterDouble5:
+    ros__parameters:
+        name: median_test
+        type: filters/MultiChannelMedianFilterDouble
+        params: {number_of_observations: 5}
+
+MultiChannelMedianFilterFloat5:
+    ros__parameters:
+        name: median_test
+        type: filters/MultiChannelMedianFilterFloat
+        params: {number_of_observations: 5}
+
+MultiChannelMeanFilterDouble5:
+    ros__parameters:
+        name: mean_test
+        type: filters/MultiChannelMeanFilterDouble
+        params: {number_of_observations: 5}
+
+MeanFilterFloat5:
+    ros__parameters:
+        name: mean_test
+        type: filters/MeanFilterFloat
+        params: {number_of_observations: 5}
+
+OneIncrements:
+    ros__parameters:
+        name: increment1
+        type: filters/IncrementFilterInt
+
+TwoIncrements:
+  ros__parameters:
+    name: increment1
+    type: filters/IncrementFilterInt
+    Increments_counter: 2
+
+ThreeIncrements:
+  ros__parameters:
+    name: increment1
+    type: filters/IncrementFilterInt
+    Increments_counter: 3
+
+TenIncrements:
+  ros__parameters:
+    name: increment1
+    type: filters/IncrementFilterInt
+    Increments_counter: 10
+
+
