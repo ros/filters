@@ -28,8 +28,7 @@
  */
 
 #include "filters/increment.h"
-#include "pluginlib/class_list_macros.h"
-
+#include "pluginlib/class_list_macros.hpp"
 
 
 PLUGINLIB_EXPORT_CLASS(filters::IncrementFilter<int>, filters::FilterBase<int>)
