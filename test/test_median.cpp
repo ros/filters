@@ -29,29 +29,13 @@
 
 #include <gtest/gtest.h>
 #include <sys/time.h>
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 
 #include "filters/median.h"
 
 using namespace filters ;
 
-void seed_rand()
-{
-  //Seed random number generator with current microseond count
-  timeval temp_time_struct;
-  gettimeofday(&temp_time_struct,NULL);
-  srand(temp_time_struct.tv_usec);
-};
-
-void generate_rand_vectors(double scale, uint64_t runs, std::vector<double>& xvalues, std::vector<double>& yvalues, std::vector<double>&zvalues)
-{
-  seed_rand();
-  for ( uint64_t i = 0; i < runs ; i++ )
-  {
-    xvalues[i] = 1.0 * ((double) rand() - (double)RAND_MAX /2.0) /(double)RAND_MAX;
-    yvalues[i] = 1.0 * ((double) rand() - (double)RAND_MAX /2.0) /(double)RAND_MAX;
-    zvalues[i] = 1.0 * ((double) rand() - (double)RAND_MAX /2.0) /(double)RAND_MAX;
-  }
-}
 
 TEST(MultiChannelMedianFilterDouble, ConfirmIdentityNRows)
 {
@@ -59,10 +43,12 @@ TEST(MultiChannelMedianFilterDouble, ConfirmIdentityNRows)
   int length = 5;
   int rows = 5;
   
-  MultiChannelFilterBase<double > * filter = new filters::MultiChannelMedianFilter<double>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterDouble5"));
+  auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
+  MultiChannelFilterBase<double > * filter = new filters::MultiChannelMedianFilter<double> ();
+  cerr<<"1. got params after configuration"<< endl;
+  EXPECT_TRUE(filter->configure(rows, node));
   
-
+  cerr<<"2. got params after configuration"<< endl;
   double input1[] = {1,2,3,4,5};
   double input1a[] = {11,12,13,14,15};
   std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
@@ -86,10 +72,12 @@ TEST(MultiChannelMedianFilterDouble, ThreeRows)
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-
-  MultiChannelFilterBase<double > * filter = new MultiChannelMedianFilter<double>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterDouble5" ));
   
+  auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
+  MultiChannelFilterBase<double > * filter = new MultiChannelMedianFilter<double> ();
+ cerr<<"1. got params after configuration"<< endl;
+  EXPECT_TRUE(filter->configure(rows,node ));
+  cerr<<"2. got params after configuration"<< endl;
   double input1[] = {0,1,2,3,4};
   std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
   double input2[] = {1,2,3,4,5};
@@ -110,15 +98,17 @@ TEST(MultiChannelMedianFilterDouble, ThreeRows)
 
 }
 
+
 TEST(MultiChannelMedianFilterFloat, ConfirmIdentityNRows)
 {
   float epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
-  MultiChannelFilterBase<float > * filter = new filters::MultiChannelMedianFilter<float>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterFloat5" ));
-
+  auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterFloat5");
+  MultiChannelFilterBase<float > * filter = new filters::MultiChannelMedianFilter<float> ();
+  EXPECT_TRUE(filter->configure(rows, node ));
+  cerr<<"2. got params after configuration"<< endl;
   float input1[] = {1,2,3,4,5};
   float input1a[] = {1,2,3,4,5};
   std::vector<float> v1 (input1, input1 + sizeof(input1) / sizeof(float));
@@ -137,15 +127,17 @@ TEST(MultiChannelMedianFilterFloat, ConfirmIdentityNRows)
   delete filter;
 }
 
+
 TEST(MultiChannelMedianFilterFloat, ThreeRows)
 {
   float epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
+  auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterFloat5");
   MultiChannelFilterBase<float > * filter = new MultiChannelMedianFilter<float>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterFloat5"));
-  
+  EXPECT_TRUE(filter->configure(rows, node));
+  cerr<<"2. got params after configuration"<< endl;
   float input1[] = {0,1,2,3,4};
   std::vector<float> v1 (input1, input1 + sizeof(input1) / sizeof(float));
   float input2[] = {1,2,3,4,5};
@@ -166,9 +158,11 @@ TEST(MultiChannelMedianFilterFloat, ThreeRows)
 
 }
 
-
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_median");
+  rclcpp::init(argc, argv);
   return RUN_ALL_TESTS();
 }
+
+
+
