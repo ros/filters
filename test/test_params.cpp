@@ -29,6 +29,8 @@
 
 #include <gtest/gtest.h>
 #include <sys/time.h>
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 #include "filters/param_test.h"
 
 using namespace filters ;
@@ -37,11 +39,12 @@ using namespace filters ;
 
 TEST(Parameters, Double)
 {
-  ros::NodeHandle nh;
+
+  auto node = rclcpp::Node::make_shared("TestDouble");
   double epsilon = 1e-6;
   
   FilterBase<double > * filter = new ParamTest<double>  ();
-  EXPECT_TRUE(filter->configure("TestDouble", nh));
+  EXPECT_TRUE(filter->configure("TestDouble", node));
   double out;
   filter -> update(out, out);
   EXPECT_NEAR(4,  out, epsilon);
@@ -49,10 +52,11 @@ TEST(Parameters, Double)
 
 TEST(Parameters, Int)
 {
-  ros::NodeHandle nh;
+
+  auto node = rclcpp::Node::make_shared("TestInt");
   
   FilterBase<int> * filter = new ParamTest<int>  ();
-  EXPECT_TRUE(filter->configure("TestInt", nh));
+  EXPECT_TRUE(filter->configure("TestInt", node));
   int out;
   filter -> update(out, out);
   EXPECT_EQ(4,  out);
@@ -60,10 +64,10 @@ TEST(Parameters, Int)
 
 TEST(Parameters, UInt)
 {
-  ros::NodeHandle nh;
-  
+
+  auto node = rclcpp::Node::make_shared("TestUInt");
   FilterBase<unsigned int> * filter = new ParamTest<unsigned int>  ();
-  EXPECT_TRUE(filter->configure("TestUInt", nh));
+  EXPECT_TRUE(filter->configure("TestUInt", node));
   unsigned int out;
   filter -> update(out, out);
   EXPECT_EQ(4,  out);
@@ -71,10 +75,10 @@ TEST(Parameters, UInt)
 
 TEST(Parameters, String)
 {
-  ros::NodeHandle nh;
-  
+
+  auto node = rclcpp::Node::make_shared("TestString");
   FilterBase<std::string> * filter = new ParamTest<std::string>  ();
-  EXPECT_TRUE(filter->configure("TestString", nh));
+  EXPECT_TRUE(filter->configure("TestString", node));
   std::string out;
   filter -> update(out, out);
   EXPECT_STREQ("four",  out.c_str());
@@ -82,11 +86,12 @@ TEST(Parameters, String)
 
 TEST(Parameters, DoubleVector)
 {
-  ros::NodeHandle nh;
+
+  auto node = rclcpp::Node::make_shared("TestDoubleVector");  
   double epsilon = 1e-6;
   
   FilterBase<std::vector<double> > * filter = new ParamTest<std::vector<double> >  ();
-  EXPECT_TRUE(filter->configure("TestDoubleVector", nh));
+  EXPECT_TRUE(filter->configure("TestDoubleVector", node));
   std::vector<double> out;
   filter -> update(out, out);
   for (std::vector<double>::iterator it = out.begin(); it != out.end(); ++it)
@@ -97,10 +102,10 @@ TEST(Parameters, DoubleVector)
 
 TEST(Parameters, StringVector)
 {
-  ros::NodeHandle nh;
-  
+ 
+  auto node = rclcpp::Node::make_shared("TestStringVector"); 
   FilterBase<std::vector<std::string> > * filter = new ParamTest<std::vector<std::string> >  ();
-  EXPECT_TRUE(filter->configure("TestStringVector", nh));
+  EXPECT_TRUE(filter->configure("TestStringVector", node));
   std::vector<std::string> out;
   filter -> update(out, out);
   for (std::vector<std::string>::iterator it = out.begin(); it != out.end(); ++it)
@@ -109,9 +114,8 @@ TEST(Parameters, StringVector)
     }
 }
 
-
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_mean");
+  rclcpp::init(argc, argv);
   return RUN_ALL_TESTS();
 }
