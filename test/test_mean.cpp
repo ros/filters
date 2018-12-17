@@ -30,36 +30,23 @@
 #include <gtest/gtest.h>
 #include <sys/time.h>
 #include "filters/mean.h"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 
 using namespace filters ;
 
-void seed_rand()
-{
-  //Seed random number generator with current microseond count
-  timeval temp_time_struct;
-  gettimeofday(&temp_time_struct,NULL);
-  srand(temp_time_struct.tv_usec);
-};
-
-void generate_rand_vectors(double scale, uint64_t runs, std::vector<double>& xvalues, std::vector<double>& yvalues, std::vector<double>&zvalues)
-{
-  seed_rand();
-  for ( uint64_t i = 0; i < runs ; i++ )
-  {
-    xvalues[i] = 1.0 * ((double) rand() - (double)RAND_MAX /2.0) /(double)RAND_MAX;
-    yvalues[i] = 1.0 * ((double) rand() - (double)RAND_MAX /2.0) /(double)RAND_MAX;
-    zvalues[i] = 1.0 * ((double) rand() - (double)RAND_MAX /2.0) /(double)RAND_MAX;
-  }
-}
 
 TEST(MultiChannelMeanFilterDouble, ConfirmIdentityNRows)
 {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-  
+
+  auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
+
   MultiChannelFilterBase<double > * filter = new MultiChannelMeanFilter<double>  ();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMeanFilterDouble5"));
+  //EXPECT_TRUE(filter->configure(rows, "MultiChannelMeanFilterDouble5"));
+  EXPECT_TRUE(filter->configure(rows, node));
 
   double input1[] = {1,2,3,4,5};
   double input1a[] = {1,2,3,4,5};
@@ -83,9 +70,12 @@ TEST(MultiChannelMeanFilterDouble, ThreeRows)
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-  
+
+  auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
+
   MultiChannelFilterBase<double > * filter = new MultiChannelMeanFilter<double> ();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMeanFilterDouble5"));
+  
+  EXPECT_TRUE(filter->configure(rows, node));
 
   double input1[] = {0,1,2,3,4};
   std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
@@ -105,7 +95,6 @@ TEST(MultiChannelMeanFilterDouble, ThreeRows)
   {
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
-
 }
 
 TEST(MeanFilterDouble, ConfirmIdentityNRows)
@@ -113,18 +102,18 @@ TEST(MeanFilterDouble, ConfirmIdentityNRows)
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-  
+
   FilterBase<double > * filter = new MeanFilter<double>  ();
-  EXPECT_TRUE(filter->configure("MeanFilterDouble5"));
+  auto node = rclcpp::Node::make_shared("MeanFilterDouble5");
+  EXPECT_TRUE(filter->configure("MeanFilterDouble5",node));
 
   double input = 1;
   double output = 0;
 
-
   for (int32_t i =0; i < rows*10; i++)
   {
     EXPECT_TRUE(filter->update(input, output));
-    
+
     for (int i = 1; i < length; i++)
     {
       EXPECT_NEAR(input, output, epsilon);
@@ -134,30 +123,26 @@ TEST(MeanFilterDouble, ConfirmIdentityNRows)
 
 TEST(MeanFilterDouble, ThreeRows)
 {
-  double epsilon = 1e-6;
-  
-  FilterBase<double > * filter = new MeanFilter<double> ();
-  EXPECT_TRUE(filter->configure("MeanFilterDouble5"));
+	double epsilon = 1e-6;
+	FilterBase<double > *filter = new MeanFilter<double> ();
+	
+    auto node = rclcpp::Node::make_shared("MeanFilterDouble5");
+	EXPECT_TRUE(filter->configure("MeanFilterDouble5",node));
+	double input1 = 0;
+	double input2 = 1;
+	double input3 = 2;
+	double output = 3;
 
-  double input1 = 0;
-  double input2 =1;
-  double input3 = 2;
-  double output = 3;
-
-
-  EXPECT_TRUE(filter->update(input1, output));
-  EXPECT_NEAR(input1, output, epsilon);
-  EXPECT_TRUE(filter->update(input2, output));
-  EXPECT_NEAR((input1+ input2)/2.0, output, epsilon);
-  EXPECT_TRUE(filter->update(input3, output));
-  EXPECT_NEAR((input1 + input2 + input3)/3, output, epsilon);
-
-
+	EXPECT_TRUE(filter->update(input1, output));
+	EXPECT_NEAR(input1, output, epsilon);
+	EXPECT_TRUE(filter->update(input2, output));
+	EXPECT_NEAR((input1+ input2)/2.0, output, epsilon);
+	EXPECT_TRUE(filter->update(input3, output));
+	EXPECT_NEAR((input1 + input2 + input3)/3, output, epsilon);
 }
-
 
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_mean");
+  rclcpp::init(argc, argv);
   return RUN_ALL_TESTS();
 }
