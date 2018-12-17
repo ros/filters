@@ -29,17 +29,21 @@
 
 #ifndef FILTERS_MEDIAN_H
 #define FILTERS_MEDIAN_H
-
 #include <stdint.h>
-#include <sstream>
-#include <cstdio>
-
+#include <cstring>
+#include <stdio.h>
+#include <iostream>
+#include "std_msgs/msg/string.hpp"
+#include <iterator>
+#include <vector>
+#include <map>
+#include <boost/algorithm/string.hpp>
 #include <boost/scoped_ptr.hpp>
-
+#include <memory>
 #include "filters/filter_base.h"
+//#include "ros/assert.h"
 
 #include "filters/realtime_circular_buffer.h"
-
 
 /*********************************************************************/
 /*
@@ -94,7 +98,7 @@ elem_type kth_smallest(elem_type a[], int n, int k)
  *
  */
 template <typename T>
-class MedianFilter: public filters::FilterBase <T>
+class MedianFilter: public FilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -104,22 +108,21 @@ public:
    */
   ~MedianFilter();
 
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
-   * \param data_in double array with length width
-   * \param data_out double array with length width
+   * \param data_in double array with length and width
+   * \param data_out double array with length and width
    */
   virtual bool update(const T& data_in, T& data_out);
   
 protected:
-  std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
-  boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_;                       ///< Storage for data between updates
+  std::vector<T> temp_storage_;                  //< Preallocated storage for the list to sort
+  boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_;    //< Storage for data between updates
   
-  T temp;  //used for preallocation and copying from non vector source
+  T temp_;  //used for preallocation and copying from non vector source
 
-
-  uint32_t number_of_observations_;             ///< Number of observations over which to filter
+  uint32_t number_of_observations_;             //< Number of observations over which to filter
 
 };
 
@@ -137,21 +140,20 @@ MedianFilter<T>::~MedianFilter()
 
 
 template <typename T>
-bool MedianFilter<T>::configure()
+bool MedianFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
   int no_obs = -1;
-  if (!FilterBase<T>::getParam(std::string("number_of_observations"), no_obs))
-  {
-    fprintf(stderr, "Error: MedianFilter was not given params.\n");
-    return false;
-  }
-  number_of_observations_ = no_obs;
-    
-  data_storage_.reset( new RealtimeCircularBuffer<T >(number_of_observations_, temp));
-  temp_storage_.resize(number_of_observations_);
-  
+  if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+	{
+		 ROS_ERROR("MedianFilter did not find param number_of_observations");
+		
+		return false;
+	}
+	data_storage_.reset(new RealtimeCircularBuffer<T>(number_of_observations_, temp_));
+   temp_storage_.resize(number_of_observations_);	
   return true;
-};
+  number_of_observations_ = no_obs;
+}
 
 template <typename T>
 bool MedianFilter<T>::update(const T& data_in, T& data_out)
@@ -178,7 +180,7 @@ bool MedianFilter<T>::update(const T& data_in, T& data_out)
  *
  */
 template <typename T>
-class MultiChannelMedianFilter: public filters::MultiChannelFilterBase <T>
+class MultiChannelMedianFilter: public MultiChannelFilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -188,7 +190,7 @@ public:
    */
   ~MultiChannelMedianFilter();
 
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in double array with length width
@@ -197,13 +199,13 @@ public:
   virtual bool update(const std::vector<T>& data_in, std::vector<T>& data_out);
   
 protected:
-  std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
-  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_;                       ///< Storage for data between updates
+  std::vector<T> temp_storage_;                     //< Preallocated storage for the list to sort
+  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_;  //< Storage for data between updates
   
   std::vector<T> temp;  //used for preallocation and copying from non vector source
 
 
-  uint32_t number_of_observations_;             ///< Number of observations over which to filter
+  uint32_t number_of_observations_;         //< Number of observations over which to filter
 
 };
 
@@ -221,16 +223,16 @@ MultiChannelMedianFilter<T>::~MultiChannelMedianFilter()
 
 
 template <typename T>
-bool MultiChannelMedianFilter<T>::configure()
+bool MultiChannelMedianFilter<T>::configure(rclcpp::Node::SharedPtr node)
 {
-  int no_obs = -1;
-  if (!FilterBase<T>::getParam("number_of_observations", no_obs))
-  {
-    fprintf(stderr, "Error: MultiChannelMedianFilter was not given params.\n");
-    return false;
-  }
-  number_of_observations_ = no_obs;
-    
+  
+  
+  if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+	{
+		cerr<<"MultiChannelMedianFilter did not find param number_of_observations"<<endl;
+		//ROS_ERROR("MeanFilter did not find param number_of_observations");
+		return false;
+	}
   temp.resize(this->number_of_channels_);
   data_storage_.reset( new RealtimeCircularBuffer<std::vector<T> >(number_of_observations_, temp));
   temp_storage_.resize(number_of_observations_);
@@ -241,11 +243,10 @@ bool MultiChannelMedianFilter<T>::configure()
 template <typename T>
 bool MultiChannelMedianFilter<T>::update(const std::vector<T>& data_in, std::vector<T>& data_out)
 {
-  //  printf("Expecting width %d, got %d and %d\n", width_, data_in.size(),data_out.size());
+  
   if (data_in.size() != this->number_of_channels_ || data_out.size() != this->number_of_channels_)
     return false;
-  if (!FilterBase<T>::configured_)
-    return false;
+ 
 
   data_storage_->push_back(data_in);
 
