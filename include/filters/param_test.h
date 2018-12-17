@@ -33,11 +33,15 @@
 #include <stdint.h>
 #include <cstring>
 #include <stdio.h>
-
+#include <iostream>
+#include "std_msgs/msg/string.hpp"
+#include <iterator>
+#include <vector>
+#include <map>
+#include <boost/algorithm/string.hpp>
 #include <boost/scoped_ptr.hpp>
-
+#include <memory>
 #include "filters/filter_base.h"
-#include "ros/assert.h"
 
 
 namespace filters
@@ -57,7 +61,7 @@ public:
    */
   ~ParamTest();
 
-  virtual bool configure();
+  virtual bool configure(rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -66,7 +70,7 @@ public:
   virtual bool update( const T & data_in, T& data_out);
   
 protected:
-  
+  T temp_;
 };
 
 
@@ -76,9 +80,15 @@ ParamTest<T>::ParamTest()
 }
 
 template <typename T>
-bool ParamTest<T>::configure()
+bool ParamTest<T>::configure(rclcpp::Node::SharedPtr node)
 {
-  return true;
+  if (!node->get_parameter("params.key", temp_))
+  {
+    ROS_ERROR("ParamTest, \"%s\", params has no attribute key", node->get_name());
+    return false;
+  }
+    
+    return true;
 }
 
 template <typename T>
@@ -90,9 +100,8 @@ ParamTest<T>::~ParamTest()
 template <typename T>
 bool ParamTest<T>::update(const T & data_in, T& data_out)
 {
-  T temp;
-  this->getParam("key", temp);
-  data_out = temp;
+  
+  data_out = temp_;
   return true;
 };
 
