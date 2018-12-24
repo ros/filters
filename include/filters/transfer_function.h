@@ -98,7 +98,7 @@ public:
    * \param number_of_channels The number of inputs filtered.
    * \param config The xml that is parsed to configure the filter.
    */
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
@@ -131,18 +131,19 @@ SingleChannelTransferFunctionFilter<T>::~SingleChannelTransferFunctionFilter()
 };
 
 template <typename T>
-bool SingleChannelTransferFunctionFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool SingleChannelTransferFunctionFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
-
+   std::string param_name1 = param_name + "params.a";
+   std::string param_name2 = param_name + "params.b";
   // Parse a and b into a std::vector<double>.
-  if (!node->get_parameter("params.a", a_))
+  if (!node->get_parameter(param_name1, a_))
   {
     ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", node->get_name());
     return false;
   }///\todo check length
 
 
-  if (!node->get_parameter("params.b", b_))
+  if (!node->get_parameter(param_name2, b_))
   {
     ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", node->get_name());
     return false;
@@ -249,7 +250,7 @@ public:
    * \param number_of_channels The number of inputs filtered.
    * \param config The xml that is parsed to configure the filter.
    */
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
@@ -282,17 +283,19 @@ MultiChannelTransferFunctionFilter<T>::~MultiChannelTransferFunctionFilter()
 };
 
 template <typename T>
-bool MultiChannelTransferFunctionFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool MultiChannelTransferFunctionFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
+   std::string param_name1 = param_name + "params.a";
+   std::string param_name2 = param_name + "params.b";
   // Parse a and b into a std::vector<double>.
-  if (!node->get_parameter("params.a", a_))
+  if (!node->get_parameter(param_name1, a_))
   {
     ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", node->get_name());
     return false;
   }///\todo check length
 
 
-  if (!node->get_parameter("params.b", b_))
+  if (!node->get_parameter(param_name2, b_))
   {
     ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", node->get_name());
     return false;

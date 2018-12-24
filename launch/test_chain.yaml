@@ -1,48 +1,154 @@
-MultiChannelMedianFilterDouble5:
-    ros__parameters:
-        name: median_test
-        type: filters/MultiChannelMedianFilterDouble
-        params: {number_of_observations: 5}
-
-MultiChannelMedianFilterFloat5:
-    ros__parameters:
-        name: median_test
-        type: filters/MultiChannelMedianFilterFloat
-        params: {number_of_observations: 5}
-
-MultiChannelMeanFilterDouble5:
-    ros__parameters:
-        name: mean_test
-        type: filters/MultiChannelMeanFilterDouble
-        params: {number_of_observations: 5}
-
 MeanFilterFloat5:
-    ros__parameters:
-        name: mean_test
-        type: filters/MeanFilterFloat
-        params: {number_of_observations: 5}
-
+        ros__parameters:
+                filter1:
+                        name: mean_test
+                        type: filters/MeanFilterFloat
+                        params: {number_of_observations: 5}                        
+MultiChannelMedianFilterDouble5:
+        ros__parameters:
+                filter1:
+                        name: median_test
+                        type: filters/MultiChannelMedianFilterDouble
+                        params: {number_of_observations: 5}                
+TransferFunction:
+        ros__parameters:
+                filter1:
+                        name: transfer_function
+                        type: filters/MultiChannelTransferFunctionFilterDouble
+                        params: 
+                            a: [1.0, -1.760041880343169, 1.182893262037831]
+                            b: [0.018098933007514, 0.054296799022543, 0.054296799022543, 0.018098933007514]                   
+MultiChannelMeanFilterDouble5:
+        ros__parameters:
+                filter1:
+                        name: mean_test
+                        type: filters/MultiChannelMeanFilterDouble
+                        params: {number_of_observations: 5}  
+MultiChannelMedianFilterFloat5:
+        ros__parameters:
+                filter1:
+                        name: median_test
+                        type: filters/MultiChannelMedianFilterFloat
+                        params: {number_of_observations: 5}  
+TwoFilters:
+        ros__parameters:
+                filter1:
+                        name: median_test_unique
+                        type: filters/MultiChannelMedianFilterDouble
+                        params: {number_of_observations: 5}
+                filter2:
+                        name: median_test2
+                        type: filters/MultiChannelMedianFilterDouble
+                        params: {number_of_observations: 5}        
 OneIncrements:
-    ros__parameters:
-        name: increment1
-        type: filters/IncrementFilterInt
-
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/IncrementFilterInt
 TwoIncrements:
-  ros__parameters:
-    name: increment1
-    type: filters/IncrementFilterInt
-    Increments_counter: 2
-
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/IncrementFilterInt
+                filter2:
+                        name: increment2
+                        type: filters/IncrementFilterInt
 ThreeIncrements:
-  ros__parameters:
-    name: increment1
-    type: filters/IncrementFilterInt
-    Increments_counter: 3
-
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/IncrementFilterInt
+                filter2:
+                        name: increment2
+                        type: filters/IncrementFilterInt
+                filter3:
+                        name: increment3
+                        type: filters/IncrementFilterInt	
 TenIncrements:
-  ros__parameters:
-    name: increment1
-    type: filters/IncrementFilterInt
-    Increments_counter: 10
-
-
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/IncrementFilterInt
+                filter2:
+                        name: increment2
+                        type: filters/IncrementFilterInt
+                filter3:
+                        name: increment3
+                        type: filters/IncrementFilterInt
+                filter4:
+                        name: increment4
+                        type: filters/IncrementFilterInt
+                filter5:
+                        name: increment5
+                        type: filters/IncrementFilterInt
+                filter6:
+                        name: increment6
+                        type: filters/IncrementFilterInt
+                filter7:
+                        name: increment7
+                        type: filters/IncrementFilterInt
+                filter8:
+                        name: increment8
+                        type: filters/IncrementFilterInt
+                filter9:
+                        name: increment9
+                        type: filters/IncrementFilterInt
+                filter10:
+                        name: increment10
+                        type: filters/IncrementFilterInt
+OneMultiChannelIncrements:
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/MultiChannelIncrementFilterInt
+TwoMultiChannelIncrements:
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/MultiChannelIncrementFilterInt
+                filter2:
+                        name: increment2
+                        type: filters/MultiChannelIncrementFilterInt
+ThreeMultiChannelIncrements:
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/MultiChannelIncrementFilterInt
+                filter2:
+                        name: increment2
+                        type: filters/MultiChannelIncrementFilterInt
+                filter3:
+                        name: increment3
+                        type: filters/MultiChannelIncrementFilterInt	
+TenMultiChannelIncrements:
+        ros__parameters:
+                filter1:		
+                        name: increment1
+                        type: filters/MultiChannelIncrementFilterInt
+                filter2:
+                        name: increment2
+                        type: filters/MultiChannelIncrementFilterInt
+                filter3:
+                        name: increment3
+                        type: filters/MultiChannelIncrementFilterInt
+                filter4:
+                        name: increment4
+                        type: filters/MultiChannelIncrementFilterInt
+                filter5:
+                        name: increment5
+                        type: filters/MultiChannelIncrementFilterInt
+                filter6:
+                        name: increment6
+                        type: filters/MultiChannelIncrementFilterInt
+                filter7:
+                        name: increment7
+                        type: filters/MultiChannelIncrementFilterInt
+                filter8:
+                        name: increment8
+                        type: filters/MultiChannelIncrementFilterInt
+                filter9:
+                        name: increment9
+                        type: filters/MultiChannelIncrementFilterInt
+                filter10:
+                        name: increment10
+                        type: filters/MultiChannelIncrementFilterInt

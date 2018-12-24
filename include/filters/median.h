@@ -108,7 +108,7 @@ public:
    */
   ~MedianFilter();
 
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in double array with length and width
@@ -140,10 +140,11 @@ MedianFilter<T>::~MedianFilter()
 
 
 template <typename T>
-bool MedianFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool MedianFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
+  std::string param_name1 = param_name+ "params.number_of_observations";
   int no_obs = -1;
-  if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+  if(!node->get_parameter(param_name1, number_of_observations_))
 	{
 		 ROS_ERROR("MedianFilter did not find param number_of_observations");
 		
@@ -190,7 +191,7 @@ public:
    */
   ~MultiChannelMedianFilter();
 
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in double array with length width
@@ -223,27 +224,23 @@ MultiChannelMedianFilter<T>::~MultiChannelMedianFilter()
 
 
 template <typename T>
-bool MultiChannelMedianFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool MultiChannelMedianFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
-  
-  
-  if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+  std::string param_name1 = param_name+ "params.number_of_observations";
+  if(!node->get_parameter(param_name1, number_of_observations_))
 	{
-		cerr<<"MultiChannelMedianFilter did not find param number_of_observations"<<endl;
-		//ROS_ERROR("MeanFilter did not find param number_of_observations");
+		ROS_ERROR("MeanFilter did not find param number_of_observations");
 		return false;
 	}
   temp.resize(this->number_of_channels_);
   data_storage_.reset( new RealtimeCircularBuffer<std::vector<T> >(number_of_observations_, temp));
   temp_storage_.resize(number_of_observations_);
-  
   return true;
 };
 
 template <typename T>
 bool MultiChannelMedianFilter<T>::update(const std::vector<T>& data_in, std::vector<T>& data_out)
 {
-  
   if (data_in.size() != this->number_of_channels_ || data_out.size() != this->number_of_channels_)
     return false;
  
@@ -262,7 +259,7 @@ bool MultiChannelMedianFilter<T>::update(const std::vector<T>& data_in, std::vec
     }
     data_out[i] = median(&temp_storage_[0], length);
   }
-
+//cerr << "data_out computed in median:" << data_out << endl;
   return true;
 };
 

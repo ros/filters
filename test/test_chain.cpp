@@ -30,13 +30,54 @@
 #include "gtest/gtest.h"
 #include "filters/filter_chain.h"
 
-
-#if 0
 TEST(MultiChannelFilterChain, configuring){
   double epsilon = 1e-9;
+  
+  auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
+  filters::MultiChannelFilterChain<double> chain("double");
+  
+  EXPECT_TRUE(chain.configure(5, node));
+  
+  double input1[] = {1,2,3,4,5};
+  double input1a[] = {9,9,9,9,9};//seed w/incorrect values
+  std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
+  std::vector<double> v1a (input1a, input1a + sizeof(input1a) / sizeof(double));
+
+   cerr << "1. before update function" << endl;
+  EXPECT_TRUE(chain.update(v1, v1a));
+  cerr << "returned from MultiChannel MeanFilter with true values"<< endl; 
+  chain.clear();
+
+  for (unsigned int i = 1; i < v1.size(); i++)
+  {
+    EXPECT_NEAR(input1[i], v1a[i], epsilon);
+  }
+} 
+
+TEST(FilterChain, configuring){
+  double epsilon = 1e-9;
+  
+  auto node = rclcpp::Node::make_shared("MeanFilterFloat5");
+  filters::FilterChain<float> chain("float");
+  
+  EXPECT_TRUE(chain.configure("MeanFilterFloat5",node));
+  
+  float v1 = 1;
+  float v1a = 9;
+
+  EXPECT_TRUE(chain.update(v1, v1a));
+  chain.clear();
+  EXPECT_NEAR(v1, v1a, epsilon);
+  
+  }
+  
+TEST(MultiChannelFilterChain, TwoFilters){
+  double epsilon = 1e-9;
+  
+  auto node = rclcpp::Node::make_shared("TwoFilters");
   filters::MultiChannelFilterChain<double> chain("double");
 
-  EXPECT_TRUE(chain.configure(5, "MultiChannelMeanFilterDouble5"));
+  EXPECT_TRUE(chain.configure(5, node));
  
   double input1[] = {1,2,3,4,5};
   double input1a[] = {9,9,9,9,9};//seed w/incorrect values
@@ -52,36 +93,16 @@ TEST(MultiChannelFilterChain, configuring){
   {
     EXPECT_NEAR(input1[i], v1a[i], epsilon);
   }
-}
-#endif
-
-TEST(FilterChain, configuring){
-  double epsilon = 1e-9;
-  filters::FilterChain<float> chain("float");
+}  
   
-  auto node = rclcpp::Node::make_shared("MeanFilterFloat5");
 
-  EXPECT_TRUE(chain.configure("MeanFilterFloat5",node));
-
-  float v1 = 1;
-  float v1a = 9;
-
-  EXPECT_TRUE(chain.update(v1, v1a));
-
-  chain.clear();
-
-  EXPECT_NEAR(v1, v1a, epsilon);
-
-  }
-
-#if 0
 TEST(MultiChannelFilterChain, MisconfiguredNumberOfChannels){
   filters::MultiChannelFilterChain<double> chain("double");
-
-  EXPECT_TRUE(chain.configure(10, "MultiChannelMedianFilterDouble5"));
-
-  //  EXPECT_TRUE(chain.configure(10));
-
+  
+  auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
+    
+  EXPECT_TRUE(chain.configure(10,node));
+  
   double input1[] = {1,2,3,4,5};
   double input1a[] = {1,2,3,4,5};
   std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
@@ -89,39 +110,83 @@ TEST(MultiChannelFilterChain, MisconfiguredNumberOfChannels){
 
   
   EXPECT_FALSE(chain.update(v1, v1a));
-
   chain.clear();
 
 }
 
-TEST(MultiChannelFilterChain, TwoFilters){
-  double epsilon = 1e-9;
-  filters::MultiChannelFilterChain<double> chain("double");
-
-  EXPECT_TRUE(chain.configure(5, "TwoFilters"));
- 
-  double input1[] = {1,2,3,4,5};
-  double input1a[] = {9,9,9,9,9};//seed w/incorrect values
-  std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
-  std::vector<double> v1a (input1a, input1a + sizeof(input1a) / sizeof(double));
-
+TEST(FilterChain, ReconfiguringChain){
+  filters::FilterChain<int> chain("int");
+  
+  int v1 = 1;
+  int v1a = 9;
+  auto node1 = rclcpp::Node::make_shared( "OneIncrements");
+  
+  EXPECT_TRUE(chain.configure("OneIncrements",node1)); 
   
   EXPECT_TRUE(chain.update(v1, v1a));
-
+  EXPECT_EQ(2, v1a);
   chain.clear();
-
-  for (unsigned int i = 1; i < v1.size(); i++)
-  {
-    EXPECT_NEAR(input1[i], v1a[i], epsilon);
-  }
+  
+  auto node2 = rclcpp::Node::make_shared( "TwoIncrements");
+  
+  EXPECT_TRUE(chain.configure("TwoIncrements",node2)); 
+  
+  EXPECT_TRUE(chain.update(v1, v1a));
+  EXPECT_EQ(3, v1a);
+  chain.clear();
+  
 }
 
+TEST(FilterChain, ThreeIncrementChains){
+  filters::FilterChain<int> chain("int");  
+  int v1 = 1;
+  int v1a = 9;
+  auto node = rclcpp::Node::make_shared( "ThreeIncrements");
+  
+  EXPECT_TRUE(chain.configure("ThreeIncrements",node)); 
+  EXPECT_TRUE(chain.update(v1, v1a));
+  EXPECT_EQ(4, v1a);
+  chain.clear();
+    
+}
 
+TEST(FilterChain, TenIncrementChains){
+  filters::FilterChain<int> chain("int");  
+  int v1 = 1;
+  int v1a = 9;
+  auto node = rclcpp::Node::make_shared( "TenIncrements");
+  
+  EXPECT_TRUE(chain.configure("TenIncrements", node)); 
+  EXPECT_TRUE(chain.update(v1, v1a));
+  EXPECT_EQ(11, v1a);
+  chain.clear();
+    
+}
+
+TEST(MultiChannelFilterChain, TenMultiChannelIncrementChains){
+  filters::MultiChannelFilterChain<int> chain("int");  
+  std::vector<int> v1;
+  v1.push_back(1);
+  v1.push_back(1);
+  v1.push_back(1);
+  std::vector<int> v1a = v1;
+  auto node = rclcpp::Node::make_shared( "TenMultiChannelIncrements");
+  
+  EXPECT_TRUE(chain.configure(3, node)); 
+  EXPECT_TRUE(chain.update(v1, v1a));
+  for (unsigned int i = 0; i < 3; i++)
+  {
+    EXPECT_EQ(11, v1a[i]);
+  }
+  chain.clear();
+    
+}
+ 
 TEST(MultiChannelFilterChain, TransferFunction){
   double epsilon = 1e-4;
- 
+  auto node = rclcpp::Node::make_shared("TransferFunction");
   filters::MultiChannelFilterChain<double> chain("double");
-  EXPECT_TRUE(chain.configure(3, "TransferFunction" ));
+  EXPECT_TRUE(chain.configure(3, node));
  
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;
   std::vector<double> out1;
@@ -164,137 +229,19 @@ TEST(MultiChannelFilterChain, TransferFunction){
   EXPECT_TRUE(chain.update(in5, in5));
   EXPECT_TRUE(chain.update(in6, in6));
   EXPECT_TRUE(chain.update(in7, in7));
-
+  cerr << "returned from transfer function with true values"<< endl; 
   chain.clear();
-
+  
   for(unsigned int i=0; i<out1.size(); i++)
   {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
 }
 
-/*
-TEST(MultiChannelFilterChain, OverlappingNames){
-  filters::MultiChannelFilterChain<double> chain("double");
-
-
-  std::string bad_xml = "<filters> <filter type=\"MultiChannelMeanFilterDouble\" name=\"mean_test\"> <params number_of_observations=\"5\"/></filter><filter type=\"MedianFilter\" name=\"mean_test\"> <params number_of_observations=\"5\"/></filter></filters>";
-
-  TiXmlDocument chain_def = TiXmlDocument();
-  chain_def.Parse(bad_xml.c_str());
-  TiXmlElement * config = chain_def.RootElement();
-
-  EXPECT_FALSE(chain.configure(5, config));
-
-}
-*/
-#endif
-
-TEST(FilterChain, ReconfiguringChain){
-  filters::FilterChain<int> chain("int");
-  
-  int v1 = 1;
-  int v1a = 9;
-
-  auto node1 = rclcpp::Node::make_shared("OneIncrements");
-
-  EXPECT_TRUE(chain.configure("OneIncrements",node1));
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(2, v1a);
-  chain.clear();
-  
-  auto node2 = rclcpp::Node::make_shared("TwoIncrements");
-
-  EXPECT_TRUE(chain.configure("TwoIncrements",node2));
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(3, v1a);
-  chain.clear();
-  
-}
-
-TEST(FilterChain, ThreeIncrementChains){
-  filters::FilterChain<int> chain("int");  
-  int v1 = 1;
-  int v1a = 9;
-  auto node = rclcpp::Node::make_shared("ThreeIncrements");
-
-  EXPECT_TRUE(chain.configure("ThreeIncrements",node));
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(4, v1a);
-  chain.clear();
-    
-}
-
-
-TEST(FilterChain, TenIncrementChains){
-  filters::FilterChain<int> chain("int");  
-  int v1 = 1;
-  int v1a = 9;
-
-  auto node = rclcpp::Node::make_shared("TenIncrements");
-
-  EXPECT_TRUE(chain.configure("TenIncrements", node));
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(11, v1a);
-  chain.clear();
-    
-}
-#if 0
-
-/*
-TEST(MultiChannelFilterChain, ReconfiguringMultiChannelChain){
-  filters::MultiChannelFilterChain<int> chain("int");
-  
-  int v1 = 1;
-  int v1a = 9;
-
-  EXPECT_TRUE(chain.configure("OneMultiChannelIncrements")); 
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(2, v1a);
-  chain.clear();
-  
-  EXPECT_TRUE(chain.configure("TwoMultiChannelIncrements")); 
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(3, v1a);
-  chain.clear();
-  
-}
-
-TEST(MultiChannelFilterChain, ThreeMultiChannelIncrementChains){
-  filters::MultiChannelFilterChain<int> chain("int");  
-  int v1 = 1;
-  int v1a = 9;
-
-  EXPECT_TRUE(chain.configure("ThreeMultiChannelIncrements")); 
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(4, v1a);
-  chain.clear();
-    
-}
-*/
-TEST(MultiChannelFilterChain, TenMultiChannelIncrementChains){
-  filters::MultiChannelFilterChain<int> chain("int");  
-  std::vector<int> v1;
-  v1.push_back(1);
-  v1.push_back(1);
-  v1.push_back(1);
-  std::vector<int> v1a = v1;
-
-  EXPECT_TRUE(chain.configure(3, "TenMultiChannelIncrements")); 
-  EXPECT_TRUE(chain.update(v1, v1a));
-  for (unsigned int i = 0; i < 3; i++)
-  {
-    EXPECT_EQ(11, v1a[i]);
-  }
-  chain.clear();
-    
-}
-#endif
-
-int main(int argc, char **argv){
-  cerr<<"Rohit Main"<<endl;
+int main(int argc, char **argv)
+{
+  //cerr<<"Rohit Main"<<endl;
   testing::InitGoogleTest(&argc, argv);
-  //ros::init(argc, argv, "test_chain");
   rclcpp::init(argc, argv);
   return RUN_ALL_TESTS();
 }

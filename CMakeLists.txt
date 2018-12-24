@@ -78,8 +78,8 @@ install(TARGETS
         mean
         median
         transfer_function
-	    param_test
-	    increment
+	      param_test
+	      increment
   DESTINATION lib/${PROJECT_NAME}  
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -129,8 +129,8 @@ if(BUILD_TESTING)
     ament_add_gtest(test_median  test/test_median.cpp)
     target_link_libraries(test_median ${LIBS})
     
-    ament_add_gtest(test_transfer_function  test/test_transfer_function.cpp)
-    target_link_libraries(test_transfer_function ${LIBS})
+   ament_add_gtest(test_transfer_function  test/test_transfer_function.cpp)
+   target_link_libraries(test_transfer_function ${LIBS})
     
     ament_add_gtest(test_params  test/test_params.cpp)
     target_link_libraries(test_params ${LIBS})
@@ -139,11 +139,11 @@ if(BUILD_TESTING)
     target_link_libraries(test_chain ${LIBS})
     
     install(
-        TARGETS test_mean 
-                test_median 
-                test_transfer_function 
+        TARGETS test_chain
+               test_median 
+               test_transfer_function 
                 test_params 
-                test_chain
+                test_mean 
 	DESTINATION lib/${PROJECT_NAME})
 endif()
 
@@ -153,4 +153,10 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+##############################################################################
+# Cosmetics Testing
+##############################################################################
+
+find_package(ament_lint_auto REQUIRED)
+ament_lint_auto_find_test_dependencies()
 ament_package()

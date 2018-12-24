@@ -60,7 +60,7 @@ public:
    */
   ~IncrementFilter();
 
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -77,7 +77,7 @@ IncrementFilter<T>::IncrementFilter()
 }
 
 template <typename T>
-bool IncrementFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool IncrementFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
     
   return true;
@@ -111,7 +111,7 @@ public:
    */
   ~MultiChannelIncrementFilter();
 
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -132,7 +132,7 @@ MultiChannelIncrementFilter<T>::MultiChannelIncrementFilter()
 }
 
 template <typename T>
-bool MultiChannelIncrementFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool MultiChannelIncrementFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
   
   return true;

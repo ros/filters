@@ -1,31 +1,38 @@
 TestDouble:
-    ros__parameters:
-        name: double_test
-        type: ParamTestDouble
-        params: {key: 4.0}
+        ros__parameters:
+                filter1:
+                        name: double_test
+                        type: ParamTestDouble
+                        params: {key: 4.0}
 TestInt:
-    ros__parameters:
-        name: int_test
-        type: ParamTestInt
-        params: {key: 4}       
+        ros__parameters:
+                filter1:
+                        name: int_test
+                        type: ParamTestInt
+                        params: {key: 4}
 TestUInt:
-    ros__parameters:
-        name: uint_test
-        type: ParamTestUInt
-        params: {key: 4}  
+        ros__parameters:
+                filter1:
+                        name: uint_test
+                        type: ParamTestUInt
+                        params: {key: 4}   
 TestString:
-    ros__parameters:
-        name: string_test
-        type: ParamTestString
-        params: {key: four} 
+        ros__parameters:
+                filter1:
+                        name: string_test
+                        type: ParamTestString
+                        params: {key: four}   
 TestDoubleVector:
-    ros__parameters:
-        name: double_vector_test
-        type: ParamTestDoubleVector
-        params: {key: [4.0, 4.0, 4.0, 4.0]}
+        ros__parameters:
+                filter1:
+                        name: double_vector_test
+                        type: ParamTestDoubleVector
+                        params: {key: [4.0, 4.0, 4.0, 4.0]} 
 TestStringVector:
-    ros__parameters:
-        name: string_vector_test
-        type: ParamTestStringVector
-        params: {key: [four, four, four, four]}
+        ros__parameters:
+                filter1:
+                        name: string_vector_test
+                        type: ParamTestStringVector
+                        params: {key: [four, four, four, four]} 
+
 

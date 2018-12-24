@@ -75,7 +75,7 @@ TEST(SingleChannelTransferFunctionDoubleFilter, SingleLowPass)
   
   auto node = rclcpp::Node::make_shared("LowPassSingle");
   FilterBase<double> * filter = new SingleChannelTransferFunctionFilter<double> ();
-  EXPECT_TRUE(filter->configure("LowPassSingle",node));
+  EXPECT_TRUE(filter->configure(node));
   
 
   double in1,in2,in3,in4,in5,in6,in7;

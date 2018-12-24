@@ -64,7 +64,7 @@ public:
    */
   ~MeanFilter();
    
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -90,14 +90,17 @@ number_of_observations_(0)
 }
 
 template <typename T>
-bool MeanFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool MeanFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
-	if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+    std::string param_name1 = param_name+ "params.number_of_observations";
+    
+    if(!node->get_parameter(param_name1.c_str(), number_of_observations_))
 	{
 		ROS_ERROR("MeanFilter did not find param number_of_observations");
-		
+		cerr<< "In mean configure :"<< number_of_observations_<<endl;
 		return false;
 	}
+	//number_of_observations_ = param_name;
 	data_storage_.reset(new RealtimeCircularBuffer<T>(number_of_observations_, temp_));
 	return true;
 }
@@ -111,13 +114,12 @@ MeanFilter<T>::~MeanFilter()
 template <typename T>
 bool MeanFilter<T>::update(const T & data_in, T& data_out)
 {
+  
   if (last_updated_row_ >= number_of_observations_ - 1)
     last_updated_row_ = 0;
   else
     last_updated_row_++;
-
   data_storage_->push_back(data_in);
-
   unsigned int length = data_storage_->size();
   data_out = 0;
   for (uint32_t row = 0; row < length; row ++)
@@ -125,7 +127,6 @@ bool MeanFilter<T>::update(const T & data_in, T& data_out)
       data_out += data_storage_->at(row);
   }
   data_out /= length;
-  
 
   return true;
 };
@@ -144,7 +145,7 @@ public:
    */
   ~MultiChannelMeanFilter();
 
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -173,15 +174,16 @@ MultiChannelMeanFilter<T>::MultiChannelMeanFilter():
 }
 
 template <typename T>
-bool MultiChannelMeanFilter<T>::configure(rclcpp::Node::SharedPtr node)
+bool MultiChannelMeanFilter<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
-	if(!node->get_parameter("params.number_of_observations", number_of_observations_))
+  std::string param_name1 = param_name+ "params.number_of_observations";
+  if(!node->get_parameter(param_name1.c_str(), number_of_observations_))
 	{
 		ROS_ERROR("MultiChannelMeanFilter did not find param number_of_observations");
 		
 		return false;
 	}
-
+    
 	temp.resize(number_of_channels_);
 	data_storage_.reset(new RealtimeCircularBuffer<std::vector<T> >(number_of_observations_, temp));
 

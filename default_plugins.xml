@@ -19,6 +19,18 @@
 	This is a mean filter which works on a stream of floats.
       </description>
     </class>
+    <class name="filters/MultiChannelMeanFilterDouble" type="filters::MultiChannelMeanFilter<double>"
+	    base_class_type="filters::MultiChannelFilterBase<double>">
+      <description>
+	This is a mean filter which works on a stream of vectors of doubles.
+      </description>
+    </class>
+    <class name="filters/MultiChannelMeanFilterFloat" type="filters::MultiChannelMeanFilter<float>"
+	    base_class_type="filters::MultiChannelFilterBase<float>">
+      <description>
+	This is a mean filter which works on a stream of vectors of floats.
+      </description>
+    </class>
   </library>
   
    <library path="/libtransfer_function">
@@ -69,7 +81,7 @@
       </description>
     </class>
    </library> 
-   <library path="lib/libincrement">
+   <library path="/libincrement">
     <class name="filters/IncrementFilterInt" type="filters::IncrementFilter<int>"
 	    base_class_type="filters::FilterBase<int>">
       <description>

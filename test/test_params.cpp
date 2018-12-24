@@ -44,7 +44,7 @@ TEST(Parameters, Double)
   double epsilon = 1e-6;
   
   FilterBase<double > * filter = new ParamTest<double>  ();
-  EXPECT_TRUE(filter->configure("TestDouble", node));
+  EXPECT_TRUE(filter->configure(node));
   double out;
   filter -> update(out, out);
   EXPECT_NEAR(4,  out, epsilon);
@@ -56,7 +56,7 @@ TEST(Parameters, Int)
   auto node = rclcpp::Node::make_shared("TestInt");
   
   FilterBase<int> * filter = new ParamTest<int>  ();
-  EXPECT_TRUE(filter->configure("TestInt", node));
+  EXPECT_TRUE(filter->configure( node));
   int out;
   filter -> update(out, out);
   EXPECT_EQ(4,  out);
@@ -67,7 +67,7 @@ TEST(Parameters, UInt)
 
   auto node = rclcpp::Node::make_shared("TestUInt");
   FilterBase<unsigned int> * filter = new ParamTest<unsigned int>  ();
-  EXPECT_TRUE(filter->configure("TestUInt", node));
+  EXPECT_TRUE(filter->configure(node));
   unsigned int out;
   filter -> update(out, out);
   EXPECT_EQ(4,  out);
@@ -78,7 +78,7 @@ TEST(Parameters, String)
 
   auto node = rclcpp::Node::make_shared("TestString");
   FilterBase<std::string> * filter = new ParamTest<std::string>  ();
-  EXPECT_TRUE(filter->configure("TestString", node));
+  EXPECT_TRUE(filter->configure(node));
   std::string out;
   filter -> update(out, out);
   EXPECT_STREQ("four",  out.c_str());
@@ -91,7 +91,7 @@ TEST(Parameters, DoubleVector)
   double epsilon = 1e-6;
   
   FilterBase<std::vector<double> > * filter = new ParamTest<std::vector<double> >  ();
-  EXPECT_TRUE(filter->configure("TestDoubleVector", node));
+  EXPECT_TRUE(filter->configure(node));
   std::vector<double> out;
   filter -> update(out, out);
   for (std::vector<double>::iterator it = out.begin(); it != out.end(); ++it)
@@ -105,7 +105,7 @@ TEST(Parameters, StringVector)
  
   auto node = rclcpp::Node::make_shared("TestStringVector"); 
   FilterBase<std::vector<std::string> > * filter = new ParamTest<std::vector<std::string> >  ();
-  EXPECT_TRUE(filter->configure("TestStringVector", node));
+  EXPECT_TRUE(filter->configure(node));
   std::vector<std::string> out;
   filter -> update(out, out);
   for (std::vector<std::string>::iterator it = out.begin(); it != out.end(); ++it)

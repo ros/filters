@@ -45,8 +45,7 @@ TEST(MultiChannelMeanFilterDouble, ConfirmIdentityNRows)
   auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
 
   MultiChannelFilterBase<double > * filter = new MultiChannelMeanFilter<double>  ();
-  //EXPECT_TRUE(filter->configure(rows, "MultiChannelMeanFilterDouble5"));
-  EXPECT_TRUE(filter->configure(rows, node));
+  EXPECT_TRUE(filter->configure(rows,node));
 
   double input1[] = {1,2,3,4,5};
   double input1a[] = {1,2,3,4,5};
@@ -75,7 +74,7 @@ TEST(MultiChannelMeanFilterDouble, ThreeRows)
 
   MultiChannelFilterBase<double > * filter = new MultiChannelMeanFilter<double> ();
   
-  EXPECT_TRUE(filter->configure(rows, node));
+  EXPECT_TRUE(filter->configure(rows,node));
 
   double input1[] = {0,1,2,3,4};
   std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
@@ -105,7 +104,7 @@ TEST(MeanFilterDouble, ConfirmIdentityNRows)
 
   FilterBase<double > * filter = new MeanFilter<double>  ();
   auto node = rclcpp::Node::make_shared("MeanFilterDouble5");
-  EXPECT_TRUE(filter->configure("MeanFilterDouble5",node));
+  EXPECT_TRUE(filter->configure(node));
 
   double input = 1;
   double output = 0;
@@ -127,7 +126,8 @@ TEST(MeanFilterDouble, ThreeRows)
 	FilterBase<double > *filter = new MeanFilter<double> ();
 	
     auto node = rclcpp::Node::make_shared("MeanFilterDouble5");
-	EXPECT_TRUE(filter->configure("MeanFilterDouble5",node));
+  
+	EXPECT_TRUE(filter->configure(node));
 	double input1 = 0;
 	double input2 = 1;
 	double input3 = 2;

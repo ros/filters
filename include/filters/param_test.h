@@ -61,7 +61,7 @@ public:
    */
   ~ParamTest();
 
-  virtual bool configure(rclcpp::Node::SharedPtr node);
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node);
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -80,9 +80,10 @@ ParamTest<T>::ParamTest()
 }
 
 template <typename T>
-bool ParamTest<T>::configure(rclcpp::Node::SharedPtr node)
+bool ParamTest<T>::get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 {
-  if (!node->get_parameter("params.key", temp_))
+  std::string param_name1 = param_name + "params.key";
+  if (!node->get_parameter(param_name1, temp_))
   {
     ROS_ERROR("ParamTest, \"%s\", params has no attribute key", node->get_name());
     return false;

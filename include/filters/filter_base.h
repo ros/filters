@@ -72,7 +72,21 @@ public:
 	 */
 	bool configure(const std::string& param_name,rclcpp::Node::SharedPtr node)
 	{            
-		parameters_and_prefixes = node->list_parameters({ }, 10);
+
+		cerr << "param name  "<< param_name << endl;
+		configured_ = get_configure(param_name,node);
+		return configured_;
+	}
+	
+bool configure(rclcpp::Node::SharedPtr node)
+{  
+    if (configured_)
+	{
+		ROS_DEBUG("Filter type already being reconfigured "); 
+        
+	};
+    configured_ = false;
+    parameters_and_prefixes = node->list_parameters({ }, 10);
 		//ROS_DEBUG("Got the List of parameters: Size = %ul", parameters_and_prefixes.names.size());
 
 		for (auto & name : parameters_and_prefixes.names) {
@@ -82,13 +96,36 @@ public:
                 ss1 << "\nParameter data_type: " << parameter.get_type();
                 ss1 << "\nParameter value (" << parameter.get_type_name() << "): " <<
 				parameter.value_to_string();
-                
+                filter_param[parameter.get_name()] = parameter.value_to_string();
 			}
 		}
-		configured_ = configure(node);
+        for(map<string, string>::iterator filter_it = filter_param.begin(); filter_it != filter_param.end(); ++filter_it ){
+        string filter_name = filter_it->first;
+        string filter_type = filter_it->second;
+            uint32_t number_of_observations_;
+            if(std::string::npos != filter_name.find("params"))
+            {
+                std::string p_name = filter_name;
+                int pos1 = p_name.find(".");
+                string name = p_name.substr(pos1+1);
+                p_name.erase(pos1+1,filter_name.length()+1);
+                std::cout << p_name << '\n';
+
+                param_name = p_name;
+            }
+            cerr << "param name  "<< param_name << endl;
+            configured_ = get_configure(param_name,node);
+ 
+        }
+
+		cerr << "param name  "<< param_name << endl;
+        configured_ = get_configure(param_name,node);
 		return configured_;
-	}
+  
+}	
 	
+	
+	virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)=0;
 	/** \brief Update the filter and return the data seperately
 	 * This is an inefficient way to do this and can be overridden in the derived class
 	 * \param data_in A reference to the data to be input to the filter
@@ -100,14 +137,16 @@ protected:
 	
 	bool configured_;
 	rcl_interfaces::msg::ListParametersResult parameters_and_prefixes;
+    map<string, string> filter_param;
     std::stringstream ss1;
+    std::string param_name;
+    int cnt =0;
 	/** \brief Pure virtual function for the sub class to configure the filter
 	 * This function must be implemented in the derived class.
 	 */
-	virtual bool configure(rclcpp::Node::SharedPtr node)=0;
+	
 
 };
-
 template <typename T>
 class MultiChannelFilterBase : public FilterBase<T>
 {
@@ -119,9 +158,9 @@ public:
    * \param The parameter from which to read the configuration
    * \param node_handle The optional node handle, useful if operating in a different namespace.
    */
-  bool configure(unsigned int number_of_channels,rclcpp::Node::SharedPtr node)
+  bool configure(unsigned int number_of_channels,const std::string& param_name,rclcpp::Node::SharedPtr node)
   {
-           
+      
 	if (configured_)
 	{
 		ROS_DEBUG("Filter type already being reconfigured "); 
@@ -130,23 +169,69 @@ public:
     configured_ = false;
     number_of_channels_ = number_of_channels;
    	ROS_DEBUG("MultiChannelFilterBase configured with %d channels", number_of_channels_);
-    
-    parameters_and_prefixes = node->list_parameters({ }, 10);
-		//ROS_INFO("Got the List of parameters: Size = ", parameters_and_prefixes.names.size());
-        for (auto & name : parameters_and_prefixes.names) {
-			for (auto & parameter : node->get_parameters({name})) {
-
-                ROS_DEBUG("Getting parameters for filters "); 
-                //ss1 << "\nParameter name: " << parameter.get_name();
-				
-			}
-		}
-        configured_ = configure(node);
+        cerr << "param name  "<< param_name.c_str() << endl;
+        configured_ = get_configure(param_name,node);
     return configured_;
    
   };
+  
+bool configure(unsigned int number_of_channels,rclcpp::Node::SharedPtr node)
+  {
+      
+	if (configured_)
+	{
+		ROS_DEBUG("Filter type already being reconfigured "); 
+        
+	};
+    configured_ = false;
+    number_of_channels_ = number_of_channels;
+   	ROS_DEBUG("MultiChannelFilterBase configured with %d channels", number_of_channels_);
 
-  virtual bool configure(rclcpp::Node::SharedPtr node)=0;
+    parameters_and_prefixes = node->list_parameters({ }, 10);
+		
+        for (auto & name : parameters_and_prefixes.names) {
+        for (auto & parameter : node->get_parameters({name})) {
+
+                ROS_DEBUG("Getting parameters for filters "); 
+                filter_param[parameter.get_name()] = parameter.value_to_string();
+                ROS_DEBUG("4. In configure function for base:");
+                if(parameter.get_name() == "name" && parameter.get_type() == rcl_interfaces::msg::ParameterType::PARAMETER_STRING)
+            {
+             
+                 cout<< "\n STRING VALUE type:" << endl;
+                 
+            }
+			}
+		}
+     RCLCPP_INFO(node->get_logger(), ss1.str().c_str());
+          
+    for (map<string, string>::iterator filter_it = filter_param.begin();
+        filter_it != filter_param.end(); ++filter_it)
+    {
+        ROS_DEBUG("\n5. In  configure function for base:");
+        string filter_name = filter_it->first;
+        string filter_type = filter_it->second;
+        if (std::string::npos != filter_name.find("params")) {
+            ROS_DEBUG("\ngot params to get substring");
+            std::string p_name = filter_name;
+                int pos1 = p_name.find(".");
+                string name = p_name.substr(pos1+1);
+                p_name.erase(pos1+1,filter_name.length()+1);
+                std::cout << p_name << '\n';
+
+                param_name = p_name;
+           
+            cerr << "param_name: " << param_name << endl;
+        }
+    }
+        cerr << "param name  "<< param_name.c_str() << endl;
+        configured_ = get_configure(param_name,node);
+    return configured_;
+   
+  };
+  
+
+  virtual bool get_configure(const std::string& param_name,rclcpp::Node::SharedPtr node)=0;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in A reference to the data to be input to the filter
@@ -168,6 +253,8 @@ protected:
   // How many parallel inputs for which the filter is to be configured
   unsigned int number_of_channels_;
   std::stringstream ss1;
+  std::string param_name;
+   map <string, string> filter_param;
   //Store the list of parameters specific to node
   rcl_interfaces::msg::ListParametersResult parameters_and_prefixes;
 

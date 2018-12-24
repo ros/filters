@@ -3,8 +3,6 @@ Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Status (2018-12-17)
 ------------------
-ROS2 porting done for filters.
-Out of total 28 tests for filters 23 tests are passing. 
 
 1.8.1 (2017-04-25)
 ------------------
