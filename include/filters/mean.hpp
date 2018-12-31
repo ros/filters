@@ -52,15 +52,16 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update(const T & data_in, T & data_out);
+
 protected:
   boost::scoped_ptr<RealtimeCircularBuffer<T>>
-  data_storage_;     //< Storage for data between updates
+  data_storage_;     //  < Storage for data between updates
 
   uint32_t
-  last_updated_row_;   //< The last row to have been updated by the filter
-  T temp_;               /// Temporary storage
+    last_updated_row_;  //  < The last row to have been updated by the filter
+  T temp_;               //  Temporary storage
   uint32_t
-  number_of_observations_;   //< Number of observations over which to filter
+    number_of_observations_;  //  < Number of observations over which to filter
 };
 rclcpp::Parameter parameter;
 template<typename T>
@@ -122,6 +123,7 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update(const std::vector<T> & data_in, std::vector<T> & data_out);
+
 protected:
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T>>>
   data_storage_;     //  < Storage for data between updates
@@ -134,7 +136,7 @@ protected:
   uint32_t
     number_of_observations_;   //  < Number of observations over which to filter
   using MultiChannelFilterBase<T>::number_of_channels_;  //  < Number of elements
-                                                      //  per observation
+                                                         //  per observation
 };
 
 template<typename T>

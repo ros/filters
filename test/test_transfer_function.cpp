@@ -21,15 +21,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "filters/transfer_function.hpp"
 
-namespace filters
-{
-
 TEST(MultiChannelTransferFunctionDoubleFilter, LowPass) {
   double epsilon = 1e-4;
 
   auto node = rclcpp::Node::make_shared("LowPass");
-  MultiChannelFilterBase<double> * filter =
-    new MultiChannelTransferFunctionFilter<double>();
+  filters::MultiChannelFilterBase<double> * filter =
+    new filters::MultiChannelTransferFunctionFilter<double>();
   EXPECT_TRUE(filter->configure(1, node));
 
   std::vector<double> in1, in2, in3, in4, in5, in6, in7;
@@ -52,14 +49,15 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPass) {
   EXPECT_TRUE(filter->update(in7, in7));
 
   EXPECT_NEAR(out1[0], in7[0], epsilon);
+  delete filter;
 }
 
 TEST(SingleChannelTransferFunctionDoubleFilter, SingleLowPass) {
   double epsilon = 1e-4;
 
   auto node = rclcpp::Node::make_shared("LowPassSingle");
-  FilterBase<double> * filter =
-    new SingleChannelTransferFunctionFilter<double>();
+  filters::FilterBase<double> * filter =
+    new filters::SingleChannelTransferFunctionFilter<double>();
   EXPECT_TRUE(filter->configure(node));
 
   double in1, in2, in3, in4, in5, in6, in7;
@@ -82,14 +80,15 @@ TEST(SingleChannelTransferFunctionDoubleFilter, SingleLowPass) {
   EXPECT_TRUE(filter->update(in7, in7));
 
   EXPECT_NEAR(out1, in7, epsilon);
+  delete filter;
 }
 
 TEST(MultiChannelTransferFunctionDoubleFilter, LowPassNonUnity) {
   double epsilon = 1e-4;
 
   auto node = rclcpp::Node::make_shared("LowPassNonUnity");
-  MultiChannelFilterBase<double> * filter =
-    new MultiChannelTransferFunctionFilter<double>();
+  filters::MultiChannelFilterBase<double> * filter =
+    new filters::MultiChannelTransferFunctionFilter<double>();
   EXPECT_TRUE(filter->configure(1, node));
 
   std::vector<double> in1, in2, in3, in4, in5, in6, in7;
@@ -112,14 +111,15 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPassNonUnity) {
   EXPECT_TRUE(filter->update(in7, in7));
 
   EXPECT_NEAR(out1[0], in7[0], epsilon);
+  delete filter;
 }
 
 TEST(MultiChannelTransferFunctionDoubleFilter, LowPassMulti) {
   double epsilon = 1e-4;
 
   auto node = rclcpp::Node::make_shared("LowPassMulti");
-  MultiChannelFilterBase<double> * filter =
-    new MultiChannelTransferFunctionFilter<double>();
+  filters::MultiChannelFilterBase<double> * filter =
+    new filters::MultiChannelTransferFunctionFilter<double>();
   EXPECT_TRUE(filter->configure(3, node));
 
   std::vector<double> in1, in2, in3, in4, in5, in6, in7;
@@ -167,14 +167,15 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPassMulti) {
   for (unsigned int i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
+  delete filter;
 }
 
 TEST(MultiChannelTransferFunctionDoubleFilter, LowPassIrrational) {
   double epsilon = 1e-4;
 
   auto node = rclcpp::Node::make_shared("LowPassIrrational");
-  MultiChannelFilterBase<double> * filter =
-    new MultiChannelTransferFunctionFilter<double>();
+  filters::MultiChannelFilterBase<double> * filter =
+    new filters::MultiChannelTransferFunctionFilter<double>();
   EXPECT_TRUE(filter->configure(3, node));
 
   std::vector<double> in1, in2, in3, in4, in5, in6, in7;
@@ -222,8 +223,8 @@ TEST(MultiChannelTransferFunctionDoubleFilter, LowPassIrrational) {
   for (unsigned int i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
+  delete filter;
 }
-}  //  namespace filters
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);

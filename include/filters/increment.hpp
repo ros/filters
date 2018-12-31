@@ -90,6 +90,7 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update(const std::vector<T> & data_in, std::vector<T> & data_out);
+
 protected:
   using MultiChannelFilterBase<T>::number_of_channels_;  //< Number of elements per observation
 };

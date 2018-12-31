@@ -20,15 +20,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "filters/median.hpp"
 
-namespace filters
-{
 TEST(MultiChannelMedianFilterDouble, ConfirmIdentityNRows) {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
 
   auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
-  MultiChannelFilterBase<double> * filter =
+  filters::MultiChannelFilterBase<double> * filter =
     new filters::MultiChannelMedianFilter<double>();
 
   EXPECT_TRUE(filter->configure(rows, node));
@@ -45,7 +43,6 @@ TEST(MultiChannelMedianFilterDouble, ConfirmIdentityNRows) {
       EXPECT_NEAR(input1[j], v1a[j], epsilon);
     }
   }
-
   delete filter;
 }
 
@@ -55,8 +52,8 @@ TEST(MultiChannelMedianFilterDouble, ThreeRows) {
   int rows = 5;
 
   auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
-  MultiChannelFilterBase<double> * filter =
-    new MultiChannelMedianFilter<double>();
+  filters::MultiChannelFilterBase<double> * filter =
+    new filters::MultiChannelMedianFilter<double>();
 
   EXPECT_TRUE(filter->configure(rows, node));
 
@@ -76,6 +73,7 @@ TEST(MultiChannelMedianFilterDouble, ThreeRows) {
   for (int i = 1; i < length; i++) {
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
+  delete filter;
 }
 
 TEST(MultiChannelMedianFilterFloat, ConfirmIdentityNRows) {
@@ -84,7 +82,7 @@ TEST(MultiChannelMedianFilterFloat, ConfirmIdentityNRows) {
   int rows = 5;
 
   auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterFloat5");
-  MultiChannelFilterBase<float> * filter =
+  filters::MultiChannelFilterBase<float> * filter =
     new filters::MultiChannelMedianFilter<float>();
   EXPECT_TRUE(filter->configure(rows, node));
 
@@ -100,7 +98,6 @@ TEST(MultiChannelMedianFilterFloat, ConfirmIdentityNRows) {
       EXPECT_NEAR(input1[j], v1a[j], epsilon);
     }
   }
-
   delete filter;
 }
 
@@ -110,7 +107,7 @@ TEST(MultiChannelMedianFilterFloat, ThreeRows) {
   int rows = 5;
 
   auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterFloat5");
-  MultiChannelFilterBase<float> * filter = new MultiChannelMedianFilter<float>();
+  filters::MultiChannelFilterBase<float> * filter = new filters::MultiChannelMedianFilter<float>();
   EXPECT_TRUE(filter->configure(rows, node));
 
   float input1[] = {0, 1, 2, 3, 4};
@@ -129,8 +126,8 @@ TEST(MultiChannelMedianFilterFloat, ThreeRows) {
   for (int i = 1; i < length; i++) {
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
+  delete filter;
 }
-}  //  namespace filters
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);

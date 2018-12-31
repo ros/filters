@@ -16,17 +16,16 @@
 #include <vector>
 #include "filters/mean.hpp"
 
-namespace filters
-{
+// namespace filters
+// {
 
 TEST(MultiChannelMeanFilterDouble, ConfirmIdentityNRows) {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-
   auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
 
-  MultiChannelFilterBase<double> * filter = new MultiChannelMeanFilter<double>();
+  filters::MultiChannelFilterBase<double> * filter = new filters::MultiChannelMeanFilter<double>();
   EXPECT_TRUE(filter->configure(rows, node));
 
   double input1[] = {1, 2, 3, 4, 5};
@@ -40,16 +39,16 @@ TEST(MultiChannelMeanFilterDouble, ConfirmIdentityNRows) {
       EXPECT_NEAR(v1[i], v1a[i], epsilon);
     }
   }
+  delete filter;
 }
 
 TEST(MultiChannelMeanFilterDouble, ThreeRows) {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-
   auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
 
-  MultiChannelFilterBase<double> * filter = new MultiChannelMeanFilter<double>();
+  filters::MultiChannelFilterBase<double> * filter = new filters::MultiChannelMeanFilter<double>();
 
   EXPECT_TRUE(filter->configure(rows, node));
 
@@ -69,14 +68,14 @@ TEST(MultiChannelMeanFilterDouble, ThreeRows) {
   for (int i = 1; i < length; i++) {
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
+  delete filter;
 }
 
 TEST(MeanFilterDouble, ConfirmIdentityNRows) {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-
-  FilterBase<double> * filter = new MeanFilter<double>();
+  filters::FilterBase<double> * filter = new filters::MeanFilter<double>();
   auto node = rclcpp::Node::make_shared("MeanFilterDouble5");
   EXPECT_TRUE(filter->configure(node));
 
@@ -89,11 +88,12 @@ TEST(MeanFilterDouble, ConfirmIdentityNRows) {
       EXPECT_NEAR(input, output, epsilon);
     }
   }
+  delete filter;
 }
 
 TEST(MeanFilterDouble, ThreeRows) {
   double epsilon = 1e-6;
-  FilterBase<double> * filter = new MeanFilter<double>();
+  filters::FilterBase<double> * filter = new filters::MeanFilter<double>();
 
   auto node = rclcpp::Node::make_shared("MeanFilterDouble5");
 
@@ -109,8 +109,9 @@ TEST(MeanFilterDouble, ThreeRows) {
   EXPECT_NEAR((input1 + input2) / 2.0, output, epsilon);
   EXPECT_TRUE(filter->update(input3, output));
   EXPECT_NEAR((input1 + input2 + input3) / 3, output, epsilon);
+  delete filter;
 }
-}  //  namespace filters
+// }  //  namespace filters
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);

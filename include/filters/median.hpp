@@ -113,6 +113,7 @@ public:
    * \param data_out double array with length and width
    */
   virtual bool update(const T & data_in, T & data_out);
+
 protected:
   std::vector<T> temp_storage_;    //  < Preallocated storage for the list to sort
   boost::scoped_ptr<RealtimeCircularBuffer<T>>
@@ -178,6 +179,7 @@ public:
    * \param data_out double array with length width
    */
   virtual bool update(const std::vector<T> & data_in, std::vector<T> & data_out);
+
 protected:
   std::vector<T> temp_storage_;   //  < Preallocated storage for the list to sort
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T>>>
@@ -206,7 +208,7 @@ bool MultiChannelMedianFilter<T>::get_configure(
   }
   temp.resize(this->number_of_channels_);
   data_storage_.reset(new RealtimeCircularBuffer<std::vector<T>>(
-   number_of_observations_, temp));
+      number_of_observations_, temp));
   temp_storage_.resize(number_of_observations_);
   return true;
 }

@@ -42,7 +42,7 @@ private:
 
 public:
   /** \brief Create the filter chain object */
- explicit FilterChain(std::string data_type)
+  explicit FilterChain(std::string data_type)
   : loader_("filters", std::string("filters::FilterBase<") + data_type +
       std::string(">")),
     configured_(false)
@@ -125,7 +125,7 @@ public:
             continue;
           }
         }
-        }
+      }
     }
 
     if (result == true) {
@@ -245,8 +245,8 @@ public:
     for (std::map<std::string, std::string>::iterator filter_it = filter_param.begin();
       filter_it != filter_param.end(); ++filter_it)
     {
-         std::string filter_name = filter_it->first;
-         std::string filter_type = filter_it->second;
+      std::string filter_name = filter_it->first;
+      std::string filter_type = filter_it->second;
       if (std::string::npos != filter_name.find("params")) {
         std::string p_name = filter_name;
         int pos1 = p_name.find(".");
@@ -276,7 +276,7 @@ public:
               reference_pointers_.push_back(p);
 
               unsigned int list_size = reference_pointers_.size();
-              }
+            }
           }
 
           if (!have_class) {
@@ -309,7 +309,7 @@ public:
         return false;
       }  //  don't keep processing on failure
       result = result && reference_pointers_[1]->update(buffer0_, data_out);
-      } else {
+    } else {
       result =
         reference_pointers_[0]->update(data_in, buffer0_);   //  first copy in
       for (unsigned int i = 1; i < reference_pointers_.size() - 1;

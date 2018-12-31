@@ -27,7 +27,7 @@
 #include <map>
 #include <memory>
 #include <vector>
- //  #include "ros/assert.h"
+//  #include "ros/assert.h"
 #include "std_msgs/msg/string.hpp"
 #include "filters/filter_base.hpp"
 #include "filters/realtime_circular_buffer.hpp"
@@ -112,7 +112,7 @@ bool SingleChannelTransferFunctionFilter<T>::get_configure(
 {
   std::string param_name1 = param_name + "params.a";
   std::string param_name2 = param_name + "params.b";
-   //   Parse a and b into a std::vector<double>.
+  //   Parse a and b into a std::vector<double>.
   if (!node->get_parameter(param_name1, a_)) {
     return false;
   }    //   /\todo check length

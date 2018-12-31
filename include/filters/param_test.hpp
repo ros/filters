@@ -53,6 +53,7 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update(const T & data_in, T & data_out);
+
 protected:
   T temp_;
 };

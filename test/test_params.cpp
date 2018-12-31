@@ -20,49 +20,51 @@
 #include "rclcpp/node.hpp"
 #include "filters/param_test.hpp"
 
-namespace filters
-{
 TEST(Parameters, Double)
 {
   auto node = rclcpp::Node::make_shared("TestDouble");
   double epsilon = 1e-6;
 
-  FilterBase<double> * filter = new ParamTest<double>();
+  filters::FilterBase<double> * filter = new filters::ParamTest<double>();
   EXPECT_TRUE(filter->configure(node));
   double out;
   filter->update(out, out);
   EXPECT_NEAR(4, out, epsilon);
+  delete filter;
 }
 
 TEST(Parameters, Int)
 {
   auto node = rclcpp::Node::make_shared("TestInt");
 
-  FilterBase<int> * filter = new ParamTest<int>();
+  filters::FilterBase<int> * filter = new filters::ParamTest<int>();
   EXPECT_TRUE(filter->configure(node));
   int out;
   filter->update(out, out);
   EXPECT_EQ(4, out);
+  delete filter;
 }
 
 TEST(Parameters, UInt)
 {
   auto node = rclcpp::Node::make_shared("TestUInt");
-  FilterBase<unsigned int> * filter = new ParamTest<unsigned int>();
+  filters::FilterBase<unsigned int> * filter = new filters::ParamTest<unsigned int>();
   EXPECT_TRUE(filter->configure(node));
   unsigned int out;
   filter->update(out, out);
   EXPECT_EQ(4, out);
+  delete filter;
 }
 
 TEST(Parameters, String)
 {
   auto node = rclcpp::Node::make_shared("TestString");
-  FilterBase<std::string> * filter = new ParamTest<std::string>();
+  filters::FilterBase<std::string> * filter = new filters::ParamTest<std::string>();
   EXPECT_TRUE(filter->configure(node));
   std::string out;
   filter->update(out, out);
   EXPECT_STREQ("four", out.c_str());
+  delete filter;
 }
 
 TEST(Parameters, DoubleVector)
@@ -70,27 +72,29 @@ TEST(Parameters, DoubleVector)
   auto node = rclcpp::Node::make_shared("TestDoubleVector");
   double epsilon = 1e-6;
 
-  FilterBase<std::vector<double>> * filter = new ParamTest<std::vector<double>>();
+  filters::FilterBase<std::vector<double>> * filter = new filters::ParamTest<std::vector<double>>();
   EXPECT_TRUE(filter->configure(node));
   std::vector<double> out;
   filter->update(out, out);
   for (std::vector<double>::iterator it = out.begin(); it != out.end(); ++it) {
     EXPECT_NEAR(4, *it, epsilon);
   }
+  delete filter;
 }
 
 TEST(Parameters, StringVector)
 {
   auto node = rclcpp::Node::make_shared("TestStringVector");
-  FilterBase<std::vector<std::string>> * filter = new ParamTest<std::vector<std::string>>();
+  filters::FilterBase<std::vector<std::string>> * filter =
+    new filters::ParamTest<std::vector<std::string>>();
   EXPECT_TRUE(filter->configure(node));
   std::vector<std::string> out;
   filter->update(out, out);
   for (std::vector<std::string>::iterator it = out.begin(); it != out.end(); ++it) {
     EXPECT_STREQ("four", it->c_str());
   }
+  delete filter;
 }
-}  //  namespace filters
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);

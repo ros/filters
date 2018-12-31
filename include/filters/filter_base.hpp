@@ -106,6 +106,7 @@ public:
    * \param data_out A reference to the data output location
    */
   virtual bool update(const T & data_in, T & data_out) = 0;
+
 protected:
   bool configured_;
   rcl_interfaces::msg::ListParametersResult parameters_and_prefixes;
@@ -154,7 +155,7 @@ public:
     for (auto & name : parameters_and_prefixes.names) {
       for (auto & parameter : node->get_parameters({name})) {
         filter_param[parameter.get_name()] = parameter.value_to_string();
-        }
+      }
     }
     for (std::map<std::string, std::string>::iterator filter_it = filter_param.begin();
       filter_it != filter_param.end(); ++filter_it)
@@ -186,6 +187,7 @@ public:
   virtual bool update(const T & data_in, T & data_out)
   {
   }
+
 protected:
   using FilterBase<T>::configured_;
   //  How many parallel inputs for which the filter is to be configured
