@@ -1,194 +1,163 @@
-/*
- * Copyright (c) 2008, Willow Garage, Inc.
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright 2018 Open Source Robotics Foundation, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#include <gtest/gtest.h>
+#include <string>
+#include <vector>
+#include "filters/filter_chain.hpp"
 
-#include "gtest/gtest.h"
-#include "filters/filter_chain.h"
-
-TEST(MultiChannelFilterChain, configuring){
+TEST(MultiChannelFilterChain, configuring) {
   double epsilon = 1e-9;
-  
   auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
   filters::MultiChannelFilterChain<double> chain("double");
-  
   EXPECT_TRUE(chain.configure(5, node));
-  
-  double input1[] = {1,2,3,4,5};
-  double input1a[] = {9,9,9,9,9};//seed w/incorrect values
-  std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
-  std::vector<double> v1a (input1a, input1a + sizeof(input1a) / sizeof(double));
+  double input1[] = {1, 2, 3, 4, 5};
+  double input1a[] = {9, 9, 9, 9, 9};  //  seed w/incorrect values
+  std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
+  std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
-   cerr << "1. before update function" << endl;
   EXPECT_TRUE(chain.update(v1, v1a));
-  cerr << "returned from MultiChannel MeanFilter with true values"<< endl; 
   chain.clear();
 
-  for (unsigned int i = 1; i < v1.size(); i++)
-  {
+  for (unsigned int i = 1; i < v1.size(); i++) {
     EXPECT_NEAR(input1[i], v1a[i], epsilon);
   }
-} 
+}
 
-TEST(FilterChain, configuring){
+TEST(FilterChain, configuring) {
   double epsilon = 1e-9;
-  
+
   auto node = rclcpp::Node::make_shared("MeanFilterFloat5");
   filters::FilterChain<float> chain("float");
-  
-  EXPECT_TRUE(chain.configure("MeanFilterFloat5",node));
-  
+
+  EXPECT_TRUE(chain.configure("MeanFilterFloat5", node));
+
   float v1 = 1;
   float v1a = 9;
 
   EXPECT_TRUE(chain.update(v1, v1a));
   chain.clear();
   EXPECT_NEAR(v1, v1a, epsilon);
-  
-  }
-  
-TEST(MultiChannelFilterChain, TwoFilters){
+}
+
+TEST(MultiChannelFilterChain, TwoFilters) {
   double epsilon = 1e-9;
-  
+
   auto node = rclcpp::Node::make_shared("TwoFilters");
   filters::MultiChannelFilterChain<double> chain("double");
 
   EXPECT_TRUE(chain.configure(5, node));
- 
-  double input1[] = {1,2,3,4,5};
-  double input1a[] = {9,9,9,9,9};//seed w/incorrect values
-  std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
-  std::vector<double> v1a (input1a, input1a + sizeof(input1a) / sizeof(double));
 
-  
+  double input1[] = {1, 2, 3, 4, 5};
+  double input1a[] = {9, 9, 9, 9, 9};  // seed w/incorrect values
+  std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
+  std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
+
   EXPECT_TRUE(chain.update(v1, v1a));
 
   chain.clear();
 
-  for (unsigned int i = 1; i < v1.size(); i++)
-  {
+  for (unsigned int i = 1; i < v1.size(); i++) {
     EXPECT_NEAR(input1[i], v1a[i], epsilon);
   }
-}  
-  
-
-TEST(MultiChannelFilterChain, MisconfiguredNumberOfChannels){
-  filters::MultiChannelFilterChain<double> chain("double");
-  
-  auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
-    
-  EXPECT_TRUE(chain.configure(10,node));
-  
-  double input1[] = {1,2,3,4,5};
-  double input1a[] = {1,2,3,4,5};
-  std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
-  std::vector<double> v1a (input1a, input1a + sizeof(input1a) / sizeof(double));
-
-  
-  EXPECT_FALSE(chain.update(v1, v1a));
-  chain.clear();
-
 }
 
-TEST(FilterChain, ReconfiguringChain){
+TEST(MultiChannelFilterChain, MisconfiguredNumberOfChannels) {
+  filters::MultiChannelFilterChain<double> chain("double");
+
+  auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
+
+  EXPECT_TRUE(chain.configure(10, node));
+
+  double input1[] = {1, 2, 3, 4, 5};
+  double input1a[] = {1, 2, 3, 4, 5};
+  std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
+  std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
+
+  EXPECT_FALSE(chain.update(v1, v1a));
+  chain.clear();
+}
+
+TEST(FilterChain, ReconfiguringChain) {
   filters::FilterChain<int> chain("int");
-  
+
   int v1 = 1;
   int v1a = 9;
-  auto node1 = rclcpp::Node::make_shared( "OneIncrements");
-  
-  EXPECT_TRUE(chain.configure("OneIncrements",node1)); 
-  
+  auto node1 = rclcpp::Node::make_shared("OneIncrements");
+
+  EXPECT_TRUE(chain.configure("OneIncrements", node1));
+
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(2, v1a);
   chain.clear();
-  
-  auto node2 = rclcpp::Node::make_shared( "TwoIncrements");
-  
-  EXPECT_TRUE(chain.configure("TwoIncrements",node2)); 
-  
+
+  auto node2 = rclcpp::Node::make_shared("TwoIncrements");
+
+  EXPECT_TRUE(chain.configure("TwoIncrements", node2));
+
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(3, v1a);
   chain.clear();
-  
 }
 
-TEST(FilterChain, ThreeIncrementChains){
-  filters::FilterChain<int> chain("int");  
+TEST(FilterChain, ThreeIncrementChains) {
+  filters::FilterChain<int> chain("int");
   int v1 = 1;
   int v1a = 9;
-  auto node = rclcpp::Node::make_shared( "ThreeIncrements");
-  
-  EXPECT_TRUE(chain.configure("ThreeIncrements",node)); 
+  auto node = rclcpp::Node::make_shared("ThreeIncrements");
+
+  EXPECT_TRUE(chain.configure("ThreeIncrements", node));
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(4, v1a);
   chain.clear();
-    
 }
 
-TEST(FilterChain, TenIncrementChains){
-  filters::FilterChain<int> chain("int");  
+TEST(FilterChain, TenIncrementChains) {
+  filters::FilterChain<int> chain("int");
   int v1 = 1;
   int v1a = 9;
-  auto node = rclcpp::Node::make_shared( "TenIncrements");
-  
-  EXPECT_TRUE(chain.configure("TenIncrements", node)); 
+  auto node = rclcpp::Node::make_shared("TenIncrements");
+
+  EXPECT_TRUE(chain.configure("TenIncrements", node));
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(11, v1a);
   chain.clear();
-    
 }
 
-TEST(MultiChannelFilterChain, TenMultiChannelIncrementChains){
-  filters::MultiChannelFilterChain<int> chain("int");  
+TEST(MultiChannelFilterChain, TenMultiChannelIncrementChains) {
+  filters::MultiChannelFilterChain<int> chain("int");
   std::vector<int> v1;
   v1.push_back(1);
   v1.push_back(1);
   v1.push_back(1);
   std::vector<int> v1a = v1;
-  auto node = rclcpp::Node::make_shared( "TenMultiChannelIncrements");
-  
-  EXPECT_TRUE(chain.configure(3, node)); 
+  auto node = rclcpp::Node::make_shared("TenMultiChannelIncrements");
+
+  EXPECT_TRUE(chain.configure(3, node));
   EXPECT_TRUE(chain.update(v1, v1a));
-  for (unsigned int i = 0; i < 3; i++)
-  {
+  for (unsigned int i = 0; i < 3; i++) {
     EXPECT_EQ(11, v1a[i]);
   }
   chain.clear();
-    
 }
- 
-TEST(MultiChannelFilterChain, TransferFunction){
+
+TEST(MultiChannelFilterChain, TransferFunction) {
   double epsilon = 1e-4;
   auto node = rclcpp::Node::make_shared("TransferFunction");
   filters::MultiChannelFilterChain<double> chain("double");
   EXPECT_TRUE(chain.configure(3, node));
- 
-  std::vector<double> in1,in2,in3,in4,in5,in6,in7;
+
+  std::vector<double> in1, in2, in3, in4, in5, in6, in7;
   std::vector<double> out1;
 
   in1.push_back(10.0);
@@ -229,18 +198,16 @@ TEST(MultiChannelFilterChain, TransferFunction){
   EXPECT_TRUE(chain.update(in5, in5));
   EXPECT_TRUE(chain.update(in6, in6));
   EXPECT_TRUE(chain.update(in7, in7));
-  cerr << "returned from transfer function with true values"<< endl; 
   chain.clear();
-  
-  for(unsigned int i=0; i<out1.size(); i++)
-  {
+
+  for (unsigned int i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
-  //cerr<<"Rohit Main"<<endl;
+  //  cerr<<"Rohit Main"<<endl;
   testing::InitGoogleTest(&argc, argv);
   rclcpp::init(argc, argv);
   return RUN_ALL_TESTS();
