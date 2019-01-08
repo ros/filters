@@ -17,7 +17,7 @@ Design changes:
 		Parameters for filters are taken from yaml file only. So filter type is configured using node paramter 
 		and corresponding code and logical parsing changes have been added to devired class of filters. 
 
-	2. The yaml file is redesigned so as to configure multiple filters in sequence. This is done by simply adding "filter1" and "filter2" keys to identify parameters for 	   different type of filters in the dictionary of yaml file. So to configure a filter type the parameter is set in the yaml as shown below:
+	2. The yaml file is redesigned so as to configure multiple filters in sequence. This is done by simply adding "filter1" and "filter2" keys to identify parameters for different type of filters in the dictionary of yaml file(this design changes reflects in commit 79a2503058f0cfe3e3ac98687d06a8c455fd0191). So to configure a filter type the parameter is set in the yaml as shown below:
 		
 		MultiChannelMedianFilterFloat5:
 			ros__parameters:
@@ -37,6 +37,10 @@ Design changes:
 					params: {number_of_observations: 5}      
 
 	3. Xmlrpc variables replaced by string types variables and required modification/changes incorporated. 
+
+Future Work
+
+        1. All Test launch.py files should be executed using "colcon test" automatically. 
 
 Build proccedure and testing
 
