@@ -37,7 +37,7 @@ set(LIBS
   ${pluginlib_LIBRARIES}
 )
 
-add_library( ${PROJECT_NAME} SHARED 
+add_library( ${PROJECT_NAME} SHARED
 src/mean.cpp
 src/median.cpp
 src/test_params.cpp
@@ -62,11 +62,6 @@ add_library(transfer_function SHARED src/transfer_function.cpp)
 target_link_libraries(transfer_function ${LIBS})
 
 install(TARGETS ${PROJECT_NAME}
-#        mean
-#        median
-#        transfer_function
-#        param_test
-#        increment
   DESTINATION lib/${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -75,11 +70,7 @@ install(TARGETS ${PROJECT_NAME}
 )
 install(
   DIRECTORY include/${PROJECT_NAME}/
- DESTINATION include/${PROJECT_NAME})
-
-#install(DIRECTORY "include/"
-#  DESTINATION include)
-
+  DESTINATION include/${PROJECT_NAME})
 
 install(FILES default_plugins.xml
   DESTINATION share/${PROJECT_NAME}
@@ -89,7 +80,6 @@ ament_export_dependencies(ament_cmake)
 ament_export_dependencies(builtin_interfaces)
 ament_export_dependencies(rclcpp)
 ament_export_dependencies(rclpy)
-#ament_export_dependencies(${PROJECT_NAME})
 ament_export_dependencies(pluginlib)
 ament_export_include_directories(${INCLUDE_DIRS})
 ament_export_libraries(${PROJECT_NAME})
