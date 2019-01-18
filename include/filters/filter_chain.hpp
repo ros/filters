@@ -49,10 +49,8 @@ public:
   {
     std::string lib_string = "";
     std::vector<std::string> libs = loader_.getDeclaredClasses();
-    // cout<<"libs.size() = "<<libs.size()<<endl;
     for (unsigned int i = 0; i < libs.size(); i++) {
-      // cout<<"lib[i] = "<<libs[i]<<endl;
-      lib_string = lib_string + std::string(", ") + libs[i];
+        lib_string = lib_string + std::string(", ") + libs[i];
     }
   }
 
@@ -64,11 +62,8 @@ public:
    * @param node The node handle to use if a different namespace is required
    */
   bool configure(std::string param_name, rclcpp::Node::SharedPtr node)
-  // bool configure(std::string param_name, ros::NodeHandle node =
-  // ros::NodeHandle())
-  {
+   {
     auto parameters_and_prefixes = node->list_parameters({}, 10);
-
     for (auto & name : parameters_and_prefixes.names) {
       for (auto & parameter : node->get_parameters({name})) {
         ss1 << "\nParameter name: " << parameter.get_name();
@@ -78,7 +73,6 @@ public:
         filter_param[parameter.get_name()] = parameter.value_to_string();
       }
     }
-
     for (std::map<std::string, std::string>::iterator filter_it = filter_param.begin();
       filter_it != filter_param.end(); ++filter_it)
     {
@@ -95,26 +89,19 @@ public:
         if (loader_.isClassAvailable(filter_type)) {
           bool have_class = false;
           bool result = true;
-
           std::vector<std::string> classes = loader_.getDeclaredClasses();
-          for (unsigned int i = 0; i < classes.size(); ++i) {
-          }
           for (unsigned int i = 0; i < classes.size(); ++i) {
             if (filter_type == classes[i]) {
               // if we've found a match... we'll get the fully qualified name
-              // and break out of the loop
               filter_type = classes[i];
               have_class = true;
-              // break;
               std::shared_ptr<filters::FilterBase<T>> p =
                 loader_.createSharedInstance(filter_type);
               if (p.get() == NULL) {
                 return false;
               }
-
               result = result && p.get()->configure(param_name1, node);
               reference_pointers_.push_back(p);
-
               unsigned int list_size = reference_pointers_.size();
             }
           }
@@ -186,8 +173,7 @@ public:
 
 private:
   std::vector<std::shared_ptr<filters::FilterBase<T>>>
-  reference_pointers_;     //   /<! A vector of pointers to currently constructed
-  //  /<filters
+  reference_pointers_;     //   /<! A vector of pointers to currently constructed //  /<filters
   unsigned int i = 0;
   bool result = true;
 
@@ -222,16 +208,14 @@ public:
   }
 
   /**@brief Configure the filter chain from a configuration stored on the
-   * parameter server
+   * parameter server(yaml file)  
    * @param param_name The name of the filter chain to load
-   * @param node The node handle to use if a different namespace is required
    */
   bool configure(
     unsigned int number_of_channels,
     rclcpp::Node::SharedPtr node)
   {
     number_of_channels_ = number_of_channels;
-
     auto parameters_and_prefixes = node->list_parameters({}, 10);
     for (auto & name : parameters_and_prefixes.names) {
       for (auto & parameter : node->get_parameters({name})) {
@@ -254,7 +238,6 @@ public:
         p_name.erase(pos1 + 1, filter_name.length() + 1);
         param_name2 = p_name;
       } else if (std::string::npos != filter_name.find("type")) {
-        // try{
         if (loader_.isClassAvailable(filter_type)) {
           bool have_class = false;
           bool result = true;
@@ -271,14 +254,12 @@ public:
               if (p.get() == NULL) {
                 return false;
               }
-              result = result && p.get()->configure(number_of_channels,
+                  result = result && p.get()->configure(number_of_channels,
                   param_name2, node);
               reference_pointers_.push_back(p);
-
               unsigned int list_size = reference_pointers_.size();
             }
           }
-
           if (!have_class) {
             RCLCPP_ERROR(node->get_logger(), "\nUnable to find filter class %s. Check that filter "
               "is fully declared.", filter_type.c_str());
@@ -361,6 +342,7 @@ private:
   std::vector<T> buffer1_;  //  /<! A temporary intermediate buffer
   bool configured_;         //  /<! whether the system is configured
   int number_of_channels_;
+  
 };
 }       //  namespace filters
 #endif  // FILTERS__FILTER_CHAIN_HPP_

@@ -105,9 +105,7 @@ public:
   /** \brief Destructor to clean up
    */
   ~MedianFilter();
-  virtual bool get_configure(
-    const std::string & param_name,
-    rclcpp::Node::SharedPtr node);
+  virtual bool configure();
   /** \brief Update the filter and return the data seperately
    * \param data_in double array with length and width
    * \param data_out double array with length and width
@@ -121,6 +119,8 @@ protected:
   T temp_;     //   used for preallocation and copying from non vector source
   uint32_t
     number_of_observations_;   //  < Number of observations over which to filter
+    using FilterBase<T>::param_name_; 
+    using FilterBase<T>::node_; 
 };
 template<typename T>
 MedianFilter<T>::MedianFilter()
@@ -130,13 +130,11 @@ MedianFilter<T>::MedianFilter()
 template<typename T>
 MedianFilter<T>::~MedianFilter() {}
 template<typename T>
-bool MedianFilter<T>::get_configure(
-  const std::string & param_name,
-  rclcpp::Node::SharedPtr node)
+bool MedianFilter<T>::configure()
 {
-  std::string param_name1 = param_name + "params.number_of_observations";
+  std::string param_name1 = param_name_ + "params.number_of_observations";
   int no_obs = -1;
-  if (!node->get_parameter(param_name1, number_of_observations_)) {
+  if (!node_->get_parameter(param_name1, number_of_observations_)) {
     return false;
   }
   data_storage_.reset(
@@ -171,9 +169,7 @@ public:
   /** \brief Destructor to clean up
    */
   ~MultiChannelMedianFilter();
-  virtual bool get_configure(
-    const std::string & param_name,
-    rclcpp::Node::SharedPtr node);
+  virtual bool configure();
   /** \brief Update the filter and return the data seperately
    * \param data_in double array with length width
    * \param data_out double array with length width
@@ -188,6 +184,8 @@ protected:
   temp;     //  used for preallocation and copying from non vector source
   uint32_t
     number_of_observations_;   //  < Number of observations over which to filter
+  using MultiChannelFilterBase<T>::param_name_;
+  using MultiChannelFilterBase<T>::node_;
 };
 template<typename T>
 MultiChannelMedianFilter<T>::MultiChannelMedianFilter()
@@ -198,12 +196,10 @@ MultiChannelMedianFilter<T>::MultiChannelMedianFilter()
 template<typename T>
 MultiChannelMedianFilter<T>::~MultiChannelMedianFilter() {}
 template<typename T>
-bool MultiChannelMedianFilter<T>::get_configure(
-  const std::string & param_name,
-  rclcpp::Node::SharedPtr node)
+bool MultiChannelMedianFilter<T>::configure()
 {
-  std::string param_name1 = param_name + "params.number_of_observations";
-  if (!node->get_parameter(param_name1, number_of_observations_)) {
+  std::string param_name1 = param_name_ + "params.number_of_observations";
+  if (!node_->get_parameter(param_name1, number_of_observations_)) {
     return false;
   }
   temp.resize(this->number_of_channels_);
@@ -230,8 +226,7 @@ bool MultiChannelMedianFilter<T>::update(
     }
     data_out[i] = median(&temp_storage_[0], length);
   }
-  //  cerr << "data_out computed in median:" << data_out << endl;
-  return true;
+ return true;
 }
 }   //  namespace filters
 #endif  // FILTERS__MEDIAN_HPP_

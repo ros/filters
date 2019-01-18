@@ -44,9 +44,7 @@ public:
   /** \brief Destructor to clean up
    */
   ~ParamTest();
-  virtual bool get_configure(
-    const std::string & param_name,
-    rclcpp::Node::SharedPtr node);
+  virtual bool configure();
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
@@ -56,16 +54,16 @@ public:
 
 protected:
   T temp_;
+  using FilterBase<T>::param_name_;
+  using FilterBase<T>::node_;
 };
 template<typename T>
 ParamTest<T>::ParamTest() {}
 template<typename T>
-bool ParamTest<T>::get_configure(
-  const std::string & param_name,
-  rclcpp::Node::SharedPtr node)
+bool ParamTest<T>::configure()
 {
-  std::string param_name1 = param_name + "params.key";
-  if (!node->get_parameter(param_name1, temp_)) {
+  std::string param_name1 = param_name_ + "params.key";
+  if (!node_->get_parameter(param_name1, temp_)) {
     return false;
   }
   return true;

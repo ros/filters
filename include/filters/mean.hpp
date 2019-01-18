@@ -44,9 +44,9 @@ public:
   /** \brief Destructor to clean up
    */
   ~MeanFilter();
-  virtual bool get_configure(
-    const std::string & param_name,
-    rclcpp::Node::SharedPtr node);
+
+  virtual bool configure();
+ 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
@@ -56,29 +56,27 @@ public:
 protected:
   boost::scoped_ptr<RealtimeCircularBuffer<T>>
   data_storage_;     //  < Storage for data between updates
-
   uint32_t
     last_updated_row_;  //  < The last row to have been updated by the filter
   T temp_;               //  Temporary storage
-  uint32_t
-    number_of_observations_;  //  < Number of observations over which to filter
+  uint32_t number_of_observations_;  //  < Number of observations over which to filter
+    using FilterBase<T>::param_name_; 
+    using FilterBase<T>::node_; 
 };
 rclcpp::Parameter parameter;
 template<typename T>
 MeanFilter<T>::MeanFilter()
-: number_of_observations_(0) {}
+:number_of_observations_(0) {}
 
 template<typename T>
-bool MeanFilter<T>::get_configure(
-  const std::string & param_name,
-  rclcpp::Node::SharedPtr node)
-{
-  std::string param_name1 = param_name + "params.number_of_observations";
 
-  if (!node->get_parameter(param_name1, number_of_observations_)) {
+bool MeanFilter<T>::configure()
+{
+  std::string param_name1 = FilterBase<T>::param_name_ + "params.number_of_observations";
+
+  if (!FilterBase<T>::node_->get_parameter(param_name1, number_of_observations_)) {
     return false;
   }
-  //  number_of_observations_ = param_name;
   data_storage_.reset(
     new RealtimeCircularBuffer<T>(number_of_observations_, temp_));
   return true;
@@ -111,13 +109,14 @@ class MultiChannelMeanFilter : public MultiChannelFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
+ // MultiChannelMeanFilter(unsigned int number_of_channels,const std::string &  param_name,rclcpp::Node::SharedPtr node);
   MultiChannelMeanFilter();
   /** \brief Destructor to clean up
    */
   ~MultiChannelMeanFilter();
-  virtual bool get_configure(
-    const std::string & param_name,
-    rclcpp::Node::SharedPtr node);
+  
+  virtual bool configure();
+  
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
@@ -130,26 +129,27 @@ protected:
   uint32_t
     last_updated_row_;   //  < The last row to have been updated by the filter
 
-  std::vector<T>
-  temp;     //  used for preallocation and copying from non vector source
+  std::vector<T> temp;     //  used for preallocation and copying from non vector source
 
-  uint32_t
-    number_of_observations_;   //  < Number of observations over which to filter
+  uint32_t number_of_observations_;   //  < Number of observations over which to filter
   using MultiChannelFilterBase<T>::number_of_channels_;  //  < Number of elements
                                                          //  per observation
+  using MultiChannelFilterBase<T>::param_name_;
+  using MultiChannelFilterBase<T>::node_;
+  
 };
 
 template<typename T>
+
 MultiChannelMeanFilter<T>::MultiChannelMeanFilter()
 : number_of_observations_(0) {}
 
 template<typename T>
-bool MultiChannelMeanFilter<T>::get_configure(
-  const std::string & param_name,
-  rclcpp::Node::SharedPtr node)
+
+bool MultiChannelMeanFilter<T>::configure()
 {
-  std::string param_name1 = param_name + "params.number_of_observations";
-  if (!node->get_parameter(param_name1, number_of_observations_)) {
+  std::string param_name1 = MultiChannelFilterBase<T>::param_name_ + "params.number_of_observations";
+  if (!MultiChannelFilterBase<T>::node_->get_parameter(param_name1, number_of_observations_)) {
     return false;
   }
   temp.resize(number_of_channels_);

@@ -77,9 +77,7 @@ public:
    * params. \param number_of_channels The number of inputs filtered. \param
    * config The xml that is parsed to configure the filter.
    */
-  virtual bool get_configure(
-    const std::string & param_name,
-    rclcpp::Node::SharedPtr node);
+  virtual bool configure();
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
@@ -97,6 +95,8 @@ protected:
 
   std::vector<double> a_;   //  Transfer functon coefficients (output).
   std::vector<double> b_;   //  Transfer functon coefficients (input).
+  using FilterBase<T>::param_name_; 
+  using FilterBase<T>::node_; 
 };
 
 template<typename T>
@@ -107,16 +107,15 @@ SingleChannelTransferFunctionFilter<
   T>::~SingleChannelTransferFunctionFilter() {}
 
 template<typename T>
-bool SingleChannelTransferFunctionFilter<T>::get_configure(
-  const std::string & param_name, rclcpp::Node::SharedPtr node)
+bool SingleChannelTransferFunctionFilter<T>::configure()
 {
-  std::string param_name1 = param_name + "params.a";
-  std::string param_name2 = param_name + "params.b";
+  std::string param_name1 = param_name_ + "params.a";
+  std::string param_name2 = param_name_ + "params.b";
   //   Parse a and b into a std::vector<double>.
-  if (!node->get_parameter(param_name1, a_)) {
+  if (!node_->get_parameter(param_name1, a_)) {
     return false;
   }    //   /\todo check length
-  if (!node->get_parameter(param_name2, b_)) {
+  if (!node_->get_parameter(param_name2, b_)) {
     return false;
   }    //   /\todo check length
   //   Create the input and output buffers of the correct size.
@@ -210,9 +209,7 @@ public:
    * params. \param number_of_channels The number of inputs filtered. \param
    * config The xml that is parsed to configure the filter.
    */
-  virtual bool get_configure(
-    const std::string & param_name,
-    rclcpp::Node::SharedPtr node);
+  virtual bool configure();
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
@@ -230,6 +227,9 @@ protected:
 
   std::vector<double> a_;   //  Transfer functon coefficients (output).
   std::vector<double> b_;   //  Transfer functon coefficients (input).
+  
+  using MultiChannelFilterBase<T>::param_name_;
+  using MultiChannelFilterBase<T>::node_;
 };
 
 template<typename T>
@@ -239,17 +239,16 @@ template<typename T>
 MultiChannelTransferFunctionFilter<T>::~MultiChannelTransferFunctionFilter() {}
 
 template<typename T>
-bool MultiChannelTransferFunctionFilter<T>::get_configure(
-  const std::string & param_name, rclcpp::Node::SharedPtr node)
+bool MultiChannelTransferFunctionFilter<T>::configure()
 {
-  std::string param_name1 = param_name + "params.a";
-  std::string param_name2 = param_name + "params.b";
+  std::string param_name1 = param_name_ + "params.a";
+  std::string param_name2 = param_name_ + "params.b";
   //  Parse a and b into a std::vector<double>.
-  if (!node->get_parameter(param_name1, a_)) {
+  if (!node_->get_parameter(param_name1, a_)) {
     return false;
   }  //  /\todo check length
 
-  if (!node->get_parameter(param_name2, b_)) {
+  if (!node_->get_parameter(param_name2, b_)) {
     return false;
   }  //  /\todo check length
 
