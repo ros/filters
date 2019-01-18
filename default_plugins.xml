@@ -2,7 +2,7 @@
 <library path = "filters_default_plugins">
 	<!--Displays Plugins-->	
   </library>
-  <library path="/libmean">
+  <library path="/libfilters">
 	  <class 
 		  name="filters/MeanFilterDouble" 
 		  type="filters::MeanFilter<double>"
@@ -33,7 +33,7 @@
     </class>
   </library>
   
-   <library path="/libtransfer_function">
+   <library path="/libfilters">
     <class name="filters/MultiChannelTransferFunctionFilterDouble" type="filters::MultiChannelTransferFunctionFilter<double>"
 	    base_class_type="filters::MultiChannelFilterBase<double>">
       <description>
@@ -47,7 +47,7 @@
       </description>
     </class>
   </library>
-  <library path="/libtest_param">
+  <library path="/libfilters">
     <class name="filters/ParamTest" type="filters::ParamTest<double>"
 	    base_class_type="filters::FilterBase<double>">
       <description>
@@ -55,7 +55,7 @@
       </description>
     </class>
   </library>
-  <library path="/libmedian">
+  <library path="/libfilters">
     <class name="filters/MultiChannelMedianFilterDouble" type="filters::MultiChannelMedianFilter<double>"
 	    base_class_type="filters::MultiChannelFilterBase<double>">
       <description>
@@ -81,7 +81,7 @@
       </description>
     </class>
    </library> 
-   <library path="/libincrement">
+   <library path="/libfilters">
     <class name="filters/IncrementFilterInt" type="filters::IncrementFilter<int>"
 	    base_class_type="filters::FilterBase<int>">
       <description>
