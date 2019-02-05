@@ -5,7 +5,8 @@ This file describes the work done and steps to perform test on the filters packa
 ROS2 Migration Changes
 
 	Basic design and concept is same as per ros.
-	Work is done by referring ROS1 lunar-devel branch filters package folder.Following are the changes: 
+	Work is done by referring ROS1 lunar-devel branch filters package folder.
+	Following are the changes: 
 		1. Migrated all header and source files into ROS2 style 
 		2. Migrated yaml files into ROS2 style
 		3. Migrated .launch files into launch.py in ROS2 style
@@ -14,10 +15,12 @@ ROS2 Migration Changes
 Design changes:
 
 	1. The parameters :
-		Parameters for filters are taken from yaml file only. So filter type is configured using node paramter 
-		and corresponding code and logical parsing changes have been added to devired class of filters. 
+		Parameters for filters are taken from yaml file only. 
+		So filter type is configured using node paramter.
+		Corresponding code and logical parsing changes have been added to devired class of filters. 
 
-	2. The yaml file is redesigned so as to configure multiple filters in sequence. This is done by simply adding "filter1" and "filter2" keys to identify parameters for different type of filters in the dictionary of yaml file(this design changes reflects in commit 79a2503058f0cfe3e3ac98687d06a8c455fd0191). So to configure a filter type the parameter is set in the yaml as shown below:
+	2. The yaml file is redesigned so as to configure multiple filters in sequence. This is done by simply adding "filter1" and "filter2" keys to identify parameters for different type of filters in the dictionary of yaml file(this design changes reflects in commit 79a2503058f0cfe3e3ac98687d06a8c455fd0191).
+	So to configure a filter type the parameter is set in the yaml as shown below:
 		
 		MultiChannelMedianFilterFloat5:
 			ros__parameters:
@@ -35,8 +38,25 @@ Design changes:
 					name: median_test2
 					type: filters/MultiChannelMedianFilterDouble
 					params: {number_of_observations: 5}      
-
-	3. Xmlrpc variables replaced by string types variables and required modification/changes incorporated. 
+					
+        3. Support for the yaml file related to different dictionary style is provided through logical changes in the design and is more generic now.For example:
+		array_filter_chain:
+			ros__parameters:
+				filter1:
+					type: laser_filters/LaserArrayFilter
+					name: laser_median_filter
+					params: 
+						range_filter_chain:
+							name: median_2
+							type: filters/MultiChannelMeanFilterFloat 
+							params:{number_of_observations: 3}
+						intensity_filter_chain:
+							name: median_2
+							type: filters/MultiChannelMeanFilterFloat
+							params:{number_of_observations: 3}		
+                        
+	4. Xmlrpc variables replaced by string types variables and required modification/changes incorporated. 
+	5. The " confugure()" function for inherited classes i.e. implementation of different type of filters is maintain as per ros1 design.(Earlier it was get_parameter(param_name, node) with two arguments). 
 
 Future Work
 

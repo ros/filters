@@ -20,7 +20,7 @@ TEST(MultiChannelFilterChain, configuring) {
   double epsilon = 1e-9;
   auto node = rclcpp::Node::make_shared("MultiChannelMeanFilterDouble5");
   filters::MultiChannelFilterChain<double> chain("double");
-  EXPECT_TRUE(chain.configure(5, node));
+  EXPECT_TRUE(chain.configure("MultiChannelMeanFilterDouble5", 5, node));
   double input1[] = {1, 2, 3, 4, 5};
   double input1a[] = {9, 9, 9, 9, 9};  //  seed w/incorrect values
   std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
@@ -56,7 +56,7 @@ TEST(MultiChannelFilterChain, TwoFilters) {
   auto node = rclcpp::Node::make_shared("TwoFilters");
   filters::MultiChannelFilterChain<double> chain("double");
 
-  EXPECT_TRUE(chain.configure(5, node));
+  EXPECT_TRUE(chain.configure("TwoFilters", 5, node));
 
   double input1[] = {1, 2, 3, 4, 5};
   double input1a[] = {9, 9, 9, 9, 9};  // seed w/incorrect values
@@ -77,7 +77,7 @@ TEST(MultiChannelFilterChain, MisconfiguredNumberOfChannels) {
 
   auto node = rclcpp::Node::make_shared("MultiChannelMedianFilterDouble5");
 
-  EXPECT_TRUE(chain.configure(10, node));
+  EXPECT_TRUE(chain.configure("MultiChannelMedianFilterDouble5", 10, node));
 
   double input1[] = {1, 2, 3, 4, 5};
   double input1a[] = {1, 2, 3, 4, 5};
@@ -143,7 +143,7 @@ TEST(MultiChannelFilterChain, TenMultiChannelIncrementChains) {
   std::vector<int> v1a = v1;
   auto node = rclcpp::Node::make_shared("TenMultiChannelIncrements");
 
-  EXPECT_TRUE(chain.configure(3, node));
+  EXPECT_TRUE(chain.configure("TenMultiChannelIncrements", 3, node));
   EXPECT_TRUE(chain.update(v1, v1a));
   for (unsigned int i = 0; i < 3; i++) {
     EXPECT_EQ(11, v1a[i]);
@@ -155,7 +155,7 @@ TEST(MultiChannelFilterChain, TransferFunction) {
   double epsilon = 1e-4;
   auto node = rclcpp::Node::make_shared("TransferFunction");
   filters::MultiChannelFilterChain<double> chain("double");
-  EXPECT_TRUE(chain.configure(3, node));
+  EXPECT_TRUE(chain.configure("TransferFunction", 3, node));
 
   std::vector<double> in1, in2, in3, in4, in5, in6, in7;
   std::vector<double> out1;

@@ -89,7 +89,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_chain  test/test_chain.cpp)
     target_link_libraries(test_chain ${LIBS})
-    
+
     install(
         TARGETS test_chain
                 test_median

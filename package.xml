@@ -27,7 +27,7 @@
   <test_depend>ament_lint_common</test_depend>
 
   <export>
-    <filters plugin="/home/user/ros2_ws_filters_test1/src/filters/default_plugins.xml"/>
+    <filters plugin="${prefix}/default_plugins.xml"/>
     <build_type>ament_cmake</build_type>
   </export>
 </package>  
