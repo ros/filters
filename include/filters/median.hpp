@@ -119,8 +119,8 @@ protected:
   T temp_;     //   used for preallocation and copying from non vector source
   uint32_t
     number_of_observations_;   //  < Number of observations over which to filter
-    using FilterBase<T>::param_name_; 
-    using FilterBase<T>::node_; 
+  using FilterBase<T>::param_name_;
+  using FilterBase<T>::node_;
 };
 template<typename T>
 MedianFilter<T>::MedianFilter()
@@ -132,9 +132,10 @@ MedianFilter<T>::~MedianFilter() {}
 template<typename T>
 bool MedianFilter<T>::configure()
 {
-  std::string param_name1 = param_name_ + "params.number_of_observations";
+  std::string param_name1 = param_name_ + "number_of_observations";
   int no_obs = -1;
   if (!node_->get_parameter(param_name1, number_of_observations_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "Error: MedianFilter was not given params.\n ");
     return false;
   }
   data_storage_.reset(
@@ -198,8 +199,9 @@ MultiChannelMedianFilter<T>::~MultiChannelMedianFilter() {}
 template<typename T>
 bool MultiChannelMedianFilter<T>::configure()
 {
-  std::string param_name1 = param_name_ + "params.number_of_observations";
+  std::string param_name1 = param_name_ + "number_of_observations";
   if (!node_->get_parameter(param_name1, number_of_observations_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "MedianFilter was not given params.\n ");
     return false;
   }
   temp.resize(this->number_of_channels_);
@@ -226,7 +228,7 @@ bool MultiChannelMedianFilter<T>::update(
     }
     data_out[i] = median(&temp_storage_[0], length);
   }
- return true;
+  return true;
 }
 }   //  namespace filters
 #endif  // FILTERS__MEDIAN_HPP_

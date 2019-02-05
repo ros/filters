@@ -26,12 +26,7 @@
 #include "std_msgs/msg/string.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/node.hpp"
-#define ROS_DEBUG printf
-#define ROS_FATAL printf
-#define ROS_WARN printf
-#define ROS_INFO printf
-#define ROS_ASSERT_MSG printf
-#define ROS_ERROR printf
+
 
 //  using namespace std;
 namespace filters
@@ -39,15 +34,14 @@ namespace filters
 /** \brief A Base filter class to provide a standard interface for all filters
 filter_b *
  */
-//rclcpp::Node::SharedPtr node_;
-
 template<typename T>
 class FilterBase
 {
 public:
   /** \brief Default constructor used by Filter Factories
    */
- FilterBase() : configured_(false){}
+  FilterBase()
+  : configured_(false) {}
 
   /** \brief Virtual Destructor
    */
@@ -57,10 +51,10 @@ public:
    */
   bool configure(const std::string & param_name, rclcpp::Node::SharedPtr node)
   {
-          node_ = node;
-          param_name_ = param_name;
-          configured_ = configure();
-          return configured_;
+    node_ = node;
+    param_name_ = param_name;
+    configured_ = configure();
+    return configured_;
   }
   bool configure(rclcpp::Node::SharedPtr node)
   {
@@ -84,20 +78,29 @@ public:
     {
       std::string filter_name = filter_it->first;
       std::string filter_type = filter_it->second;
+      std::string p_name, param_name;
       if (std::string::npos != filter_name.find("params")) {
-        std::string p_name = filter_name;
-        int pos1 = p_name.find(".");
-        std::string name = p_name.substr(pos1 + 1);
-        p_name.erase(pos1 + 1, filter_name.length() + 1);
-        param_name_ = p_name;
+        if (std::string::npos != filter_name.find("type") ) {
+          RCLCPP_DEBUG(node->get_logger(), "type is not desired string: ");
+        } else if (std::string::npos != filter_name.find("name")) {
+          RCLCPP_DEBUG(node->get_logger(), "name  is not desired string: ");
+        } else {
+          for (int i = 0; i < static_cast<int>(filter_name.length()); i++) {
+            if (filter_name[i] == '.') {
+              p_name = filter_name.substr(i + 1);
+            }
+          }
+          int pos1 = filter_name.length() - p_name.length();
+          param_name = filter_name.erase(pos1, filter_name.length() + 1);
+          param_name_ = param_name;
+        }
       }
-      configured_ = configure();
     }
-      configured_ = configure();
+    configured_ = configure();
     return configured_;
   }
- virtual bool configure() = 0;
- 
+  virtual bool configure() = 0;
+
   /** \brief Update the filter and return the data seperately
    * This is an inefficient way to do this and can be overridden in the derived
    * class \param data_in A reference to the data to be input to the filter
@@ -112,7 +115,7 @@ protected:
   std::stringstream ss1;
   std::string param_name_;
   rclcpp::Node::SharedPtr node_;
-   int cnt = 0;
+  int cnt = 0;
   /** \brief Pure virtual function for the sub class to configure the filter
    * This function must be implemented in the derived class.
    */
@@ -121,30 +124,17 @@ template<typename T>
 class MultiChannelFilterBase : public FilterBase<T>
 {
 public:
-  MultiChannelFilterBase(): number_of_channels_(0){}
+  MultiChannelFilterBase()
+  : number_of_channels_(0) {}
   /** \brief Configure the filter from the node parameter set by yaml file (parameter server)
    * \param number_of_channels How many parallel channels the filter will
-   * process \param The parameter from which to read the configuration 
+   * process \param The parameter from which to read the configuration
    */
-  bool configure(
-    unsigned int number_of_channels, const std::string & param_name,
-    rclcpp::Node::SharedPtr node)
-  {
-      if (configured_) {
-      RCLCPP_DEBUG(node->get_logger(), "Filter type already being reconfigured");
-    }
-    configured_ = false;
-    node_ = node; 
-    param_name_ = param_name;
-    number_of_channels_ = number_of_channels;
-    configured_ = configure();
-    return configured_;
-  }
   bool configure(
     unsigned int number_of_channels,
     rclcpp::Node::SharedPtr node)
   {
-    node_ = node;        
+    node_ = node;
     if (configured_) {
       RCLCPP_DEBUG(node->get_logger(), "Filter type already being reconfigured ");
     }
@@ -161,19 +151,29 @@ public:
     {
       std::string filter_name = filter_it->first;
       std::string filter_type = filter_it->second;
+      std::string p_name, param_name;
       if (std::string::npos != filter_name.find("params")) {
-        std::string p_name = filter_name;
-        int pos1 = p_name.find(".");
-        std::string name = p_name.substr(pos1 + 1);
-        p_name.erase(pos1 + 1, filter_name.length() + 1);
-        param_name_ = p_name;
+        if (std::string::npos != filter_name.find("type") ) {
+          RCLCPP_DEBUG(node->get_logger(), "type is not desired string: ");
+        } else if (std::string::npos != filter_name.find("name")) {
+          RCLCPP_DEBUG(node->get_logger(), "name  is not desired string: ");
+        } else {
+          for (int i = 0; i < static_cast<int>(filter_name.length()); i++) {
+            if (filter_name[i] == '.') {
+              p_name = filter_name.substr(i + 1);
+            }
+          }
+          int pos1 = filter_name.length() - p_name.length();
+          param_name = filter_name.erase(pos1, filter_name.length() + 1);
+          param_name_ = param_name;
+        }
       }
     }
     configured_ = configure();
     return configured_;
   }
   virtual bool configure() = 0;
-  
+
   /** \brief Update the filter and return the data seperately
    * \param data_in A reference to the data to be input to the filter
    * \param data_out A reference to the data output location
@@ -196,8 +196,6 @@ protected:
   std::map<std::string, std::string> filter_param;
   //  Store the list of parameters specific to node
   rcl_interfaces::msg::ListParametersResult parameters_and_prefixes;
-
 };
-
 }   //  namespace filters
 #endif  // FILTERS__FILTER_BASE_HPP_

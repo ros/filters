@@ -93,8 +93,8 @@ public:
 
 protected:
   using MultiChannelFilterBase<T>::number_of_channels_;  //< Number of elements per observation
-  //using MultiChannelFilterBase<T>::param_name_;
-  //using MultiChannelFilterBase<T>::node_;
+  //  using MultiChannelFilterBase<T>::param_name_;
+  using MultiChannelFilterBase<T>::node_;
 };
 template<typename T>
 MultiChannelIncrementFilter<T>::MultiChannelIncrementFilter()
@@ -115,8 +115,7 @@ bool MultiChannelIncrementFilter<T>::update(
   std::vector<T> & data_out)
 {
   if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_) {
-    ROS_ERROR("Configured with wrong size config:%d in:%d out:%d", number_of_channels_,
-      (int)data_in.size(), (int)data_out.size());
+//  RCLCPP_DEBUG(node_->get_logger(), "IncrementFilter configured with wrong size config\n ");
     return false;
   }
   //  Return each value

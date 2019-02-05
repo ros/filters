@@ -95,8 +95,8 @@ protected:
 
   std::vector<double> a_;   //  Transfer functon coefficients (output).
   std::vector<double> b_;   //  Transfer functon coefficients (input).
-  using FilterBase<T>::param_name_; 
-  using FilterBase<T>::node_; 
+  using FilterBase<T>::param_name_;
+  using FilterBase<T>::node_;
 };
 
 template<typename T>
@@ -109,13 +109,15 @@ SingleChannelTransferFunctionFilter<
 template<typename T>
 bool SingleChannelTransferFunctionFilter<T>::configure()
 {
-  std::string param_name1 = param_name_ + "params.a";
-  std::string param_name2 = param_name_ + "params.b";
+  std::string param_name1 = param_name_ + "a";
+  std::string param_name2 = param_name_ + "b";
   //   Parse a and b into a std::vector<double>.
   if (!node_->get_parameter(param_name1, a_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "TransferFunctionFilter params has no attribute a.\n ");
     return false;
   }    //   /\todo check length
   if (!node_->get_parameter(param_name2, b_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "TransferFunctionFilter params has no attribute b.\n ");
     return false;
   }    //   /\todo check length
   //   Create the input and output buffers of the correct size.
@@ -123,6 +125,7 @@ bool SingleChannelTransferFunctionFilter<T>::configure()
   output_buffer_.reset(new RealtimeCircularBuffer<T>(a_.size() - 1, temp_));
   //  Prevent divide by zero while normalizing coeffs.
   if (a_[0] == 0) {
+    //  RCLCPP_DEBUG(node_->get_logger(),"a[0] can not equal 0.");
     return false;
   }
   //  Normalize the coeffs by a[0].
@@ -227,7 +230,7 @@ protected:
 
   std::vector<double> a_;   //  Transfer functon coefficients (output).
   std::vector<double> b_;   //  Transfer functon coefficients (input).
-  
+
   using MultiChannelFilterBase<T>::param_name_;
   using MultiChannelFilterBase<T>::node_;
 };
@@ -241,14 +244,16 @@ MultiChannelTransferFunctionFilter<T>::~MultiChannelTransferFunctionFilter() {}
 template<typename T>
 bool MultiChannelTransferFunctionFilter<T>::configure()
 {
-  std::string param_name1 = param_name_ + "params.a";
-  std::string param_name2 = param_name_ + "params.b";
+  std::string param_name1 = param_name_ + "a";
+  std::string param_name2 = param_name_ + "b";
   //  Parse a and b into a std::vector<double>.
   if (!node_->get_parameter(param_name1, a_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "TransferFunctionFilter params has no attribute a.\n");
     return false;
   }  //  /\todo check length
 
   if (!node_->get_parameter(param_name2, b_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "TransferFunctionFilter params has no attribute b.\n");
     return false;
   }  //  /\todo check length
 

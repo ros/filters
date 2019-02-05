@@ -62,7 +62,7 @@ ParamTest<T>::ParamTest() {}
 template<typename T>
 bool ParamTest<T>::configure()
 {
-  std::string param_name1 = param_name_ + "params.key";
+  std::string param_name1 = param_name_ + "key";
   if (!node_->get_parameter(param_name1, temp_)) {
     return false;
   }

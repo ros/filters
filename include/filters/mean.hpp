@@ -46,7 +46,7 @@ public:
   ~MeanFilter();
 
   virtual bool configure();
- 
+
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
@@ -60,21 +60,21 @@ protected:
     last_updated_row_;  //  < The last row to have been updated by the filter
   T temp_;               //  Temporary storage
   uint32_t number_of_observations_;  //  < Number of observations over which to filter
-    using FilterBase<T>::param_name_; 
-    using FilterBase<T>::node_; 
+  using FilterBase<T>::param_name_;
+  using FilterBase<T>::node_;
 };
-rclcpp::Parameter parameter;
+
 template<typename T>
 MeanFilter<T>::MeanFilter()
-:number_of_observations_(0) {}
+: number_of_observations_(0) {}
 
 template<typename T>
-
 bool MeanFilter<T>::configure()
 {
-  std::string param_name1 = FilterBase<T>::param_name_ + "params.number_of_observations";
+  std::string param_name1 = FilterBase<T>::param_name_ + "number_of_observations";
 
   if (!FilterBase<T>::node_->get_parameter(param_name1, number_of_observations_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "MeanFilter did not find param number_of_observation ");
     return false;
   }
   data_storage_.reset(
@@ -109,14 +109,13 @@ class MultiChannelMeanFilter : public MultiChannelFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
- // MultiChannelMeanFilter(unsigned int number_of_channels,const std::string &  param_name,rclcpp::Node::SharedPtr node);
   MultiChannelMeanFilter();
   /** \brief Destructor to clean up
    */
   ~MultiChannelMeanFilter();
-  
+
   virtual bool configure();
-  
+
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
@@ -136,20 +135,18 @@ protected:
                                                          //  per observation
   using MultiChannelFilterBase<T>::param_name_;
   using MultiChannelFilterBase<T>::node_;
-  
 };
 
 template<typename T>
-
 MultiChannelMeanFilter<T>::MultiChannelMeanFilter()
 : number_of_observations_(0) {}
 
 template<typename T>
-
 bool MultiChannelMeanFilter<T>::configure()
 {
-  std::string param_name1 = MultiChannelFilterBase<T>::param_name_ + "params.number_of_observations";
+  std::string param_name1 = MultiChannelFilterBase<T>::param_name_ + "number_of_observations";
   if (!MultiChannelFilterBase<T>::node_->get_parameter(param_name1, number_of_observations_)) {
+    //  RCLCPP_DEBUG(node_->get_logger(), "MeanFilter did not find param number_of_observation ");
     return false;
   }
   temp.resize(number_of_channels_);
@@ -169,6 +166,7 @@ bool MultiChannelMeanFilter<T>::update(
   if (data_in.size() != number_of_channels_ ||
     data_out.size() != number_of_channels_)
   {
+    //  RCLCPP_DEBUG(node_->get_logger(), "MeanFilter is Configured with wrong size config");
     return false;
   }
   //  update active row

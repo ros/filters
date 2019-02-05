@@ -15,7 +15,7 @@
 #ifndef FILTERS__FILTER_CHAIN_HPP_
 #define FILTERS__FILTER_CHAIN_HPP_
 
-//   #include "ros/ros.h"
+
 #include <sstream>
 #include <vector>
 #include <string>
@@ -50,7 +50,7 @@ public:
     std::string lib_string = "";
     std::vector<std::string> libs = loader_.getDeclaredClasses();
     for (unsigned int i = 0; i < libs.size(); i++) {
-        lib_string = lib_string + std::string(", ") + libs[i];
+      lib_string = lib_string + std::string(", ") + libs[i];
     }
   }
 
@@ -62,15 +62,28 @@ public:
    * @param node The node handle to use if a different namespace is required
    */
   bool configure(std::string param_name, rclcpp::Node::SharedPtr node)
-   {
-    auto parameters_and_prefixes = node->list_parameters({}, 10);
-    for (auto & name : parameters_and_prefixes.names) {
-      for (auto & parameter : node->get_parameters({name})) {
-        ss1 << "\nParameter name: " << parameter.get_name();
-        ss1 << "\nParameter data_type: " << parameter.get_type();
-        ss1 << "\nParameter value (" << parameter.get_type_name() <<
-          "): " << parameter.value_to_string();
-        filter_param[parameter.get_name()] = parameter.value_to_string();
+  {
+    if (std::string::npos != param_name.find("params.")) {
+      auto parameters_and_prefixes = node->list_parameters({param_name}, 10);
+      for (auto & name : parameters_and_prefixes.names) {
+        for (auto & parameter : node->get_parameters({name})) {
+          ss1 << "\nParameter name: " << parameter.get_name();
+          ss1 << "\nParameter data_type: " << parameter.get_type();
+          ss1 << "\nParameter value (" << parameter.get_type_name() <<
+            "): " << parameter.value_to_string();
+          filter_param[parameter.get_name()] = parameter.value_to_string();
+        }
+      }
+    } else {
+      auto parameters_and_prefixes = node->list_parameters({}, 10);
+      for (auto & name : parameters_and_prefixes.names) {
+        for (auto & parameter : node->get_parameters({name})) {
+          ss1 << "\nParameter name: " << parameter.get_name();
+          ss1 << "\nParameter data_type: " << parameter.get_type();
+          ss1 << "\nParameter value (" << parameter.get_type_name() <<
+            "): " << parameter.value_to_string();
+          filter_param[parameter.get_name()] = parameter.value_to_string();
+        }
       }
     }
     for (std::map<std::string, std::string>::iterator filter_it = filter_param.begin();
@@ -78,50 +91,43 @@ public:
     {
       std::string filter_name = filter_it->first;
       std::string filter_type = filter_it->second;
+      std::string p_name, param_name;
       if (std::string::npos != filter_name.find("params")) {
-        std::string p_name = filter_name;
-        int pos1 = p_name.find(".");
-        std::string name = p_name.substr(pos1 + 1);
-        p_name.erase(pos1 + 1, filter_name.length() + 1);
-        param_name1 = p_name;
-      } else if (std::string::npos != filter_name.find("type")) {
-        // try
-        if (loader_.isClassAvailable(filter_type)) {
-          bool have_class = false;
-          bool result = true;
-          std::vector<std::string> classes = loader_.getDeclaredClasses();
-          for (unsigned int i = 0; i < classes.size(); ++i) {
-            if (filter_type == classes[i]) {
-              // if we've found a match... we'll get the fully qualified name
-              filter_type = classes[i];
-              have_class = true;
-              std::shared_ptr<filters::FilterBase<T>> p =
-                loader_.createSharedInstance(filter_type);
-              if (p.get() == NULL) {
-                return false;
-              }
-              result = result && p.get()->configure(param_name1, node);
-              reference_pointers_.push_back(p);
-              unsigned int list_size = reference_pointers_.size();
+        if (std::string::npos != filter_name.find("type") ) {
+          RCLCPP_DEBUG(node->get_logger(), "type is not desired string: ");
+        } else if (std::string::npos != filter_name.find("name")) {
+          RCLCPP_DEBUG(node->get_logger(), "name  is not desired string: ");
+        } else {
+          for (int i = 0; i < static_cast<int>(filter_name.length()); i++) {
+            if (filter_name[i] == '.') {
+              p_name = filter_name.substr(i + 1);
             }
           }
-          if (!have_class) {
-            RCLCPP_DEBUG(node->get_logger(), "\nUnable to find filter class %s. Check that filter "
-              "is fully declared.",
-              filter_type.c_str());
-            continue;
+          int pos1 = filter_name.length() - p_name.length();
+          param_name = filter_name.erase(pos1, filter_name.length() + 1);
+          param_name1 = param_name;
+        }
+      } else if (std::string::npos != filter_name.find("type")) {
+        if (loader_.isClassAvailable(filter_type)) {
+          bool result = true;
+          std::shared_ptr<filters::FilterBase<T>> p =
+            loader_.createSharedInstance(filter_type);
+          if (p.get() == NULL) {
+            RCLCPP_DEBUG(node->get_logger(), "unable to allocate memory to filter type");
+            return false;
           }
+          result = result && p.get()->configure(param_name1, node);
+          reference_pointers_.push_back(p);
+          unsigned int list_size = reference_pointers_.size();
         }
       }
     }
-
     if (result == true) {
       configured_ = true;
     }
     return result;
   }
-
-  /** \brief process data through each of the filters added sequentially */
+  /** \  brief process data through each of the filters added sequentially */
   bool update(const T & data_in, T & data_out)
   {
     unsigned int list_size = reference_pointers_.size();
@@ -141,17 +147,16 @@ public:
       result =
         reference_pointers_[0]->update(data_in, buffer0_);   // first copy in
       for (unsigned int i = 1; i < reference_pointers_.size() - 1;
-        i++)    // all but first and last (never called if size=2)
+        i++)    //  all but first and last (never called if size=2)
       {
         if (i % 2 == 1) {
           result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
         } else {
           result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
         }
-
         if (result == false) {
           return false;
-        }  // don't keep processing on failure
+        }  //  don't keep processing on failure
       }
       if (list_size % 2 == 1) {      //   odd number last deposit was in buffer1
         result =
@@ -176,12 +181,9 @@ private:
   reference_pointers_;     //   /<! A vector of pointers to currently constructed //  /<filters
   unsigned int i = 0;
   bool result = true;
-
-  rclcpp::Parameter parameter_test;
   std::map<std::string, std::string> filter_param;
   std::string param_name1;
   std::stringstream ss1;
-  std::vector<std::string> classes = loader_.getDeclaredClasses();
   T buffer0_;         //   <! A temporary intermediate buffer
   T buffer1_;         //   <! A temporary intermediate buffer
   bool configured_;   //   <! whether the system is configured
@@ -206,24 +208,38 @@ public:
       lib_string = lib_string + std::string(", ") + libs[i];
     }
   }
-
+  ~MultiChannelFilterChain() {clear();}
   /**@brief Configure the filter chain from a configuration stored on the
-   * parameter server(yaml file)  
+   * parameter server(yaml file)
    * @param param_name The name of the filter chain to load
    */
   bool configure(
+    std::string param_name,
     unsigned int number_of_channels,
     rclcpp::Node::SharedPtr node)
   {
     number_of_channels_ = number_of_channels;
-    auto parameters_and_prefixes = node->list_parameters({}, 10);
-    for (auto & name : parameters_and_prefixes.names) {
-      for (auto & parameter : node->get_parameters({name})) {
-        ss1 << "\nParameter name: " << parameter.get_name();
-        ss1 << "\nParameter data_type: " << parameter.get_type();
-        ss1 << "\nParameter value (" << parameter.get_type_name() <<
-          "): " << parameter.value_to_string();
-        filter_param[parameter.get_name()] = parameter.value_to_string();
+    if (std::string::npos != param_name.find("params.")) {
+      auto parameters_and_prefixes = node->list_parameters({param_name}, 10);
+      for (auto & name : parameters_and_prefixes.names) {
+        for (auto & parameter : node->get_parameters({name})) {
+          ss1 << "\nParameter name: " << parameter.get_name();
+          ss1 << "\nParameter data_type: " << parameter.get_type();
+          ss1 << "\nParameter value (" << parameter.get_type_name() <<
+            "): " << parameter.value_to_string();
+          filter_param[parameter.get_name()] = parameter.value_to_string();
+        }
+      }
+    } else {
+      auto parameters_and_prefixes = node->list_parameters({}, 10);
+      for (auto & name : parameters_and_prefixes.names) {
+        for (auto & parameter : node->get_parameters({name})) {
+          ss1 << "\nParameter name: " << parameter.get_name();
+          ss1 << "\nParameter data_type: " << parameter.get_type();
+          ss1 << "\nParameter value (" << parameter.get_type_name() <<
+            "): " << parameter.value_to_string();
+          filter_param[parameter.get_name()] = parameter.value_to_string();
+        }
       }
     }
     for (std::map<std::string, std::string>::iterator filter_it = filter_param.begin();
@@ -231,44 +247,52 @@ public:
     {
       std::string filter_name = filter_it->first;
       std::string filter_type = filter_it->second;
+      std::string p_name, param_name;
       if (std::string::npos != filter_name.find("params")) {
-        std::string p_name = filter_name;
-        int pos1 = p_name.find(".");
-        std::string name = p_name.substr(pos1 + 1);
-        p_name.erase(pos1 + 1, filter_name.length() + 1);
-        param_name2 = p_name;
+        if (std::string::npos != filter_name.find("type") ) {
+          if (loader_.isClassAvailable(filter_type)) {
+            bool result = true;
+            buffer0_.resize(number_of_channels);
+            buffer1_.resize(number_of_channels);
+            std::shared_ptr<filters::MultiChannelFilterBase<T>> p =
+              loader_.createSharedInstance(filter_type);
+            if (p.get() == NULL) {
+              RCLCPP_DEBUG(node->get_logger(), "unable to allocate memory to filter type");
+              return false;
+            }
+            result = result && p.get()->configure(number_of_channels, node);
+            reference_pointers_.push_back(p);
+            unsigned int list_size = reference_pointers_.size();
+          }
+        } else if (std::string::npos != filter_name.find("name")) {
+          RCLCPP_DEBUG(node->get_logger(), "name is not desired string: ");
+        } else {
+          for (int i = 0; i < static_cast<int>(filter_name.length()); i++) {
+            if (filter_name[i] == '.') {
+              p_name = filter_name.substr(i + 1);
+            }
+          }
+          int pos1 = filter_name.length() - p_name.length();
+          param_name = filter_name.erase(pos1, filter_name.length() + 1);
+          param_name2 = param_name;
+        }
       } else if (std::string::npos != filter_name.find("type")) {
         if (loader_.isClassAvailable(filter_type)) {
-          bool have_class = false;
           bool result = true;
           buffer0_.resize(number_of_channels);
           buffer1_.resize(number_of_channels);
-          std::vector<std::string> classes = loader_.getDeclaredClasses();
-          for (unsigned int i = 0; i < classes.size(); ++i) {
-            if (filter_type == classes[i]) {
-              // if we've found a match... we'll get the fully qualified name
-              filter_type = classes[i];
-              have_class = true;
-              std::shared_ptr<filters::MultiChannelFilterBase<T>> p =
-                loader_.createSharedInstance(filter_type);
-              if (p.get() == NULL) {
-                return false;
-              }
-                  result = result && p.get()->configure(number_of_channels,
-                  param_name2, node);
-              reference_pointers_.push_back(p);
-              unsigned int list_size = reference_pointers_.size();
-            }
+          std::shared_ptr<filters::MultiChannelFilterBase<T>> p =
+            loader_.createSharedInstance(filter_type);
+          if (p.get() == NULL) {
+            RCLCPP_DEBUG(node->get_logger(), "unable to allocate memory to filter type");
+            return false;
           }
-          if (!have_class) {
-            RCLCPP_ERROR(node->get_logger(), "\nUnable to find filter class %s. Check that filter "
-              "is fully declared.", filter_type.c_str());
-            continue;
-          }
+          result = result && p.get()->configure(number_of_channels, node);
+          reference_pointers_.push_back(p);
+          unsigned int list_size = reference_pointers_.size();
         }
       }
     }
-
     if (result == true) {
       configured_ = true;
     }
@@ -315,8 +339,6 @@ public:
     }
     return result;
   }
-
-  ~MultiChannelFilterChain() {clear();}
   /** \brief Clear all filters from this chain */
   bool clear()
   {
@@ -332,17 +354,14 @@ private:
   std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T>>>
   reference_pointers_;     //  /<! A vector of pointers to currently constructed
   //  /<filters
-  rclcpp::Parameter parameter_test;
   unsigned int i = 0;
   std::map<std::string, std::string> filter_param;
   std::string param_name2;
   std::stringstream ss1;
-  std::vector<std::string> classes;
   std::vector<T> buffer0_;  //  /<! A temporary intermediate buffer
   std::vector<T> buffer1_;  //  /<! A temporary intermediate buffer
   bool configured_;         //  /<! whether the system is configured
   int number_of_channels_;
-  
 };
 }       //  namespace filters
 #endif  // FILTERS__FILTER_CHAIN_HPP_
