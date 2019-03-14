@@ -28,17 +28,25 @@
  */
 
 #include <gtest/gtest.h>
+#ifndef _WIN32
 #include <sys/time.h>
+#else
+#include <windows.h>
+#endif
 #include "filters/mean.h"
 
 using namespace filters ;
 
 void seed_rand()
 {
+#ifndef _WIN32
   //Seed random number generator with current microseond count
   timeval temp_time_struct;
   gettimeofday(&temp_time_struct,NULL);
   srand(temp_time_struct.tv_usec);
+#else
+  srand(GetTickCount());
+#endif
 };
 
 void generate_rand_vectors(double scale, uint64_t runs, std::vector<double>& xvalues, std::vector<double>& yvalues, std::vector<double>&zvalues)

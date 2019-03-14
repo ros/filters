@@ -28,7 +28,9 @@
  */
 
 #include <gtest/gtest.h>
+#ifndef _WIN32
 #include <sys/time.h>
+#endif
 #include "filters/param_test.h"
 
 using namespace filters ;
