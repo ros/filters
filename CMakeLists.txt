@@ -28,7 +28,9 @@ catkin_package(
 ##############################################################################
 
 add_library(real_time_circular_buffer INTERFACE)
-target_include_directories(real_time_circular_buffer INTERFACE ${Boost_INCLUDE_DIRS})
+target_include_directories(real_time_circular_buffer INTERFACE
+  include
+  ${Boost_INCLUDE_DIRS})
 
 # Plugins
 add_library(mean src/mean.cpp)
