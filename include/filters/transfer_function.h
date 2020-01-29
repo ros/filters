@@ -34,10 +34,9 @@
 
 #include <stdint.h>
 #include <math.h>
+#include <memory>
 #include <vector>
 #include <string>
-
-#include <boost/scoped_ptr.hpp>
 
 #include "filters/filter_base.h"
 #include "filters/realtime_circular_buffer.h"
@@ -99,8 +98,8 @@ public:
 
 protected:
 
-  boost::scoped_ptr<RealtimeCircularBuffer<T > > input_buffer_; //The input sample history.
-  boost::scoped_ptr<RealtimeCircularBuffer<T > > output_buffer_; //The output sample history.
+  std::unique_ptr<RealtimeCircularBuffer<T > > input_buffer_; //The input sample history.
+  std::unique_ptr<RealtimeCircularBuffer<T > > output_buffer_; //The output sample history.
 
   T  temp_; //used for storage and preallocation
 
@@ -250,8 +249,8 @@ public:
 
 protected:
 
-  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > input_buffer_; //The input sample history.
-  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > output_buffer_; //The output sample history.
+  std::unique_ptr<RealtimeCircularBuffer<std::vector<T> > > input_buffer_; //The input sample history.
+  std::unique_ptr<RealtimeCircularBuffer<std::vector<T> > > output_buffer_; //The output sample history.
 
   std::vector<T>  temp_; //used for storage and preallocation
 

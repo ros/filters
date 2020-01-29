@@ -34,7 +34,7 @@
 #include <sstream>
 #include <cstdio>
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 #include "filters/filter_base.h"
 
@@ -114,7 +114,7 @@ public:
   
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
-  boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_;                       ///< Storage for data between updates
+  std::unique_ptr<RealtimeCircularBuffer<T > > data_storage_;                       ///< Storage for data between updates
   
   T temp;  //used for preallocation and copying from non vector source
 
@@ -198,7 +198,7 @@ public:
   
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
-  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_;                       ///< Storage for data between updates
+  std::unique_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_;                       ///< Storage for data between updates
   
   std::vector<T> temp;  //used for preallocation and copying from non vector source
 

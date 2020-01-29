@@ -34,7 +34,7 @@
 #include <cstring>
 #include <stdio.h>
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 #include "filters/filter_base.h"
 #include "ros/assert.h"
@@ -67,7 +67,7 @@ public:
   virtual bool update( const T & data_in, T& data_out);
   
 protected:
-  boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_; ///< Storage for data between updates
+  std::unique_ptr<RealtimeCircularBuffer<T > > data_storage_; ///< Storage for data between updates
   uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
   T temp_; /// Temporary storage
   uint32_t number_of_observations_;             ///< Number of observations over which to filter
@@ -150,7 +150,7 @@ public:
   virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
   
 protected:
-  boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_; ///< Storage for data between updates
+  std::unique_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_; ///< Storage for data between updates
   uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
 
   std::vector<T> temp;  //used for preallocation and copying from non vector source
