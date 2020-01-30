@@ -32,10 +32,10 @@
 
 #include "ros/ros.h"
 #include "filters/filter_base.h"
+#include <memory>
 #include <pluginlib/class_loader.h>
 #include <sstream>
 #include <vector>
-#include "boost/shared_ptr.hpp"
 
 namespace filters
 {
@@ -229,7 +229,7 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::FilterBase<T> > p(loader_.createInstance(config[i]["type"]));
+      std::shared_ptr<filters::FilterBase<T> > p(loader_.createInstance(config[i]["type"]));
       if (p.get() == NULL)
         return false;
       result = result &&  p.get()->configure(config[i]);    
@@ -249,7 +249,7 @@ public:
 
 private:
 
-  std::vector<boost::shared_ptr<filters::FilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
+  std::vector<std::shared_ptr<filters::FilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
 
   T buffer0_; ///<! A temporary intermediate buffer
   T buffer1_; ///<! A temporary intermediate buffer
@@ -466,7 +466,7 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::MultiChannelFilterBase<T> > p(loader_.createInstance(config[i]["type"]));
+      std::shared_ptr<filters::MultiChannelFilterBase<T> > p(loader_.createInstance(config[i]["type"]));
       if (p.get() == NULL)
         return false;
       result = result &&  p.get()->configure(size, config[i]);    
@@ -486,7 +486,7 @@ public:
 
 private:
 
-  std::vector<boost::shared_ptr<filters::MultiChannelFilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
+  std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
 
   std::vector<T> buffer0_; ///<! A temporary intermediate buffer
   std::vector<T> buffer1_; ///<! A temporary intermediate buffer
