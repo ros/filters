@@ -21,6 +21,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES mean params increment median transfer_function
   CATKIN_DEPENDS roslib roscpp rosconsole pluginlib
+  DEPENDS Boost
 )
 
 ##############################################################################
