@@ -35,6 +35,8 @@
 #include "ros/console.h"
 #include "ros/ros.h"
 
+#include "boost/scoped_ptr.hpp"
+#include <boost/algorithm/string.hpp>
 
 namespace filters
 {
