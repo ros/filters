@@ -29,9 +29,6 @@
 
 #include <ros/ros.h>
 #include <gtest/gtest.h>
-#ifndef _WIN32
-#include <sys/time.h>
-#endif
 #include <vector>
 #include "filters/transfer_function.h"
 
