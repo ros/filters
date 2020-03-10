@@ -2,6 +2,11 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Reduce dependency on boost (`#30 <https://github.com/ros/filters/issues/30>`_)
+* Contributors: Shane Loretz
+
 1.8.1 (2017-04-25)
 ------------------
 * Fix warning about string type
