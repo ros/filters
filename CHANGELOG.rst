@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.0 (2020-03-10)
+------------------
 * Reduce dependency on boost (`#30 <https://github.com/ros/filters/issues/30>`_)
 * Contributors: Shane Loretz
 
