@@ -29,18 +29,42 @@
 
 #include <gtest/gtest.h>
 #include <sys/time.h>
+#include <rclcpp/rclcpp.hpp>
 #include "filters/mean.hpp"
+
+class MeanFilterTest : public ::testing::Test {
+protected:
+  MeanFilterTest()
+  {
+    rclcpp::init(0, nullptr);
+    rclcpp::NodeOptions options;
+    options.parameter_overrides().emplace_back("dummy.prefix.number_of_observations", 5);
+    node_ = std::make_shared<rclcpp::Node>("mean_filter_test", options);
+  }
+
+  ~MeanFilterTest() override
+  {
+    node_.reset();
+    rclcpp::shutdown();
+  }
+
+  rclcpp::Node::SharedPtr node_;
+};
 
 using namespace filters ;
 
-TEST(MultiChannelMeanFilterDouble, ConfirmIdentityNRows)
+TEST_F(MeanFilterTest, MultiChannelConfirmIdentityNRows)
 {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
-  MultiChannelFilterBase<double > * filter = new MultiChannelMeanFilter<double>  ();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMeanFilterDouble5"));
+  std::shared_ptr<MultiChannelFilterBase<double>> filter =
+    std::make_shared<MultiChannelMeanFilter<double>>();
+  ASSERT_TRUE(
+    filter->configure(
+      rows, "dummy.prefix", "MultiChannelMeanFilterDouble5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
   double input1[] = {1,2,3,4,5};
   double input1a[] = {1,2,3,4,5};
@@ -59,14 +83,18 @@ TEST(MultiChannelMeanFilterDouble, ConfirmIdentityNRows)
   }
 }
 
-TEST(MultiChannelMeanFilterDouble, ThreeRows)
+TEST_F(MeanFilterTest, MultiChannelThreeRows)
 {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
-  MultiChannelFilterBase<double > * filter = new MultiChannelMeanFilter<double> ();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMeanFilterDouble5"));
+  std::shared_ptr<MultiChannelFilterBase<double>> filter =
+    std::make_shared<MultiChannelMeanFilter<double>>();
+  ASSERT_TRUE(
+    filter->configure(
+      rows, "dummy.prefix", "MultiChannelMeanFilterDouble5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
   double input1[] = {0,1,2,3,4};
   std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
@@ -89,14 +117,18 @@ TEST(MultiChannelMeanFilterDouble, ThreeRows)
 
 }
 
-TEST(MeanFilterDouble, ConfirmIdentityNRows)
+TEST_F(MeanFilterTest, ConfirmIdentityNRows)
 {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
-  FilterBase<double > * filter = new MeanFilter<double>  ();
-  EXPECT_TRUE(filter->configure("MeanFilterDouble5"));
+  std::shared_ptr<FilterBase<double>> filter =
+    std::make_shared<MeanFilter<double>>();
+  ASSERT_TRUE(
+    filter->configure(
+      "dummy.prefix", "MeanFilterDouble5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
   double input = 1;
   double output = 0;
@@ -113,12 +145,16 @@ TEST(MeanFilterDouble, ConfirmIdentityNRows)
   }
 }
 
-TEST(MeanFilterDouble, ThreeRows)
+TEST_F(MeanFilterTest, ThreeRows)
 {
   double epsilon = 1e-6;
   
-  FilterBase<double > * filter = new MeanFilter<double> ();
-  EXPECT_TRUE(filter->configure("MeanFilterDouble5"));
+  std::shared_ptr<FilterBase<double>> filter =
+    std::make_shared<MeanFilter<double>>();
+  ASSERT_TRUE(
+    filter->configure(
+      "dummy.prefix", "MeanFilterDouble5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
   double input1 = 0;
   double input2 =1;
@@ -134,11 +170,4 @@ TEST(MeanFilterDouble, ThreeRows)
   EXPECT_NEAR((input1 + input2 + input3)/3, output, epsilon);
 
 
-}
-
-
-int main(int argc, char **argv){
-  testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_mean");
-  return RUN_ALL_TESTS();
 }

@@ -1,28 +1,23 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(filters)
+
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 ##############################################################################
 # Find dependencies
 ##############################################################################
 
-find_package(catkin REQUIRED COMPONENTS pluginlib roslib roscpp rosconsole)
+find_package(ament_cmake REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(Boost REQUIRED)
-
-include_directories(
-    include
-    ${catkin_INCLUDE_DIRS}
-)
-
-##############################################################################
-# Define package
-##############################################################################
-
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES mean params increment median transfer_function
-  CATKIN_DEPENDS roslib roscpp rosconsole pluginlib
-  DEPENDS Boost
-)
 
 ##############################################################################
 # Build
@@ -34,57 +29,114 @@ target_include_directories(real_time_circular_buffer INTERFACE
   ${Boost_INCLUDE_DIRS})
 
 # Plugins
-add_library(mean src/mean.cpp)
+add_library(mean SHARED src/mean.cpp)
 target_link_libraries(mean
-  ${catkin_LIBRARIES}
   real_time_circular_buffer)
-add_library(params src/test_params.cpp)
-target_link_libraries(params
-  ${catkin_LIBRARIES}
-  real_time_circular_buffer)
-add_library(increment src/increment.cpp)
-target_link_libraries(increment
-  ${catkin_LIBRARIES}
-  real_time_circular_buffer)
-add_library(median src/median.cpp)
-target_link_libraries(median
-  ${catkin_LIBRARIES}
-  real_time_circular_buffer)
-add_library(transfer_function src/transfer_function.cpp)
-target_link_libraries(transfer_function
-  ${catkin_LIBRARIES}
-  real_time_circular_buffer)
+ament_target_dependencies(mean
+  "rclcpp"
+  "pluginlib"
+)
 
-if(CATKIN_ENABLE_TESTING)
-  find_package(rostest)
+add_library(params SHARED src/test_params.cpp)
+target_link_libraries(params
+  real_time_circular_buffer)
+ament_target_dependencies(params
+  "rclcpp"
+  "pluginlib"
+)
+
+add_library(increment SHARED src/increment.cpp)
+target_link_libraries(increment
+  real_time_circular_buffer)
+ament_target_dependencies(increment
+  "rclcpp"
+  "pluginlib"
+)
+
+add_library(median SHARED src/median.cpp)
+target_link_libraries(median
+  real_time_circular_buffer)
+ament_target_dependencies(median
+  "rclcpp"
+  "pluginlib"
+)
+
+add_library(transfer_function SHARED src/transfer_function.cpp)
+target_link_libraries(transfer_function
+  real_time_circular_buffer)
+ament_target_dependencies(transfer_function
+  "rclcpp"
+  "pluginlib"
+)
+
+if(BUILD_TESTING)
+  # TODO(sloretz) this disables ROS 2 style tests; reenable and fix style
+  set(ament_cmake_copyright_FOUND TRUE)
+  set(ament_cmake_cpplint_FOUND TRUE)
+  set(ament_cmake_uncrustify_FOUND TRUE)
+
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
   # Test median filter
-  add_executable(median_test EXCLUDE_FROM_ALL test/test_median.cpp )
-  target_link_libraries(median_test median ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-  add_rostest(test/test_median.launch)
+  ament_add_gtest(median_test test/test_median.cpp)
+  target_link_libraries(median_test median)
 
   # Test transfer function filter
-  add_executable(transfer_function_test EXCLUDE_FROM_ALL test/test_transfer_function.cpp)
-  target_link_libraries(transfer_function_test transfer_function ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-  add_rostest(test/test_transfer_function.launch)
+  ament_add_gtest(transfer_function_test test/test_transfer_function.cpp)
+  target_link_libraries(transfer_function_test transfer_function)
 
   # Test mean filter
-  add_executable(mean_test EXCLUDE_FROM_ALL test/test_mean.cpp)
-  target_link_libraries(mean_test mean ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-  add_rostest(test/test_mean.launch)
+  ament_add_gtest(mean_test test/test_mean.cpp)
+  target_link_libraries(mean_test mean)
 
   # Test params filter
-  add_executable(params_test EXCLUDE_FROM_ALL test/test_params.cpp)
-  target_link_libraries(params_test params ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-  add_rostest(test/test_params.launch)
-
-  # Test plugin loading into filter chain
-  add_executable(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)
-  target_link_libraries(chain_test increment ${catkin_LIBRARIES} ${GTEST_LIBRARIES}) # Needed for OSX
-  add_rostest(test/test_chain.launch)
+  ament_add_gtest(params_test test/test_params.cpp)
+  target_link_libraries(params_test params)
 
   # Test realtime safe buffer class
-  catkin_add_gtest(realtime_buffer_test EXCLUDE_FROM_ALL test/test_realtime_circular_buffer.cpp)
+  ament_add_gtest(realtime_buffer_test test/test_realtime_circular_buffer.cpp)
   target_link_libraries(realtime_buffer_test real_time_circular_buffer)
+
+  # Pluginlib specific testing for filter chain
+  set(test_prefix "${CMAKE_CURRENT_BINARY_DIR}/pluginlib_test_prefix")
+  set(test_package_name "${PROJECT_NAME}")
+  set(test_plugins_xml "default_plugins.xml")
+  set(test_package_xml "package.xml")
+  set(test_plugin_targets mean increment median transfer_function)
+
+  # Write the necessary files to detect a package with pluginlib plugins
+  file(COPY "${test_plugins_xml}" DESTINATION "${test_prefix}/share/${test_package_name}/")
+  configure_file("${test_package_xml}" "${test_prefix}/share/${test_package_name}/package.xml" COPYONLY)
+  file(WRITE "${test_prefix}/share/ament_index/resource_index/${test_package_name}__pluginlib__plugin/pluginlib"
+    "share/${test_package_name}/${test_plugins_xml}\n")
+  file(WRITE "${test_prefix}/share/ament_index/resource_index/packages/${test_package_name}" "")
+
+  # Copy library files to test folder so they can be loaded
+  foreach(test_plugin_target IN LISTS test_plugin_targets)
+    set(_resource "$<TARGET_FILE:${test_plugin_target}>")
+    set(_output "${test_prefix}/lib/$<TARGET_FILE_NAME:${test_plugin_target}>")
+    add_custom_command(TARGET ${test_plugin_target}
+      COMMENT "Copying target ${test_plugin_target} for testing"
+      DEPENDS "${_resource}"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${_resource}"
+        "${_output}"
+    )
+    add_custom_target("copy_${test_plugin_target}_for_testing" DEPENDS "${test_plugin_target}")
+  endforeach()
+
+  # Test plugin loading into filter chain
+  ament_add_gtest(chain_test test/test_chain.cpp
+    ENV "AMENT_PREFIX_PATH=${test_prefix}")
+  target_include_directories(chain_test PRIVATE include)
+  foreach(test_plugin_target IN LISTS test_plugin_targets)
+    add_dependencies(chain_test "copy_${test_plugin_target}_for_testing")
+  endforeach()
+  ament_target_dependencies(chain_test
+    "rclcpp"
+    "pluginlib"
+  )
 endif()
 
 ##############################################################################
@@ -92,23 +144,16 @@ endif()
 ##############################################################################
 
 # Install libraries
-install(TARGETS mean params increment median transfer_function
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+install(
+  TARGETS mean increment median transfer_function
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 # Install headers
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+install(DIRECTORY include/
+  DESTINATION include)
 
-# Install plugins xml file
-install(FILES default_plugins.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
-if(CATKIN_ENABLE_TESTING)
-  if(TARGET tests)
-  add_dependencies(tests median_test transfer_function_test mean_test params_test chain_test)
-  endif()
-endif()
+# Instal pluginlib xml
+pluginlib_export_plugin_description_file(filters "default_plugins.xml")
