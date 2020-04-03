@@ -28,7 +28,7 @@
  */
 
 #include "filters/increment.hpp"
-#include "pluginlib/class_list_macros.h"
+#include "pluginlib/class_list_macros.hpp"
 
 
 

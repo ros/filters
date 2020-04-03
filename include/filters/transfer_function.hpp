@@ -111,12 +111,12 @@ protected:
 template <typename T>
 SingleChannelTransferFunctionFilter<T>::SingleChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 SingleChannelTransferFunctionFilter<T>::~SingleChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 bool SingleChannelTransferFunctionFilter<T>::configure()
@@ -125,14 +125,18 @@ bool SingleChannelTransferFunctionFilter<T>::configure()
   // Parse a and b into a std::vector<double>.
   if (!FilterBase<T>::getParam("a", a_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", FilterBase<T>::getName().c_str());
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "TransferFunctionFilter, \"%s\", params has no attribute a.", FilterBase<T>::getName().c_str());
     return false;
   }///\todo check length
 
 
   if (!FilterBase<T>::getParam("b", b_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", FilterBase<T>::getName().c_str());
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "TransferFunctionFilter, \"%s\", params has no attribute b.", FilterBase<T>::getName().c_str());
     return false;
   }///\todo check length
 
@@ -143,7 +147,7 @@ bool SingleChannelTransferFunctionFilter<T>::configure()
   // Prevent divide by zero while normalizing coeffs.
   if ( a_[0] == 0)
   {
-    ROS_ERROR("a[0] can not equal 0.");
+    RCLCPP_ERROR(this->logging_interface_->get_logger(), "a[0] can not equal 0.");
     return false;
   }
 
@@ -162,7 +166,7 @@ bool SingleChannelTransferFunctionFilter<T>::configure()
   }
 
   return true;
-};
+}
 
 
 template <typename T>
@@ -189,7 +193,7 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T  & data_in, T & data
   output_buffer_->push_front(data_out);
 
   return true;
-};
+}
 
 
 
@@ -262,12 +266,12 @@ protected:
 template <typename T>
 MultiChannelTransferFunctionFilter<T>::MultiChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 MultiChannelTransferFunctionFilter<T>::~MultiChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 bool MultiChannelTransferFunctionFilter<T>::configure()
@@ -275,14 +279,18 @@ bool MultiChannelTransferFunctionFilter<T>::configure()
   // Parse a and b into a std::vector<double>.
   if (!FilterBase<T>::getParam("a", a_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute a.", FilterBase<T>::getName().c_str());
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "TransferFunctionFilter, \"%s\", params has no attribute a.", FilterBase<T>::getName().c_str());
     return false;
   }///\todo check length
 
 
   if (!FilterBase<T>::getParam("b", b_))
   {
-    ROS_ERROR("TransferFunctionFilter, \"%s\", params has no attribute b.", FilterBase<T>::getName().c_str());
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "TransferFunctionFilter, \"%s\", params has no attribute b.", FilterBase<T>::getName().c_str());
     return false;
   }///\todo check length
 
@@ -294,7 +302,7 @@ bool MultiChannelTransferFunctionFilter<T>::configure()
   // Prevent divide by zero while normalizing coeffs.
   if ( a_[0] == 0)
   {
-    ROS_ERROR("a[0] can not equal 0.");
+    RCLCPP_ERROR(this->logging_interface_->get_logger(), "a[0] can not equal 0.");
     return false;
   }
 
@@ -313,7 +321,7 @@ bool MultiChannelTransferFunctionFilter<T>::configure()
   }
 
   return true;
-};
+}
 
 
 template <typename T>
@@ -323,7 +331,9 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
   // Ensure the correct number of inputs
   if (data_in.size() != this->number_of_channels_ || data_out.size() != this->number_of_channels_ )
   {
-    ROS_ERROR("Number of channels is %d, but data_in.size() = %d and data_out.size() = %d.  They must match", this->number_of_channels_, (int)data_in.size(), (int)data_out.size());
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "Number of channels is %d, but data_in.size() = %d and data_out.size() = %d.  They must match", this->number_of_channels_, (int)data_in.size(), (int)data_out.size());
     return false;
   }
   // Copy data to prevent mutation if in and out are the same ptr
@@ -345,7 +355,7 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
   input_buffer_->push_front(temp_);
   output_buffer_->push_front(data_out);
   return true;
-};
+}
 
 }
 

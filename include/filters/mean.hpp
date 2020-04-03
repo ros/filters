@@ -37,8 +37,6 @@
 #include <memory>
 
 #include "filters/filter_base.hpp"
-#include "ros/assert.h"
-
 #include "filters/realtime_circular_buffer.hpp"
 
 namespace filters
@@ -87,7 +85,9 @@ bool MeanFilter<T>::configure()
   
   if (!FilterBase<T>::getParam(std::string("number_of_observations"), number_of_observations_))
   {
-    ROS_ERROR("MeanFilter did not find param number_of_observations");
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "MeanFilter did not find param number_of_observations");
     return false;
   }
   
@@ -125,7 +125,7 @@ bool MeanFilter<T>::update(const T & data_in, T& data_out)
   
 
   return true;
-};
+}
 
 /** \brief A mean filter which works on double arrays.
  *
@@ -139,7 +139,7 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~MultiChannelMeanFilter();
+  virtual ~MultiChannelMeanFilter();
 
   virtual bool configure();
 
@@ -175,7 +175,9 @@ bool MultiChannelMeanFilter<T>::configure()
   
   if (!FilterBase<T>::getParam("number_of_observations", number_of_observations_))
   {
-    ROS_ERROR("MultiChannelMeanFilter did not find param number_of_observations");
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "MultiChannelMeanFilter did not find param number_of_observations");
     return false;
   }
   
@@ -196,7 +198,9 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
 {
   if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_)
   {
-    ROS_ERROR("Configured with wrong size config:%d in:%d out:%d", number_of_channels_, (int)data_in.size(), (int)data_out.size());
+    RCLCPP_ERROR(
+      this->logging_interface_->get_logger(),
+      "Configured with wrong size config:%d in:%d out:%d", number_of_channels_, (int)data_in.size(), (int)data_out.size());
     return false;
   }
 
@@ -223,7 +227,7 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
   }
 
   return true;
-};
+}
 
 }
 #endif// FILTERS_MEAN_HPP_

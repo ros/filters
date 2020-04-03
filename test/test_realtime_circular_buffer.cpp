@@ -57,9 +57,3 @@ TEST(RealtimeCircularBuffer, InitializationVector)
       EXPECT_EQ(vec_buf[i][j], j);
   }
 }
-
-
-int main(int argc, char **argv){
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

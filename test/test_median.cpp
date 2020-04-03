@@ -32,16 +32,39 @@
 
 #include "filters/median.hpp"
 
+class MedianFilterTest : public ::testing::Test {
+protected:
+  MedianFilterTest()
+  {
+    rclcpp::init(0, nullptr);
+    rclcpp::NodeOptions options;
+    options.parameter_overrides().emplace_back("dummy.prefix.number_of_observations", 5);
+    node_ = std::make_shared<rclcpp::Node>("median_filter_test", options);
+  }
+
+  ~MedianFilterTest() override
+  {
+    node_.reset();
+    rclcpp::shutdown();
+  }
+
+  rclcpp::Node::SharedPtr node_;
+};
+
 using namespace filters ;
 
-TEST(MultiChannelMedianFilterDouble, ConfirmIdentityNRows)
+TEST_F(MedianFilterTest, MultiChannelDoubleConfirmIdentityNRows)
 {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
-  MultiChannelFilterBase<double > * filter = new filters::MultiChannelMedianFilter<double>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterDouble5"));
+  std::shared_ptr<MultiChannelFilterBase<double>> filter =
+    std::make_shared<MultiChannelMedianFilter<double>>();
+  ASSERT_TRUE(
+    filter->configure(
+      rows, "dummy.prefix", "MultiChannelMedianFilterDouble5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
   
 
   double input1[] = {1,2,3,4,5};
@@ -58,18 +81,20 @@ TEST(MultiChannelMedianFilterDouble, ConfirmIdentityNRows)
        EXPECT_NEAR(input1[j], v1a[j], epsilon);
     }
   }
-
-  delete filter;
 }
 
-TEST(MultiChannelMedianFilterDouble, ThreeRows)
+TEST_F(MedianFilterTest, MultiChannelDoubleThreeRows)
 {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
 
-  MultiChannelFilterBase<double > * filter = new MultiChannelMedianFilter<double>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterDouble5" ));
+  std::shared_ptr<MultiChannelFilterBase<double>> filter =
+    std::make_shared<MultiChannelMedianFilter<double>>();
+  ASSERT_TRUE(
+    filter->configure(
+      rows, "dummy.prefix", "MultiChannelMedianFilterDouble5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
   
   double input1[] = {0,1,2,3,4};
   std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
@@ -91,14 +116,18 @@ TEST(MultiChannelMedianFilterDouble, ThreeRows)
 
 }
 
-TEST(MultiChannelMedianFilterFloat, ConfirmIdentityNRows)
+TEST_F(MedianFilterTest, MultiChannelFloatConfirmIdentityNRows)
 {
   float epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
-  MultiChannelFilterBase<float > * filter = new filters::MultiChannelMedianFilter<float>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterFloat5" ));
+  std::shared_ptr<MultiChannelFilterBase<float>> filter =
+    std::make_shared<MultiChannelMedianFilter<float>>();
+  ASSERT_TRUE(
+    filter->configure(
+      rows, "dummy.prefix", "MultiChannelMedianFilterFloat5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
   float input1[] = {1,2,3,4,5};
   float input1a[] = {1,2,3,4,5};
@@ -115,17 +144,20 @@ TEST(MultiChannelMedianFilterFloat, ConfirmIdentityNRows)
     }
   }
 
-  delete filter;
 }
 
-TEST(MultiChannelMedianFilterFloat, ThreeRows)
+TEST_F(MedianFilterTest, MultiChannelFloatThreeRows)
 {
   float epsilon = 1e-6;
   int length = 5;
   int rows = 5;
   
-  MultiChannelFilterBase<float > * filter = new MultiChannelMedianFilter<float>();
-  EXPECT_TRUE(filter->configure(rows, "MultiChannelMedianFilterFloat5"));
+  std::shared_ptr<MultiChannelFilterBase<float>> filter =
+    std::make_shared<MultiChannelMedianFilter<float>>();
+  ASSERT_TRUE(
+    filter->configure(
+      rows, "dummy.prefix", "MultiChannelMedianFilterFloat5",
+      node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
   
   float input1[] = {0,1,2,3,4};
   std::vector<float> v1 (input1, input1 + sizeof(input1) / sizeof(float));
@@ -145,11 +177,4 @@ TEST(MultiChannelMedianFilterFloat, ThreeRows)
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
 
-}
-
-
-int main(int argc, char **argv){
-  testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_median");
-  return RUN_ALL_TESTS();
 }
