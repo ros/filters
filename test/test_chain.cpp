@@ -168,22 +168,6 @@ TEST(MultiChannelFilterChain, TransferFunction){
   }
 }
 
-/*
-TEST(MultiChannelFilterChain, OverlappingNames){
-  filters::MultiChannelFilterChain<double> chain("double");
-
-
-  std::string bad_xml = "<filters> <filter type=\"MultiChannelMeanFilterDouble\" name=\"mean_test\"> <params number_of_observations=\"5\"/></filter><filter type=\"MedianFilter\" name=\"mean_test\"> <params number_of_observations=\"5\"/></filter></filters>";
-
-  TiXmlDocument chain_def = TiXmlDocument();
-  chain_def.Parse(bad_xml.c_str());
-  TiXmlElement * config = chain_def.RootElement();
-
-  EXPECT_FALSE(chain.configure(5, config));
-
-}
-*/
-
 TEST(FilterChain, ReconfiguringChain){
   filters::FilterChain<int> chain("int");
   
@@ -225,37 +209,7 @@ TEST(FilterChain, TenIncrementChains){
   chain.clear();
     
 }
-/*
-TEST(MultiChannelFilterChain, ReconfiguringMultiChannelChain){
-  filters::MultiChannelFilterChain<int> chain("int");
-  
-  int v1 = 1;
-  int v1a = 9;
 
-  EXPECT_TRUE(chain.configure("OneMultiChannelIncrements")); 
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(2, v1a);
-  chain.clear();
-  
-  EXPECT_TRUE(chain.configure("TwoMultiChannelIncrements")); 
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(3, v1a);
-  chain.clear();
-  
-}
-
-TEST(MultiChannelFilterChain, ThreeMultiChannelIncrementChains){
-  filters::MultiChannelFilterChain<int> chain("int");  
-  int v1 = 1;
-  int v1a = 9;
-
-  EXPECT_TRUE(chain.configure("ThreeMultiChannelIncrements")); 
-  EXPECT_TRUE(chain.update(v1, v1a));
-  EXPECT_EQ(4, v1a);
-  chain.clear();
-    
-}
-*/
 TEST(MultiChannelFilterChain, TenMultiChannelIncrementChains){
   filters::MultiChannelFilterChain<int> chain("int");  
   std::vector<int> v1;
