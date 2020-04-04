@@ -141,8 +141,6 @@ MultiChannelIncrementFilter<T>::~MultiChannelIncrementFilter()
 template <typename T>
 bool MultiChannelIncrementFilter<T>::update(const std::vector<T> & data_in, std::vector<T>& data_out)
 {
-  //  ROS_ASSERT(data_in.size() == width_);
-  //ROS_ASSERT(data_out.size() == width_);
   if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_)
   {
     ROS_ERROR("Configured with wrong size config:%d in:%d out:%d", number_of_channels_, (int)data_in.size(), (int)data_out.size());
