@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "filters/increment.h"
+#include "filters/increment.hpp"
 #include "pluginlib/class_list_macros.h"
 
 

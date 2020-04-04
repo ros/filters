@@ -36,9 +36,9 @@
 
 #include <memory>
 
-#include "filters/filter_base.h"
+#include "filters/filter_base.hpp"
 
-#include "filters/realtime_circular_buffer.h"
+#include "filters/realtime_circular_buffer.hpp"
 
 
 /*********************************************************************/

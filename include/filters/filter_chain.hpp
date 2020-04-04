@@ -31,7 +31,7 @@
 #define FILTERS_FILTER_CHAIN_H_
 
 #include "ros/ros.h"
-#include "filters/filter_base.h"
+#include "filters/filter_base.hpp"
 #include <pluginlib/class_loader.h>
 #include <sstream>
 #include <vector>

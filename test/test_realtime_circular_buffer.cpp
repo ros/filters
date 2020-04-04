@@ -31,7 +31,7 @@
 #include <sys/time.h>
 
 #include <vector>
-#include "filters/realtime_circular_buffer.h"
+#include "filters/realtime_circular_buffer.hpp"
 
 using namespace filters ;
 

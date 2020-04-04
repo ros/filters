@@ -34,7 +34,7 @@
 #include <cstring>
 #include <stdio.h>
 
-#include "filters/filter_base.h"
+#include "filters/filter_base.hpp"
 #include "ros/assert.h"
 
 
