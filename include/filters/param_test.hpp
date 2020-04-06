@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_PARAM_TEST
-#define FILTERS_PARAM_TEST
+#ifndef FILTERS_PARAM_TEST_HPP_
+#define FILTERS_PARAM_TEST_HPP_
 
 #include <stdint.h>
 #include <cstring>

@@ -29,8 +29,8 @@
 
 // Original version: Melonee Wise <mwise@willowgarage.com>
 
-#ifndef FILTERS_TRANSFER_FUNCTION_H_
-#define FILTERS_TRANSFER_FUNCTION_H_
+#ifndef FILTERS_TRANSFER_FUNCTION_HPP_
+#define FILTERS_TRANSFER_FUNCTION_HPP_
 
 #include <stdint.h>
 #include <math.h>
@@ -349,4 +349,4 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
 
 }
 
-#endif //#ifndef FILTERS_TRAjNSFER_FUNCTION_H_
+#endif //#ifndef FILTERS_TRAjNSFER_FUNCTION_HPP_

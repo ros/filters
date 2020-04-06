@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_FILTER_BASE_H_
-#define FILTERS_FILTER_BASE_H_
+#ifndef FILTERS_FILTER_BASE_HPP_
+#define FILTERS_FILTER_BASE_HPP_
 
 #include <typeinfo>
 #include "ros/assert.h"
@@ -454,4 +454,4 @@ protected:
 };
 
 }
-#endif //#ifndef FILTERS_FILTER_BASE_H_
+#endif //#ifndef FILTERS_FILTER_BASE_HPP_

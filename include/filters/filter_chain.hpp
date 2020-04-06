@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_FILTER_CHAIN_H_
-#define FILTERS_FILTER_CHAIN_H_
+#ifndef FILTERS_FILTER_CHAIN_HPP_
+#define FILTERS_FILTER_CHAIN_HPP_
 
 #include "ros/ros.h"
 #include "filters/filter_base.hpp"
@@ -496,4 +496,4 @@ private:
 
 };
 
-#endif //#ifndef FILTERS_FILTER_CHAIN_H_
+#endif //#ifndef FILTERS_FILTER_CHAIN_HPP_

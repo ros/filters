@@ -29,8 +29,8 @@
 
 ///\author Tully Foote tfoote@willowgarage.com
 
-#ifndef FILTERS_REALTIME_CIRCULAR_BUFFER_H_
-#define FILTERS_REALTIME_CIRCULAR_BUFFER_H_
+#ifndef FILTERS_REALTIME_CIRCULAR_BUFFER_HPP_
+#define FILTERS_REALTIME_CIRCULAR_BUFFER_HPP_
 
 #include <stdint.h>
 #include <vector>
@@ -103,4 +103,4 @@ private:
   boost::circular_buffer<T> cb_;
 };
 } //namespace filters
-#endif //#ifndef REALTIME_CIRCULAR_BUFFER_H_
+#endif //#ifndef REALTIME_CIRCULAR_BUFFER_HPP_

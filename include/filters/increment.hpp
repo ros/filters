@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_MEAN_H
-#define FILTERS_MEAN_H
+#ifndef FILTERS_MEAN_HPP_
+#define FILTERS_MEAN_HPP_
 
 #include <stdint.h>
 #include <cstring>
@@ -158,4 +158,4 @@ bool MultiChannelIncrementFilter<T>::update(const std::vector<T> & data_in, std:
 };
 
 }
-#endif// FILTERS_INCREMENT_H
+#endif// FILTERS_INCREMENT_HPP_
