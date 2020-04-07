@@ -29,7 +29,7 @@
 
 #include <gtest/gtest.h>
 #include <sys/time.h>
-#include "filters/mean.h"
+#include "filters/mean.hpp"
 
 using namespace filters ;
 

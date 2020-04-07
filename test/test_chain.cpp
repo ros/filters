@@ -28,7 +28,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "filters/filter_chain.h"
+#include "filters/filter_chain.hpp"
 
 
 

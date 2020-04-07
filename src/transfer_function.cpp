@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "filters/transfer_function.h"
+#include "filters/transfer_function.hpp"
 #include "pluginlib/class_list_macros.h"
 
 PLUGINLIB_EXPORT_CLASS(filters::SingleChannelTransferFunctionFilter<double>, filters::FilterBase<double>)

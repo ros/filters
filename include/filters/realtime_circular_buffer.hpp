@@ -27,13 +27,80 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "filters/mean.hpp"
-#include "pluginlib/class_list_macros.h"
+///\author Tully Foote tfoote@willowgarage.com
 
+#ifndef FILTERS_REALTIME_CIRCULAR_BUFFER_HPP_
+#define FILTERS_REALTIME_CIRCULAR_BUFFER_HPP_
 
+#include <stdint.h>
+#include <vector>
 
-PLUGINLIB_EXPORT_CLASS(filters::MeanFilter<double>, filters::FilterBase<double>)
-PLUGINLIB_EXPORT_CLASS(filters::MeanFilter<float>, filters::FilterBase<float>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMeanFilter<double>, filters::MultiChannelFilterBase<double>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMeanFilter<float>, filters::MultiChannelFilterBase<float>)
+#include <algorithm>
+#include <boost/circular_buffer.hpp>
 
+namespace filters
+{
+
+/** \brief A realtime safe circular (ring) buffer.
+ */
+template <typename T>
+class RealtimeCircularBuffer
+{
+private:
+  RealtimeCircularBuffer();
+
+public:
+  RealtimeCircularBuffer(int size, const T& default_val):
+    counter_(0), cb_(size)
+  {
+    for (unsigned int i = 0; i < cb_.capacity(); i++)
+    {
+      cb_.push_back(default_val);
+    }
+  };
+
+  void push_back(const T& item)
+  {
+    if (cb_.capacity() == 0) return;
+
+    if ( counter_ < cb_.size()) 
+    {
+      cb_[counter_] = item; 
+    }
+    else 
+      cb_.push_back(item);
+    counter_ ++;
+  };
+  
+  void push_front(const T& item)
+  {
+    if (cb_.capacity() == 0) return;
+    cb_.push_front(item);
+    counter_ ++;
+  };
+  
+  void clear() { counter_ = 0;};
+
+  void set_capacity(unsigned int order, const T& value);
+  
+  T& front(){return cb_.front();};
+  T& back()
+  {
+    if (counter_ < cb_.size()) 
+      return cb_[counter_]; 
+    else 
+      return cb_.back();
+  };
+  
+  unsigned int size(){  return std::min(counter_, (unsigned int)cb_.size());};
+  bool empty(){return cb_.empty();};
+  T& at(size_t index){return cb_.at(index);};
+  T& operator[](size_t index){return cb_[index];}
+private:
+
+  unsigned int counter_; //<! special counter to keep track of first N times through
+
+  boost::circular_buffer<T> cb_;
+};
+} //namespace filters
+#endif //#ifndef REALTIME_CIRCULAR_BUFFER_HPP_

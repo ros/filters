@@ -1,19 +1,21 @@
 /*
- * Copyright (c) 2010, Willow Garage, Inc.
+ * Software License Agreement (BSD License)
+ *
+ * Copyright (c) 2020, Open Source Robotics Foundation, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holders nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,72 +29,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_PARAM_TEST
-#define FILTERS_PARAM_TEST
+#ifndef FILTERS__PARAM_TEST_H_
+#define FILTERS__PARAM_TEST_H_
 
-#include <stdint.h>
-#include <cstring>
-#include <stdio.h>
-
-#include "filters/filter_base.h"
-#include "ros/assert.h"
-
-
-namespace filters
-{
-
-/** \brief A mean filter which works on doubles.
- *
- */
-template <typename T>
-class ParamTest: public FilterBase <T>
-{
-public:
-  /** \brief Construct the filter with the expected width and height */
-  ParamTest();
-
-  /** \brief Destructor to clean up
-   */
-  ~ParamTest();
-
-  virtual bool configure();
-
-  /** \brief Update the filter and return the data seperately
-   * \param data_in T array with length width
-   * \param data_out T array with length width
-   */
-  virtual bool update( const T & data_in, T& data_out);
-  
-protected:
-  
-};
-
-
-template <typename T>
-ParamTest<T>::ParamTest()
-{
-}
-
-template <typename T>
-bool ParamTest<T>::configure()
-{
-  return true;
-}
-
-template <typename T>
-ParamTest<T>::~ParamTest()
-{
-}
-
-
-template <typename T>
-bool ParamTest<T>::update(const T & data_in, T& data_out)
-{
-  T temp;
-  this->getParam("key", temp);
-  data_out = temp;
-  return true;
-};
-
-}
+#ifdef _MSC_VER
+#pragma message("Including header <filters/param_test.h> is deprecated,")
+#pragma message("include <filters/param_test.hpp> instead.")
+#else
+// *INDENT-OFF* (prevent uncrustify from adding indention below)
+#warning Including header <filters/param_test.h> is deprecated, \
+include <filters/param_test.hpp> instead.
 #endif
+
+#include "./param_test.hpp"
+
+#endif  // FILTERS__PARAM_TEST_H_

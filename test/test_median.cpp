@@ -30,7 +30,7 @@
 #include <gtest/gtest.h>
 #include <sys/time.h>
 
-#include "filters/median.h"
+#include "filters/median.hpp"
 
 using namespace filters ;
 

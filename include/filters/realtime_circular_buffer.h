@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Software License Agreement (BSD License)
+ *
+ * Copyright (c) 2020, Open Source Robotics Foundation, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +12,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *     * Neither the name of the copyright holders nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
  *
@@ -27,80 +29,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-///\author Tully Foote tfoote@willowgarage.com
+#ifndef FILTERS__REALTIME_CIRCULAR_BUFFER_H_
+#define FILTERS__REALTIME_CIRCULAR_BUFFER_H_
 
-#ifndef FILTERS_REALTIME_CIRCULAR_BUFFER_H_
-#define FILTERS_REALTIME_CIRCULAR_BUFFER_H_
+#ifdef _MSC_VER
+#pragma message("Including header <filters/realtime_circular_buffer.h> is deprecated,")
+#pragma message("include <filters/realtime_circular_buffer.hpp> instead.")
+#else
+// *INDENT-OFF* (prevent uncrustify from adding indention below)
+#warning Including header <filters/realtime_circular_buffer.h> is deprecated, \
+include <filters/realtime_circular_buffer.hpp> instead.
+#endif
 
-#include <stdint.h>
-#include <vector>
+#include "./realtime_circular_buffer.hpp"
 
-#include <algorithm>
-#include <boost/circular_buffer.hpp>
-
-namespace filters
-{
-
-/** \brief A realtime safe circular (ring) buffer.
- */
-template <typename T>
-class RealtimeCircularBuffer
-{
-private:
-  RealtimeCircularBuffer();
-
-public:
-  RealtimeCircularBuffer(int size, const T& default_val):
-    counter_(0), cb_(size)
-  {
-    for (unsigned int i = 0; i < cb_.capacity(); i++)
-    {
-      cb_.push_back(default_val);
-    }
-  };
-
-  void push_back(const T& item)
-  {
-    if (cb_.capacity() == 0) return;
-
-    if ( counter_ < cb_.size()) 
-    {
-      cb_[counter_] = item; 
-    }
-    else 
-      cb_.push_back(item);
-    counter_ ++;
-  };
-  
-  void push_front(const T& item)
-  {
-    if (cb_.capacity() == 0) return;
-    cb_.push_front(item);
-    counter_ ++;
-  };
-  
-  void clear() { counter_ = 0;};
-
-  void set_capacity(unsigned int order, const T& value);
-  
-  T& front(){return cb_.front();};
-  T& back()
-  {
-    if (counter_ < cb_.size()) 
-      return cb_[counter_]; 
-    else 
-      return cb_.back();
-  };
-  
-  unsigned int size(){  return std::min(counter_, (unsigned int)cb_.size());};
-  bool empty(){return cb_.empty();};
-  T& at(size_t index){return cb_.at(index);};
-  T& operator[](size_t index){return cb_[index];}
-private:
-
-  unsigned int counter_; //<! special counter to keep track of first N times through
-
-  boost::circular_buffer<T> cb_;
-};
-} //namespace filters
-#endif //#ifndef REALTIME_CIRCULAR_BUFFER_H_
+#endif  // FILTERS__REALTIME_CIRCULAR_BUFFER_H_

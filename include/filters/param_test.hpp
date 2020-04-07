@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2008, Willow Garage, Inc.
+ * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of the Willow Garage, Inc. nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,13 +27,72 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "filters/mean.hpp"
-#include "pluginlib/class_list_macros.h"
+#ifndef FILTERS_PARAM_TEST_HPP_
+#define FILTERS_PARAM_TEST_HPP_
+
+#include <stdint.h>
+#include <cstring>
+#include <stdio.h>
+
+#include "filters/filter_base.hpp"
+#include "ros/assert.h"
 
 
+namespace filters
+{
 
-PLUGINLIB_EXPORT_CLASS(filters::MeanFilter<double>, filters::FilterBase<double>)
-PLUGINLIB_EXPORT_CLASS(filters::MeanFilter<float>, filters::FilterBase<float>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMeanFilter<double>, filters::MultiChannelFilterBase<double>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMeanFilter<float>, filters::MultiChannelFilterBase<float>)
+/** \brief A mean filter which works on doubles.
+ *
+ */
+template <typename T>
+class ParamTest: public FilterBase <T>
+{
+public:
+  /** \brief Construct the filter with the expected width and height */
+  ParamTest();
 
+  /** \brief Destructor to clean up
+   */
+  ~ParamTest();
+
+  virtual bool configure();
+
+  /** \brief Update the filter and return the data seperately
+   * \param data_in T array with length width
+   * \param data_out T array with length width
+   */
+  virtual bool update( const T & data_in, T& data_out);
+  
+protected:
+  
+};
+
+
+template <typename T>
+ParamTest<T>::ParamTest()
+{
+}
+
+template <typename T>
+bool ParamTest<T>::configure()
+{
+  return true;
+}
+
+template <typename T>
+ParamTest<T>::~ParamTest()
+{
+}
+
+
+template <typename T>
+bool ParamTest<T>::update(const T & data_in, T& data_out)
+{
+  T temp;
+  this->getParam("key", temp);
+  data_out = temp;
+  return true;
+};
+
+}
+#endif
