@@ -157,3 +157,5 @@ install(DIRECTORY include/
 
 # Instal pluginlib xml
 pluginlib_export_plugin_description_file(filters "default_plugins.xml")
+
+ament_package()
