@@ -349,4 +349,4 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
 
 }
 
-#endif //#ifndef FILTERS_TRAjNSFER_FUNCTION_HPP_
+#endif //#ifndef FILTERS_TRANSFER_FUNCTION_HPP_
