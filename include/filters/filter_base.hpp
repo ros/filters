@@ -67,7 +67,7 @@ public:
         node_logger->get_logger(),
         "Filter %s already being reconfigured",
         filter_name_.c_str());
-    };
+    }
     if (!node_params) {
       throw std::runtime_error("Need a parameters interface to function.");
     }
