@@ -155,7 +155,7 @@ install(
 install(DIRECTORY include/
   DESTINATION include)
 
-# Instal pluginlib xml
+# Install pluginlib xml
 pluginlib_export_plugin_description_file(filters "default_plugins.xml")
 
 ament_package()
