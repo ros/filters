@@ -30,8 +30,13 @@
 #ifndef FILTERS_FILTER_BASE_HPP_
 #define FILTERS_FILTER_BASE_HPP_
 
+#include <string>
 #include <typeinfo>
-#include "rclcpp/rclcpp.hpp"
+#include <vector>
+
+#include <rcl_interfaces/msg/parameter_descriptor.hpp>
+#include <rcl_interfaces/msg/parameter_type.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 namespace filters
 {
