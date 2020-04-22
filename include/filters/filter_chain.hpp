@@ -31,10 +31,16 @@
 #define FILTERS_FILTER_CHAIN_HPP_
 
 #include "filters/filter_base.hpp"
-#include <pluginlib/class_loader.hpp>
+
 #include <algorithm>
 #include <sstream>
+#include <string>
 #include <vector>
+
+#include <pluginlib/class_loader.hpp>
+#include <rcl_interfaces/msg/parameter_descriptor.hpp>
+#include <rcl_interfaces/msg/parameter_type.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 namespace filters
 {
