@@ -33,40 +33,40 @@ add_library(mean SHARED src/mean.cpp)
 target_link_libraries(mean
   real_time_circular_buffer)
 ament_target_dependencies(mean
-  "rclcpp"
   "pluginlib"
+  "rclcpp"
 )
 
 add_library(params SHARED src/test_params.cpp)
 target_link_libraries(params
   real_time_circular_buffer)
 ament_target_dependencies(params
-  "rclcpp"
   "pluginlib"
+  "rclcpp"
 )
 
 add_library(increment SHARED src/increment.cpp)
 target_link_libraries(increment
   real_time_circular_buffer)
 ament_target_dependencies(increment
-  "rclcpp"
   "pluginlib"
+  "rclcpp"
 )
 
 add_library(median SHARED src/median.cpp)
 target_link_libraries(median
   real_time_circular_buffer)
 ament_target_dependencies(median
-  "rclcpp"
   "pluginlib"
+  "rclcpp"
 )
 
 add_library(transfer_function SHARED src/transfer_function.cpp)
 target_link_libraries(transfer_function
   real_time_circular_buffer)
 ament_target_dependencies(transfer_function
-  "rclcpp"
   "pluginlib"
+  "rclcpp"
 )
 
 if(BUILD_TESTING)
