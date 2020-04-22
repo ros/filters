@@ -124,7 +124,7 @@ private:
       desc.type = type;
       desc.read_only = true;
 
-      if (name.size() == 0u) {
+      if (name.empty()) {
         throw std::runtime_error("Parameter must have a name");
       }
 
