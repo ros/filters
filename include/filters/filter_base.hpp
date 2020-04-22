@@ -78,7 +78,6 @@ public:
     }
 
     configured_ = false;
-    bool retval = true;
 
     filter_name_ = filter_name;
     param_prefix_ = param_prefix;
@@ -92,9 +91,8 @@ public:
       }
     }
 
-    retval = retval && configure();
-    configured_ = retval;
-    return retval;
+    configured_ = configure();
+    return configured_;
   }
 
   /** \brief Update the filter and return the data seperately
