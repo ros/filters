@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_MEAN_HPP_
-#define FILTERS_MEAN_HPP_
+#ifndef FILTERS_INCREMENT_HPP_
+#define FILTERS_INCREMENT_HPP_
 
 #include <stdint.h>
 #include <cstring>
