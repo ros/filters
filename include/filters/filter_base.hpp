@@ -236,9 +236,6 @@ public:
    */
   virtual ~MultiChannelFilterBase() = default;
 
-  // Allow overloading with base class function
-  using FilterBase<T>::configure;
-  
   /** \brief Configure the filter from the parameter server 
    * \param number_of_channels How many parallel channels the filter will process
    * \param The parameter from which to read the configuration
@@ -253,7 +250,7 @@ public:
   {
     number_of_channels_ = number_of_channels;
 
-    return configure(param_prefix, filter_name, node_logger, node_params);
+    return FilterBase<T>::configure(param_prefix, filter_name, node_logger, node_params);
   };
 
   /** \brief Update the filter and return the data seperately
