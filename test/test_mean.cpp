@@ -28,11 +28,16 @@
  */
 
 #include <gtest/gtest.h>
-#include <sys/time.h>
-#include <rclcpp/rclcpp.hpp>
+
+#include <memory>
+#include <vector>
+
+#include "rclcpp/rclcpp.hpp"
+
 #include "filters/mean.hpp"
 
-class MeanFilterTest : public ::testing::Test {
+class MeanFilterTest : public ::testing::Test
+{
 protected:
   MeanFilterTest()
   {
@@ -51,33 +56,29 @@ protected:
   rclcpp::Node::SharedPtr node_;
 };
 
-using namespace filters ;
-
 TEST_F(MeanFilterTest, MultiChannelConfirmIdentityNRows)
 {
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-  
-  std::shared_ptr<MultiChannelFilterBase<double>> filter =
-    std::make_shared<MultiChannelMeanFilter<double>>();
+
+  std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
+    std::make_shared<filters::MultiChannelMeanFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       rows, "dummy.prefix", "MultiChannelMeanFilterDouble5",
       node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
-  double input1[] = {1,2,3,4,5};
-  double input1a[] = {1,2,3,4,5};
-  std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
-  std::vector<double> v1a (input1a, input1a + sizeof(input1a) / sizeof(double));
+  double input1[] = {1, 2, 3, 4, 5};
+  double input1a[] = {1, 2, 3, 4, 5};
+  std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
+  std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
 
-  for (int32_t i =0; i < rows*10; i++)
-  {
+  for (int32_t i = 0; i < rows * 10; i++) {
     EXPECT_TRUE(filter->update(v1, v1a));
 
-    for (int i = 1; i < length; i++)
-    {
+    for (int i = 1; i < length; i++) {
       EXPECT_NEAR(v1[i], v1a[i], epsilon);
     }
   }
@@ -88,33 +89,30 @@ TEST_F(MeanFilterTest, MultiChannelThreeRows)
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-  
-  std::shared_ptr<MultiChannelFilterBase<double>> filter =
-    std::make_shared<MultiChannelMeanFilter<double>>();
+
+  std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
+    std::make_shared<filters::MultiChannelMeanFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       rows, "dummy.prefix", "MultiChannelMeanFilterDouble5",
       node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
-  double input1[] = {0,1,2,3,4};
-  std::vector<double> v1 (input1, input1 + sizeof(input1) / sizeof(double));
-  double input2[] = {1,2,3,4,5};
-  std::vector<double> v2 (input2, input2 + sizeof(input2) / sizeof(double));
-  double input3[] = {2,3,4,5,6};
-  std::vector<double> v3 (input3, input3 + sizeof(input3) / sizeof(double));
-  double input1a[] = {1,2,3,4,5};
-  std::vector<double> v1a (input1a, input1a + sizeof(input1a) / sizeof(double));
-
+  double input1[] = {0, 1, 2, 3, 4};
+  std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
+  double input2[] = {1, 2, 3, 4, 5};
+  std::vector<double> v2(input2, input2 + sizeof(input2) / sizeof(double));
+  double input3[] = {2, 3, 4, 5, 6};
+  std::vector<double> v3(input3, input3 + sizeof(input3) / sizeof(double));
+  double input1a[] = {1, 2, 3, 4, 5};
+  std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
   EXPECT_TRUE(filter->update(v1, v1a));
   EXPECT_TRUE(filter->update(v2, v1a));
   EXPECT_TRUE(filter->update(v3, v1a));
 
-  for (int i = 1; i < length; i++)
-  {
+  for (int i = 1; i < length; i++) {
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
-
 }
 
 TEST_F(MeanFilterTest, ConfirmIdentityNRows)
@@ -122,9 +120,9 @@ TEST_F(MeanFilterTest, ConfirmIdentityNRows)
   double epsilon = 1e-6;
   int length = 5;
   int rows = 5;
-  
-  std::shared_ptr<FilterBase<double>> filter =
-    std::make_shared<MeanFilter<double>>();
+
+  std::shared_ptr<filters::FilterBase<double>> filter =
+    std::make_shared<filters::MeanFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       "dummy.prefix", "MeanFilterDouble5",
@@ -133,13 +131,10 @@ TEST_F(MeanFilterTest, ConfirmIdentityNRows)
   double input = 1;
   double output = 0;
 
-
-  for (int32_t i =0; i < rows*10; i++)
-  {
+  for (int32_t i = 0; i < rows * 10; i++) {
     EXPECT_TRUE(filter->update(input, output));
-    
-    for (int i = 1; i < length; i++)
-    {
+
+    for (int i = 1; i < length; i++) {
       EXPECT_NEAR(input, output, epsilon);
     }
   }
@@ -148,26 +143,23 @@ TEST_F(MeanFilterTest, ConfirmIdentityNRows)
 TEST_F(MeanFilterTest, ThreeRows)
 {
   double epsilon = 1e-6;
-  
-  std::shared_ptr<FilterBase<double>> filter =
-    std::make_shared<MeanFilter<double>>();
+
+  std::shared_ptr<filters::FilterBase<double>> filter =
+    std::make_shared<filters::MeanFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       "dummy.prefix", "MeanFilterDouble5",
       node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
   double input1 = 0;
-  double input2 =1;
+  double input2 = 1;
   double input3 = 2;
   double output = 3;
-
 
   EXPECT_TRUE(filter->update(input1, output));
   EXPECT_NEAR(input1, output, epsilon);
   EXPECT_TRUE(filter->update(input2, output));
-  EXPECT_NEAR((input1+ input2)/2.0, output, epsilon);
+  EXPECT_NEAR((input1 + input2) / 2.0, output, epsilon);
   EXPECT_TRUE(filter->update(input3, output));
-  EXPECT_NEAR((input1 + input2 + input3)/3, output, epsilon);
-
-
+  EXPECT_NEAR((input1 + input2 + input3) / 3, output, epsilon);
 }
