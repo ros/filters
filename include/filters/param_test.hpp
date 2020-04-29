@@ -52,18 +52,15 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~ParamTest();
+  ~ParamTest() override;
 
-  virtual bool configure();
+  bool configure() override;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
    */
-  virtual bool update( const T & data_in, T& data_out);
-  
-protected:
-  
+  bool update( const T & data_in, T& data_out) override;
 };
 
 

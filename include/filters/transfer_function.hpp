@@ -80,19 +80,19 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~SingleChannelTransferFunctionFilter();
+  ~SingleChannelTransferFunctionFilter() override;
 
   /** \brief Configure the filter with the correct number of channels and params.
    * \param number_of_channels The number of inputs filtered.
    * \param config The xml that is parsed to configure the filter.
    */
-  virtual bool configure();
+  bool configure() override;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
    * \param data_out vector<T> with number_of_channels elements
    */
-  virtual bool update(const T & data_in, T& data_out) ;
+  bool update(const T & data_in, T& data_out) override;
 
 
 
@@ -235,19 +235,19 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~MultiChannelTransferFunctionFilter();
+  ~MultiChannelTransferFunctionFilter() override;
 
   /** \brief Configure the filter with the correct number of channels and params.
    * \param number_of_channels The number of inputs filtered.
    * \param config The xml that is parsed to configure the filter.
    */
-  virtual bool configure();
+  bool configure() override;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in vector<T> with number_of_channels elements
    * \param data_out vector<T> with number_of_channels elements
    */
-  virtual bool update(const std::vector<T> & data_in, std::vector<T>& data_out) ;
+  bool update(const std::vector<T> & data_in, std::vector<T>& data_out) override;
 
 
 

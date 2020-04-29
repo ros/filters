@@ -41,6 +41,19 @@
 namespace filters
 {
 
+namespace impl {
+
+std::string normalize_param_prefix(std::string prefix) {
+  if (!prefix.empty()) {
+    if ('.' != prefix.back()) {
+      prefix += '.';
+    }
+  }
+  return prefix;
+}
+
+}  // namespace impl
+
 /** \brief A Base filter class to provide a standard interface for all filters
  *
  */
@@ -54,7 +67,7 @@ public:
 
   /** \brief Virtual Destructor
    */
-  virtual ~FilterBase(){};
+  virtual ~FilterBase() = default;
 
   /** \brief Configure the filter from the parameter server 
    * \param The parameter from which to read the configuration
@@ -80,17 +93,12 @@ public:
     configured_ = false;
 
     filter_name_ = filter_name;
-    param_prefix_ = param_prefix;
+    param_prefix_ = impl::normalize_param_prefix(param_prefix);
     params_interface_ = node_params;
     logging_interface_ = node_logger;
 
     // Make param_prefix an empty string or a string ending in '.'
-    if (!param_prefix_.empty()) {
-      if ('.' != param_prefix_.back()) {
-        param_prefix_ += '.';
-      }
-    }
-
+  
     configured_ = configure();
     return configured_;
   }
@@ -104,14 +112,6 @@ public:
 
   /** \brief Get the name of the filter as a string */
   inline const std::string& getName(){return filter_name_;};
-
-
-protected:
-
-  /** \brief Pure virtual function for the sub class to configure the filter
-   * This function must be implemented in the derived class.
-   */
-  virtual bool configure()=0;
 
 private:
   template <typename PT>
@@ -143,6 +143,10 @@ private:
   }
 
 protected:
+  /** \brief Pure virtual function for the sub class to configure the filter
+   * This function must be implemented in the derived class.
+   */
+  virtual bool configure()=0;
 
   /** \brief Get a filter parameter as a string 
    * \param name The name of the parameter
@@ -220,7 +224,6 @@ protected:
 
   std::string param_prefix_;
 
-protected:
   rclcpp::node_interfaces::NodeParametersInterface::SharedPtr params_interface_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr logging_interface_;
 };
