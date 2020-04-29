@@ -31,7 +31,6 @@
 #include "pluginlib/class_list_macros.hpp"
 
 
-
 PLUGINLIB_EXPORT_CLASS(filters::IncrementFilter<int>, filters::FilterBase<int>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelIncrementFilter<int>, filters::MultiChannelFilterBase<int>)
-
+PLUGINLIB_EXPORT_CLASS(filters::MultiChannelIncrementFilter<int>,
+  filters::MultiChannelFilterBase<int>)

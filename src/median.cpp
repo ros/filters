@@ -27,19 +27,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "filters/median.hpp"
 #include <pluginlib/class_list_macros.hpp>
 
+// Double precision
+PLUGINLIB_EXPORT_CLASS(filters::MedianFilter<double>, filters::FilterBase<double>)
+PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMedianFilter<double>,
+  filters::MultiChannelFilterBase<double>)
 
-//Double precision
-PLUGINLIB_EXPORT_CLASS(filters::MedianFilter<double>,filters::FilterBase<double>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMedianFilter<double>,filters::MultiChannelFilterBase<double>)
-
-//Float precision
-PLUGINLIB_EXPORT_CLASS(filters::MedianFilter<float>,filters::FilterBase<float>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMedianFilter<float>,filters::MultiChannelFilterBase<float>)
-
-
-
-
+// Float precision
+PLUGINLIB_EXPORT_CLASS(filters::MedianFilter<float>, filters::FilterBase<float>)
+PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMedianFilter<float>,
+  filters::MultiChannelFilterBase<float>)

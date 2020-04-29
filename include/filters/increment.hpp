@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of the Willow Garage, Inc. nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,137 +27,134 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_INCREMENT_HPP_
-#define FILTERS_INCREMENT_HPP_
+#ifndef FILTERS__INCREMENT_HPP_
+#define FILTERS__INCREMENT_HPP_
 
-#include <stdint.h>
-#include <cstring>
-#include <stdio.h>
+#include <vector>
 
 #include "filters/filter_base.hpp"
 
 namespace filters
 {
 
-/** \brief A increment filter which works on doubles.
- *
+/**
+ * \brief A increment filter which works on doubles.
  */
-template <typename T>
-class IncrementFilter: public FilterBase <T>
+template<typename T>
+class IncrementFilter : public FilterBase<T>
 {
 public:
-  /** \brief Construct the filter with the expected width and height */
+  /**
+   * \brief Construct the filter with the expected width and height
+   */
   IncrementFilter();
 
-  /** \brief Destructor to clean up
+  /**
+   * \brief Destructor to clean up
    */
   ~IncrementFilter() override;
 
   bool configure() override;
 
-  /** \brief Update the filter and return the data seperately
+  /**
+   * \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
    */
-  bool update( const T & data_in, T& data_out) override;
-  
+  bool update(const T & data_in, T & data_out) override;
 };
 
 
-template <typename T>
+template<typename T>
 IncrementFilter<T>::IncrementFilter()
 {
 }
 
-template <typename T>
-bool IncrementFilter<T>::configure()
-{
-    
-  return true;
-}
-
-template <typename T>
+template<typename T>
 IncrementFilter<T>::~IncrementFilter()
 {
 }
 
-
-template <typename T>
-bool IncrementFilter<T>::update(const T & data_in, T& data_out)
+template<typename T>
+bool IncrementFilter<T>::configure()
 {
-  data_out = data_in + 1;  
-
   return true;
 }
 
-/** \brief A increment filter which works on arrays.
- *
+template<typename T>
+bool IncrementFilter<T>::update(const T & data_in, T & data_out)
+{
+  data_out = data_in + 1;
+  return true;
+}
+
+/**
+ * \brief A increment filter which works on arrays.
  */
-template <typename T>
-class MultiChannelIncrementFilter: public MultiChannelFilterBase <T>
+template<typename T>
+class MultiChannelIncrementFilter : public MultiChannelFilterBase<T>
 {
 public:
-  /** \brief Construct the filter with the expected width and height */
+  /**
+   * \brief Construct the filter with the expected width and height
+   */
   MultiChannelIncrementFilter();
 
-  /** \brief Destructor to clean up
+  /**
+   * \brief Destructor to clean up
    */
   ~MultiChannelIncrementFilter() override;
 
   bool configure() override;
 
-  /** \brief Update the filter and return the data seperately
+  /**
+   * \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
    */
-  bool update( const std::vector<T> & data_in, std::vector<T>& data_out) override;
-  
-protected:
-  using MultiChannelFilterBase<T>::number_of_channels_;           ///< Number of elements per observation
+  bool update(const std::vector<T> & data_in, std::vector<T> & data_out) override;
 
-  
-  
+protected:
+  using MultiChannelFilterBase<T>::number_of_channels_;  ///< Number of elements per observation
 };
 
 
-template <typename T>
+template<typename T>
 MultiChannelIncrementFilter<T>::MultiChannelIncrementFilter()
 {
 }
 
-template <typename T>
-bool MultiChannelIncrementFilter<T>::configure()
-{
-  
-  return true;
-}
-
-template <typename T>
+template<typename T>
 MultiChannelIncrementFilter<T>::~MultiChannelIncrementFilter()
 {
 }
 
-
-template <typename T>
-bool MultiChannelIncrementFilter<T>::update(const std::vector<T> & data_in, std::vector<T>& data_out)
+template<typename T>
+bool MultiChannelIncrementFilter<T>::configure()
 {
-  if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_)
-  {
+  return true;
+}
+
+template<typename T>
+bool MultiChannelIncrementFilter<T>::update(
+  const std::vector<T> & data_in, std::vector<T> & data_out)
+{
+  if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_) {
     RCLCPP_ERROR(
       this->logging_interface_->get_logger(),
-      "Configured with wrong size config:%d in:%d out:%d", number_of_channels_, (int)data_in.size(), (int)data_out.size());
+      "Configured with wrong size config: %d, in: %d out: %d",
+      number_of_channels_, (int)data_in.size(), (int)data_out.size());
     return false;
   }
 
-
-  //Return each value
-  for (uint32_t i = 0; i < number_of_channels_; i++)
-  {
+  // Return each value
+  for (uint32_t i = 0; i < number_of_channels_; i++) {
     data_out[i] = data_in[i] + 1;
   }
 
   return true;
 }
 
-}
-#endif// FILTERS_INCREMENT_HPP_
+}  // namespace filters
+
+#endif  // FILTERS__INCREMENT_HPP_
