@@ -51,15 +51,15 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~IncrementFilter();
+  ~IncrementFilter() override;
 
-  virtual bool configure();
+  bool configure() override;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
    */
-  virtual bool update( const T & data_in, T& data_out);
+  bool update( const T & data_in, T& data_out) override;
   
 };
 
@@ -102,15 +102,15 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~MultiChannelIncrementFilter();
+  ~MultiChannelIncrementFilter() override;
 
-  virtual bool configure();
+  bool configure() override;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in T array with length width
    * \param data_out T array with length width
    */
-  virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
+  bool update( const std::vector<T> & data_in, std::vector<T>& data_out) override;
   
 protected:
   using MultiChannelFilterBase<T>::number_of_channels_;           ///< Number of elements per observation

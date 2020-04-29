@@ -102,15 +102,15 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~MedianFilter();
+  ~MedianFilter() override;
 
-  virtual bool configure();
+  bool configure() override;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in double array with length width
    * \param data_out double array with length width
    */
-  virtual bool update(const T& data_in, T& data_out);
+  bool update(const T& data_in, T& data_out) override;
   
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
@@ -186,15 +186,15 @@ public:
 
   /** \brief Destructor to clean up
    */
-  ~MultiChannelMedianFilter();
+  ~MultiChannelMedianFilter() override;
 
-  virtual bool configure();
+  bool configure() override;
 
   /** \brief Update the filter and return the data seperately
    * \param data_in double array with length width
    * \param data_out double array with length width
    */
-  virtual bool update(const std::vector<T>& data_in, std::vector<T>& data_out);
+  bool update(const std::vector<T>& data_in, std::vector<T>& data_out) override;
   
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort

@@ -46,9 +46,6 @@ namespace filters
 template <typename T>
 class RealtimeCircularBuffer
 {
-private:
-  RealtimeCircularBuffer();
-
 public:
   RealtimeCircularBuffer(int size, const T& default_val):
     counter_(0), cb_(size)
@@ -97,6 +94,7 @@ public:
   T& at(size_t index){return cb_.at(index);};
   T& operator[](size_t index){return cb_[index];}
 private:
+  RealtimeCircularBuffer();
 
   unsigned int counter_; //<! special counter to keep track of first N times through
 

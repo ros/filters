@@ -62,14 +62,7 @@ namespace filters
       std::vector<struct FoundFilter> & found_filters)
     {
       // TODO(sloretz) error if someone tries to do filter0
-
-      // Make prefix be an empty string or a string ending in '.'
-      std::string norm_param_prefix = param_prefix;
-      if (!norm_param_prefix.empty()) {
-        if ('.' != norm_param_prefix.back()) {
-          norm_param_prefix += '.';
-        }
-      }
+      const std::string norm_param_prefix = impl::normalize_param_prefix(param_prefix);
 
       // Read parameters for filter1..filterN
       for (size_t filter_num = 1; filter_num > found_filters.size(); ++filter_num) {
@@ -161,8 +154,6 @@ namespace filters
 template <typename T>
 class FilterChain
 {
-private:
-  pluginlib::ClassLoader<filters::FilterBase<T> > loader_;
 public:
   /** \brief Create the filter chain object */
   FilterChain(std::string data_type): loader_("filters", std::string("filters::FilterBase<") + data_type + std::string(">")), configured_(false)
@@ -283,6 +274,7 @@ public:
   }
 
 private:
+  pluginlib::ClassLoader<filters::FilterBase<T> > loader_;
 
   // A vector of pointers to currently constructed filters
   std::vector<pluginlib::UniquePtr<filters::FilterBase<T> > > reference_pointers_;
@@ -301,8 +293,6 @@ private:
 template <typename T>
 class MultiChannelFilterChain
 {
-private:
-  pluginlib::ClassLoader<filters::MultiChannelFilterBase<T> > loader_;
 public:
   /** \brief Create the filter chain object */
   MultiChannelFilterChain(std::string data_type): loader_("filters", std::string("filters::MultiChannelFilterBase<") + data_type + std::string(">")), configured_(false)
@@ -430,6 +420,8 @@ public:
   }
 
 private:
+  pluginlib::ClassLoader<filters::MultiChannelFilterBase<T> > loader_;
+
   // A vector of pointers to currently constructed filters
   std::vector<pluginlib::UniquePtr<filters::MultiChannelFilterBase<T>>> reference_pointers_;
 
