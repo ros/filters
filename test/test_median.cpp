@@ -57,8 +57,8 @@ protected:
 TEST_F(MedianFilterTest, MultiChannelDoubleConfirmIdentityNRows)
 {
   double epsilon = 1e-6;
-  int length = 5;
-  int rows = 5;
+  size_t length = 5;
+  size_t rows = 5;
 
   std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
     std::make_shared<filters::MultiChannelMedianFilter<double>>();
@@ -67,15 +67,15 @@ TEST_F(MedianFilterTest, MultiChannelDoubleConfirmIdentityNRows)
       rows, "dummy.prefix", "MultiChannelMedianFilterDouble5",
       node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
-  double input1[] = {1, 2, 3, 4, 5};
-  double input1a[] = {11, 12, 13, 14, 15};
+  double input1[] = {1., 2., 3., 4., 5.};
+  double input1a[] = {11., 12., 13., 14., 15.};
   std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
   std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
-  for (int i = 0; i < rows * 10; i++) {
+  for (size_t i = 0; i < rows * 10; ++i) {
     EXPECT_TRUE(filter->update(v1, v1a));
 
-    for (int j = 1; j < length; j++) {
+    for (size_t j = 1; j < length; ++j) {
       EXPECT_NEAR(input1[j], v1a[j], epsilon);
     }
   }
@@ -84,8 +84,8 @@ TEST_F(MedianFilterTest, MultiChannelDoubleConfirmIdentityNRows)
 TEST_F(MedianFilterTest, MultiChannelDoubleThreeRows)
 {
   double epsilon = 1e-6;
-  int length = 5;
-  int rows = 5;
+  size_t length = 5;
+  size_t rows = 5;
 
   std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
     std::make_shared<filters::MultiChannelMedianFilter<double>>();
@@ -94,20 +94,20 @@ TEST_F(MedianFilterTest, MultiChannelDoubleThreeRows)
       rows, "dummy.prefix", "MultiChannelMedianFilterDouble5",
       node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
-  double input1[] = {0, 1, 2, 3, 4};
+  double input1[] = {0., 1., 2., 3., 4.};
   std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
-  double input2[] = {1, 2, 3, 4, 5};
+  double input2[] = {1., 2., 3., 4., 5.};
   std::vector<double> v2(input2, input2 + sizeof(input2) / sizeof(double));
-  double input3[] = {2, 3, 4, 5, 6};
+  double input3[] = {2., 3., 4., 5., 6.};
   std::vector<double> v3(input3, input3 + sizeof(input3) / sizeof(double));
-  double input1a[] = {1, 2, 3, 4, 5};
+  double input1a[] = {1., 2., 3., 4., 5.};
   std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
   EXPECT_TRUE(filter->update(v1, v1a));
   EXPECT_TRUE(filter->update(v2, v1a));
   EXPECT_TRUE(filter->update(v3, v1a));
 
-  for (int i = 1; i < length; i++) {
+  for (size_t i = 1; i < length; i++) {
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
 }
@@ -115,8 +115,8 @@ TEST_F(MedianFilterTest, MultiChannelDoubleThreeRows)
 TEST_F(MedianFilterTest, MultiChannelFloatConfirmIdentityNRows)
 {
   float epsilon = 1e-6;
-  int length = 5;
-  int rows = 5;
+  size_t length = 5;
+  size_t rows = 5;
 
   std::shared_ptr<filters::MultiChannelFilterBase<float>> filter =
     std::make_shared<filters::MultiChannelMedianFilter<float>>();
@@ -125,15 +125,15 @@ TEST_F(MedianFilterTest, MultiChannelFloatConfirmIdentityNRows)
       rows, "dummy.prefix", "MultiChannelMedianFilterFloat5",
       node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
-  float input1[] = {1, 2, 3, 4, 5};
-  float input1a[] = {1, 2, 3, 4, 5};
+  float input1[] = {1., 2., 3., 4., 5.};
+  float input1a[] = {1., 2., 3., 4., 5.};
   std::vector<float> v1(input1, input1 + sizeof(input1) / sizeof(float));
   std::vector<float> v1a(input1a, input1a + sizeof(input1a) / sizeof(float));
 
-  for (int i = 0; i < rows * 10; i++) {
+  for (size_t i = 0; i < rows * 10; ++i) {
     EXPECT_TRUE(filter->update(v1, v1a));
 
-    for (int j = 1; j < length; j++) {
+    for (size_t j = 1; j < length; ++j) {
       EXPECT_NEAR(input1[j], v1a[j], epsilon);
     }
   }
@@ -142,8 +142,8 @@ TEST_F(MedianFilterTest, MultiChannelFloatConfirmIdentityNRows)
 TEST_F(MedianFilterTest, MultiChannelFloatThreeRows)
 {
   float epsilon = 1e-6;
-  int length = 5;
-  int rows = 5;
+  size_t length = 5;
+  size_t rows = 5;
 
   std::shared_ptr<filters::MultiChannelFilterBase<float>> filter =
     std::make_shared<filters::MultiChannelMedianFilter<float>>();
@@ -152,20 +152,20 @@ TEST_F(MedianFilterTest, MultiChannelFloatThreeRows)
       rows, "dummy.prefix", "MultiChannelMedianFilterFloat5",
       node_->get_node_logging_interface(), node_->get_node_parameters_interface()));
 
-  float input1[] = {0, 1, 2, 3, 4};
+  float input1[] = {0., 1., 2., 3., 4.};
   std::vector<float> v1(input1, input1 + sizeof(input1) / sizeof(float));
-  float input2[] = {1, 2, 3, 4, 5};
+  float input2[] = {1., 2., 3., 4., 5.};
   std::vector<float> v2(input2, input2 + sizeof(input2) / sizeof(float));
-  float input3[] = {2, 3, 4, 5, 6};
+  float input3[] = {2., 3., 4., 5., 6.};
   std::vector<float> v3(input3, input3 + sizeof(input3) / sizeof(float));
-  float input1a[] = {1, 2, 3, 4, 5};
+  float input1a[] = {1., 2., 3., 4., 5.};
   std::vector<float> v1a(input1a, input1a + sizeof(input1a) / sizeof(float));
 
   EXPECT_TRUE(filter->update(v1, v1a));
   EXPECT_TRUE(filter->update(v2, v1a));
   EXPECT_TRUE(filter->update(v3, v1a));
 
-  for (int i = 1; i < length; i++) {
+  for (size_t i = 1; i < length; ++i) {
     EXPECT_NEAR(v2[i], v1a[i], epsilon);
   }
 }

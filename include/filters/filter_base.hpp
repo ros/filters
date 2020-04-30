@@ -114,7 +114,9 @@ public:
    */
   virtual bool update(const T & data_in, T & data_out) = 0;
 
-  /** \brief Get the name of the filter as a string */
+  /**
+   * \brief Get the name of the filter as a string
+   */
   inline const std::string & getName() {return filter_name_;}
 
 private:
@@ -197,6 +199,24 @@ protected:
    * \param value The int to set with the value
    * \return Whether or not the parameter of name/type was set */
   bool getParam(const std::string & name, unsigned int & value)
+  {
+    int signed_value;
+    if (!getParam(name, signed_value)) {
+      return false;
+    }
+    if (signed_value < 0) {
+      return false;
+    }
+    value = signed_value;
+    return true;
+  }
+
+  /**
+   * \brief Get a filter parameter as a size_t
+   * \param name The name of the parameter
+   * \param value The int to set with the value
+   * \return Whether or not the parameter of name/type was set */
+  bool getParam(const std::string & name, size_t & value)
   {
     int signed_value;
     if (!getParam(name, signed_value)) {
@@ -293,7 +313,7 @@ public:
 
 protected:
   /// How many parallel inputs for which the filter is to be configured
-  unsigned int number_of_channels_;
+  size_t number_of_channels_;
 };
 
 }  // namespace filters
