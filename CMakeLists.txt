@@ -70,14 +70,22 @@ ament_target_dependencies(transfer_function
 )
 
 if(BUILD_TESTING)
-  # TODO(sloretz) this disables ROS 2 style tests; reenable and fix style
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  set(ament_cmake_uncrustify_FOUND TRUE)
+  # TODO(hidmic): use ament_lint_common once ament_copyright complains are resolved
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  find_package(ament_cmake_xmllint REQUIRED)
 
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
+  # Enforce ROS2 style
+  ament_cpplint()
+  ament_cppcheck(
+    LANGUAGE c++  # Force C++ for .h headers
+    INCLUDE_DIRS include
+  )
+  ament_uncrustify()
+  ament_xmllint()
 
+  find_package(ament_cmake_gtest REQUIRED)
   # Test median filter
   ament_add_gtest(median_test test/test_median.cpp)
   target_link_libraries(median_test median)
