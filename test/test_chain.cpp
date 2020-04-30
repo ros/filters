@@ -72,8 +72,8 @@ TEST_F(ChainTest, multi_channel_configuring) {
       5, "MultiChannelMeanFilterDouble5",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
-  double input1[] = {1, 2, 3, 4, 5};
-  double input1a[] = {9, 9, 9, 9, 9};  // seed w/incorrect values
+  double input1[] = {1., 2., 3., 4., 5.};
+  double input1a[] = {9., 9., 9., 9., 9.};  // seed w/incorrect values
   std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
   std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
@@ -82,7 +82,7 @@ TEST_F(ChainTest, multi_channel_configuring) {
 
   chain.clear();
 
-  for (unsigned int i = 1; i < v1.size(); i++) {
+  for (size_t i = 1; i < v1.size(); ++i) {
     EXPECT_NEAR(input1[i], v1a[i], epsilon);
   }
 }
@@ -101,8 +101,8 @@ TEST_F(ChainTest, configuring) {
       "MeanFilterFloat5", node->get_node_logging_interface(),
       node->get_node_parameters_interface()));
 
-  float v1 = 1;
-  float v1a = 9;
+  float v1 = 1.;
+  float v1a = 9.;
 
   EXPECT_TRUE(chain.update(v1, v1a));
 
@@ -127,8 +127,8 @@ TEST_F(ChainTest, MisconfiguredNumberOfChannels) {
       10, "MultiChannelMedianFilterDouble5",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
-  double input1[] = {1, 2, 3, 4, 5};
-  double input1a[] = {1, 2, 3, 4, 5};
+  double input1[] = {1., 2., 3., 4., 5.};
+  double input1a[] = {1., 2., 3., 4., 5.};
   std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
   std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
@@ -154,8 +154,8 @@ TEST_F(ChainTest, MultiChannelTwoFilters) {
       5, "TwoFilters",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
-  double input1[] = {1, 2, 3, 4, 5};
-  double input1a[] = {9, 9, 9, 9, 9};  // seed w/incorrect values
+  double input1[] = {1., 2., 3., 4., 5.};
+  double input1a[] = {9., 9., 9., 9., 9.};  // seed w/incorrect values
   std::vector<double> v1(input1, input1 + sizeof(input1) / sizeof(double));
   std::vector<double> v1a(input1a, input1a + sizeof(input1a) / sizeof(double));
 
@@ -163,7 +163,7 @@ TEST_F(ChainTest, MultiChannelTwoFilters) {
 
   chain.clear();
 
-  for (unsigned int i = 1; i < v1.size(); i++) {
+  for (size_t i = 1; i < v1.size(); i++) {
     EXPECT_NEAR(input1[i], v1a[i], epsilon);
   }
 }
@@ -232,7 +232,7 @@ TEST_F(ChainTest, TransferFunction) {
 
   chain.clear();
 
-  for (unsigned int i = 0; i < out1.size(); i++) {
+  for (size_t i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
 }
@@ -364,7 +364,7 @@ TEST_F(ChainTest, TenMultiChannelIncrementChains) {
       3, "TenMultiChannelIncrements", node->get_node_logging_interface(),
       node->get_node_parameters_interface()));
   EXPECT_TRUE(chain.update(v1, v1a));
-  for (unsigned int i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; ++i) {
     EXPECT_EQ(11, v1a[i]);
   }
 }

@@ -120,7 +120,7 @@ protected:
 
   T temp;  // used for preallocation and copying from non vector source
 
-  uint32_t number_of_observations_;  ///< Number of observations over which to filter
+  size_t number_of_observations_;  ///< Number of observations over which to filter
 };
 
 template<typename T>
@@ -138,12 +138,10 @@ MedianFilter<T>::~MedianFilter()
 template<typename T>
 bool MedianFilter<T>::configure()
 {
-  int no_obs = -1;
-  if (!FilterBase<T>::getParam("number_of_observations", no_obs)) {
+  if (!FilterBase<T>::getParam("number_of_observations", number_of_observations_)) {
     RCLCPP_ERROR(this->logging_interface_->get_logger(), "MedianFilter was not given params.\n");
     return false;
   }
-  number_of_observations_ = no_obs;
 
   data_storage_.reset(new RealtimeCircularBuffer<T>(number_of_observations_, temp));
   temp_storage_.resize(number_of_observations_);
@@ -160,9 +158,8 @@ bool MedianFilter<T>::update(const T & data_in, T & data_out)
 
   data_storage_->push_back(data_in);
 
-  unsigned int length = data_storage_->size();
-
-  for (uint32_t row = 0; row < length; row++) {
+  size_t length = data_storage_->size();
+  for (size_t row = 0; row < length; ++row) {
     temp_storage_[row] = (*data_storage_)[row];
   }
   data_out = median(&temp_storage_[0], length);
@@ -203,7 +200,7 @@ protected:
 
   std::vector<T> temp;  // used for preallocation and copying from non vector source
 
-  uint32_t number_of_observations_;  ///< Number of observations over which to filter
+  size_t number_of_observations_;  ///< Number of observations over which to filter
 };
 
 template<typename T>
@@ -220,13 +217,11 @@ MultiChannelMedianFilter<T>::~MultiChannelMedianFilter()
 template<typename T>
 bool MultiChannelMedianFilter<T>::configure()
 {
-  int no_obs = -1;
-  if (!FilterBase<T>::getParam("number_of_observations", no_obs)) {
+  if (!FilterBase<T>::getParam("number_of_observations", number_of_observations_)) {
     RCLCPP_ERROR(
       this->logging_interface_->get_logger(), "MultiChannelMedianFilter was not given params.\n");
     return false;
   }
-  number_of_observations_ = no_obs;
 
   temp.resize(this->number_of_channels_);
   data_storage_.reset(new RealtimeCircularBuffer<std::vector<T>>(number_of_observations_, temp));
@@ -247,9 +242,9 @@ bool MultiChannelMedianFilter<T>::update(const std::vector<T> & data_in, std::ve
 
   data_storage_->push_back(data_in);
 
-  unsigned int length = data_storage_->size();
-  for (uint32_t i = 0; i < this->number_of_channels_; i++) {
-    for (uint32_t row = 0; row < length; row++) {
+  size_t length = data_storage_->size();
+  for (size_t i = 0; i < this->number_of_channels_; ++i) {
+    for (size_t row = 0; row < length; ++row) {
       temp_storage_[row] = (*data_storage_)[row][i];
     }
     data_out[i] = median(&temp_storage_[0], length);

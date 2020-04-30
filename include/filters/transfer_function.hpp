@@ -139,20 +139,20 @@ bool SingleChannelTransferFunctionFilter<T>::configure()
   output_buffer_.reset(new RealtimeCircularBuffer<T>(a_.size() - 1, temp_));
 
   // Prevent divide by zero while normalizing coeffs.
-  if (a_[0] == 0) {
+  if (a_[0] == 0.) {
     RCLCPP_ERROR(this->logging_interface_->get_logger(), "a[0] can not equal 0.");
     return false;
   }
 
   // Normalize the coeffs by a[0].
-  if (a_[0] != 1) {
-    for (uint32_t i = 0; i < b_.size(); i++) {
+  if (a_[0] != 1.) {
+    for (size_t i = 0; i < b_.size(); i++) {
       b_[i] = (b_[i] / a_[0]);
     }
-    for (uint32_t i = 1; i < a_.size(); i++) {
+    for (size_t i = 1; i < a_.size(); i++) {
       a_[i] = (a_[i] / a_[0]);
     }
-    a_[0] = (a_[0] / a_[0]);
+    a_[0] = 1.;
   }
 
   return true;
@@ -170,10 +170,10 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T & data_in, T & data_
 
   data_out = b_[0] * temp_;
 
-  for (uint32_t row = 1; row <= input_buffer_->size(); row++) {
+  for (size_t row = 1; row <= input_buffer_->size(); ++row) {
     data_out += b_[row] * (*input_buffer_)[row - 1];
   }
-  for (uint32_t row = 1; row <= output_buffer_->size(); row++) {
+  for (size_t row = 1; row <= output_buffer_->size(); ++row) {
     data_out -= a_[row] * (*output_buffer_)[row - 1];
   }
 
@@ -269,7 +269,6 @@ bool MultiChannelTransferFunctionFilter<T>::configure()
     return false;
   }  /// \todo check length
 
-
   if (!FilterBase<T>::getParam("b", b_)) {
     RCLCPP_ERROR(
       this->logging_interface_->get_logger(),
@@ -284,20 +283,20 @@ bool MultiChannelTransferFunctionFilter<T>::configure()
   output_buffer_.reset(new RealtimeCircularBuffer<std::vector<T>>(a_.size() - 1, temp_));
 
   // Prevent divide by zero while normalizing coeffs.
-  if (a_[0] == 0) {
+  if (a_[0] == 0.) {
     RCLCPP_ERROR(this->logging_interface_->get_logger(), "a[0] can not equal 0.");
     return false;
   }
 
   // Normalize the coeffs by a[0].
-  if (a_[0] != 1) {
-    for (uint32_t i = 0; i < b_.size(); i++) {
+  if (a_[0] != 1.) {
+    for (size_t i = 0; i < b_.size(); ++i) {
       b_[i] = (b_[i] / a_[0]);
     }
-    for (uint32_t i = 1; i < a_.size(); i++) {
+    for (size_t i = 1; i < a_.size(); ++i) {
       a_[i] = (a_[i] / a_[0]);
     }
-    a_[0] = (a_[0] / a_[0]);
+    a_[0] = 1.;
   }
 
   return true;
@@ -312,21 +311,21 @@ bool MultiChannelTransferFunctionFilter<T>::update(
   if (data_in.size() != this->number_of_channels_ || data_out.size() != this->number_of_channels_) {
     RCLCPP_ERROR(
       this->logging_interface_->get_logger(),
-      "Number of channels is %d, but data_in.size() = %d and data_out.size() = %d. "
-      "They must match", this->number_of_channels_, (int)data_in.size(), (int)data_out.size());
+      "Number of channels is %d, but data_in.size() = %ld and data_out.size() = %ld. "
+      "They must match", this->number_of_channels_, data_in.size(), data_out.size());
     return false;
   }
   // Copy data to prevent mutation if in and out are the same ptr
   temp_ = data_in;
 
-  for (uint32_t i = 0; i < temp_.size(); i++) {
+  for (size_t i = 0; i < temp_.size(); ++i) {
     data_out[i] = b_[0] * temp_[i];
 
-    for (uint32_t row = 1; row <= input_buffer_->size(); row++) {
-      (data_out)[i] += b_[row] * (*input_buffer_)[row - 1][i];
+    for (size_t row = 1; row <= input_buffer_->size(); ++row) {
+      data_out[i] += b_[row] * (*input_buffer_)[row - 1][i];
     }
-    for (uint32_t row = 1; row <= output_buffer_->size(); row++) {
-      (data_out)[i] -= a_[row] * (*output_buffer_)[row - 1][i];
+    for (size_t row = 1; row <= output_buffer_->size(); ++row) {
+      data_out[i] -= a_[row] * (*output_buffer_)[row - 1][i];
     }
   }
   input_buffer_->push_front(temp_);

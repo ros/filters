@@ -142,13 +142,13 @@ bool MultiChannelIncrementFilter<T>::update(
   if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_) {
     RCLCPP_ERROR(
       this->logging_interface_->get_logger(),
-      "Configured with wrong size config: %d, in: %d out: %d",
-      number_of_channels_, (int)data_in.size(), (int)data_out.size());
+      "Configured with wrong size config: %ld, in: %ld out: %ld",
+      number_of_channels_, data_in.size(), data_out.size());
     return false;
   }
 
   // Return each value
-  for (uint32_t i = 0; i < number_of_channels_; i++) {
+  for (size_t i = 0; i < number_of_channels_; ++i) {
     data_out[i] = data_in[i] + 1;
   }
 

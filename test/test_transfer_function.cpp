@@ -226,7 +226,7 @@ TEST_F(TransferFunctionTest, LowPassMulti)
   EXPECT_TRUE(filter->update(in6, in6));
   EXPECT_TRUE(filter->update(in7, in7));
 
-  for (unsigned int i = 0; i < out1.size(); i++) {
+  for (size_t i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
 }
@@ -288,7 +288,7 @@ TEST_F(TransferFunctionTest, LowPassIrrational)
   EXPECT_TRUE(filter->update(in6, in6));
   EXPECT_TRUE(filter->update(in7, in7));
 
-  for (unsigned int i = 0; i < out1.size(); i++) {
+  for (size_t i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
 }

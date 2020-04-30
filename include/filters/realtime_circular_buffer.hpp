@@ -47,10 +47,10 @@ template<typename T>
 class RealtimeCircularBuffer
 {
 public:
-  RealtimeCircularBuffer(int size, const T & default_val)
+  RealtimeCircularBuffer(size_t size, const T & default_val)
   : counter_(0), cb_(size)
   {
-    for (unsigned int i = 0; i < cb_.capacity(); i++) {
+    for (size_t i = 0; i < cb_.capacity(); ++i) {
       cb_.push_back(default_val);
     }
   }
@@ -94,7 +94,7 @@ public:
     }
   }
 
-  unsigned int size() {return std::min(counter_, (unsigned int)cb_.size());}
+  size_t size() {return std::min(counter_, cb_.size());}
   bool empty() {return cb_.empty();}
   T & at(size_t index) {return cb_.at(index);}
   T & operator[](size_t index) {return cb_[index];}
@@ -102,7 +102,7 @@ public:
 private:
   RealtimeCircularBuffer();
 
-  unsigned int counter_;  ///< special counter to keep track of first N times through
+  size_t counter_;  ///< special counter to keep track of first N times through
 
   boost::circular_buffer<T> cb_;
 };

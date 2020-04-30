@@ -181,8 +181,8 @@ public:
    */
   bool update(const T & data_in, T & data_out)
   {
-    unsigned int list_size = reference_pointers_.size();
     bool result;
+    size_t list_size = reference_pointers_.size();
     if (list_size == 0) {
       data_out = data_in;
       result = true;
@@ -194,16 +194,12 @@ public:
       result = result && reference_pointers_[1]->update(buffer0_, data_out);
     } else {
       result = reference_pointers_[0]->update(data_in, buffer0_);  // first copy in
-      for (unsigned int i = 1; i < reference_pointers_.size() - 1; i++) {
+      for (size_t i = 1; i < reference_pointers_.size() - 1 && result; ++i) {
         // all but first and last (never called if size=2)
         if (i % 2 == 1) {
           result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
         } else {
           result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
-        }
-
-        if (result == false) {  // don't keep processing on failure
-          return false;
         }
       }
       if (list_size % 2 == 1) {  // odd number last deposit was in buffer1
@@ -224,7 +220,6 @@ public:
     reference_pointers_.clear();
     return true;
   }
-
 
   /**
    * \brief Configure the filter chain and all filters which have been addedj
@@ -322,8 +317,9 @@ public:
    */
   bool update(const std::vector<T> & data_in, std::vector<T> & data_out)
   {
-    unsigned int list_size = reference_pointers_.size();
     bool result;
+    size_t list_size = reference_pointers_.size();
+
     if (list_size == 0) {
       data_out = data_in;
       result = true;
@@ -331,22 +327,17 @@ public:
       result = reference_pointers_[0]->update(data_in, data_out);
     } else if (list_size == 2) {
       result = reference_pointers_[0]->update(data_in, buffer0_);
-      if (result == false) {  // don't keep processing on failure
-        return false;
+      if (result) {  // don't keep processing on failure
+        result = result && reference_pointers_[1]->update(buffer0_, data_out);
       }
-      result = result && reference_pointers_[1]->update(buffer0_, data_out);
     } else {
       result = reference_pointers_[0]->update(data_in, buffer0_);  // first copy in
-      for (unsigned int i = 1; i < reference_pointers_.size() - 1; i++) {
+      for (size_t i = 1; i < reference_pointers_.size() - 1 && result; ++i) {
         // all but first and last (never if size = 2)
         if (i % 2 == 1) {
           result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
         } else {
           result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
-        }
-
-        if (result == false) {  // don't keep processing on failure
-          return false;
         }
       }
       if (list_size % 2 == 1) {  // odd number last deposit was in buffer1
@@ -357,7 +348,6 @@ public:
     }
     return result;
   }
-
 
   ~MultiChannelFilterChain()
   {
@@ -375,7 +365,6 @@ public:
     buffer1_.clear();
     return true;
   }
-
 
   /**
    * \brief Configure the filter chain
@@ -396,7 +385,7 @@ public:
     logging_interface_ = node_logger;
     params_interface_ = node_params;
 
-    std::vector<struct impl::FoundFilter> found_filters;
+    std::vector<impl::FoundFilter> found_filters;
     if (!impl::load_chain_config(
         param_prefix, logging_interface_, params_interface_, found_filters))
     {

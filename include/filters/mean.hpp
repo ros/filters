@@ -106,15 +106,15 @@ bool MeanFilter<T>::update(const T & data_in, T & data_out)
   if (last_updated_row_ >= number_of_observations_ - 1) {
     last_updated_row_ = 0;
   } else {
-    last_updated_row_++;
+    ++last_updated_row_;
   }
 
   data_storage_->push_back(data_in);
 
-  unsigned int length = data_storage_->size();
+  size_t length = data_storage_->size();
 
   data_out = 0;
-  for (uint32_t row = 0; row < length; row++) {
+  for (size_t row = 0; row < length; ++row) {
     data_out += data_storage_->at(row);
   }
   data_out /= length;
@@ -192,8 +192,8 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
   if (data_in.size() != number_of_channels_ || data_out.size() != number_of_channels_) {
     RCLCPP_ERROR(
       this->logging_interface_->get_logger(),
-      "Configured with wrong size config:%d in:%d out:%d", number_of_channels_,
-      (int)data_in.size(), (int)data_out.size());
+      "Configured with wrong size config: %ld, in: %ld out: %ld",
+      number_of_channels_, data_in.size(), data_out.size());
     return false;
   }
 
@@ -201,17 +201,17 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
   if (last_updated_row_ >= number_of_observations_ - 1) {
     last_updated_row_ = 0;
   } else {
-    last_updated_row_++;
+    ++last_updated_row_;
   }
 
   data_storage_->push_back(data_in);
 
-  unsigned int length = data_storage_->size();
+  size_t length = data_storage_->size();
 
   // Return each value
-  for (uint32_t i = 0; i < number_of_channels_; i++) {
+  for (size_t i = 0; i < number_of_channels_; ++i) {
     data_out[i] = 0;
-    for (uint32_t row = 0; row < length; row++) {
+    for (size_t row = 0; row < length; ++row) {
       data_out[i] += data_storage_->at(row)[i];
     }
     data_out[i] /= length;
