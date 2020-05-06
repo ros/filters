@@ -31,6 +31,7 @@
 #define FILTERS__MEDIAN_HPP_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "filters/filter_base.hpp"
@@ -43,7 +44,6 @@
  * Algorithm from N. Wirth's book, implementation by N. Devillard.
  * This code in public domain.
  */
-#define ELEM_SWAP(a, b) {register elem_type t = (a);(a) = (b);(b) = t;}
 
 namespace filters
 {
@@ -64,8 +64,8 @@ namespace filters
 template<typename elem_type>
 elem_type kth_smallest(elem_type a[], int n, int k)
 {
-  register int i, j, l, m;
-  register elem_type x;
+  int i, j, l, m;
+  elem_type x;
   l = 0; m = n - 1;
   while (l < m) {
     x = a[k];
@@ -75,7 +75,7 @@ elem_type kth_smallest(elem_type a[], int n, int k)
       while (a[i] < x) {i++;}
       while (x < a[j]) {j--;}
       if (i <= j) {
-        ELEM_SWAP(a[i], a[j]);
+        std::swap(a[i], a[j]);
         i++; j--;
       }
     } while (i <= j);
@@ -84,9 +84,12 @@ elem_type kth_smallest(elem_type a[], int n, int k)
   }
   return a[k];
 }
-#define median(a, n) kth_smallest(a, n, (((n) & 1) ? ((n) / 2) : (((n) / 2) - 1)))
-#undef ELEM_SWAP
 
+template<typename elem_type>
+elem_type median(elem_type a[], int n)
+{
+  return kth_smallest(a, n, (((n) & 1) ? ((n) / 2) : (((n) / 2) - 1)));
+}
 
 /**
  * \brief A median filter which works on arrays.
