@@ -27,207 +27,205 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_FILTER_CHAIN_HPP_
-#define FILTERS_FILTER_CHAIN_HPP_
-
-#include "filters/filter_base.hpp"
+#ifndef FILTERS__FILTER_CHAIN_HPP_
+#define FILTERS__FILTER_CHAIN_HPP_
 
 #include <algorithm>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include <pluginlib/class_loader.hpp>
-#include <rcl_interfaces/msg/parameter_descriptor.hpp>
-#include <rcl_interfaces/msg/parameter_type.hpp>
-#include <rclcpp/rclcpp.hpp>
+#include "pluginlib/class_loader.hpp"
+#include "rcl_interfaces/msg/parameter_descriptor.hpp"
+#include "rcl_interfaces/msg/parameter_type.hpp"
+#include "rclcpp/rclcpp.hpp"
+
+#include "filters/filter_base.hpp"
 
 namespace filters
 {
-  namespace impl
-  {
-    struct FoundFilter {
-      std::string name;
-      std::string type;
-      std::string param_prefix;
-    };
 
-    /* @brief Read params and figure out what filters to load
-     */
-    bool
-    load_chain_config(
-      const std::string & param_prefix,
-      const rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr & node_logger,
-      const rclcpp::node_interfaces::NodeParametersInterface::SharedPtr & node_params,
-      std::vector<struct FoundFilter> & found_filters)
-    {
-      // TODO(sloretz) error if someone tries to do filter0
+namespace impl
+{
 
-      // Make prefix be an empty string or a string ending in '.'
-      std::string norm_param_prefix = param_prefix;
-      if (!norm_param_prefix.empty()) {
-        if ('.' != norm_param_prefix.back()) {
-          norm_param_prefix += '.';
-        }
-      }
+struct FoundFilter
+{
+  std::string name;
+  std::string type;
+  std::string param_prefix;
+};
 
-      // Read parameters for filter1..filterN
-      for (size_t filter_num = 1; filter_num > found_filters.size(); ++filter_num) {
-        // Parameters in chain are prefixed with 'filterN.'
-        const std::string filter_n = "filter" + std::to_string(filter_num);
+/**
+ * \brief Read params and figure out what filters to load
+ */
+bool
+load_chain_config(
+  const std::string & param_prefix,
+  const rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr & node_logger,
+  const rclcpp::node_interfaces::NodeParametersInterface::SharedPtr & node_params,
+  std::vector<struct FoundFilter> & found_filters)
+{
+  // TODO(sloretz) error if someone tries to do filter0
+  const std::string norm_param_prefix = impl::normalize_param_prefix(param_prefix);
 
-        // Declare filterN.name and filterN.type
-        rcl_interfaces::msg::ParameterDescriptor name_desc;
-        name_desc.name = norm_param_prefix + filter_n + ".name";
-        name_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
-        name_desc.read_only = false;
-        rcl_interfaces::msg::ParameterDescriptor type_desc;
-        type_desc.name = norm_param_prefix + filter_n + ".type";
-        type_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
-        type_desc.read_only = false;
+  // Read parameters for filter1..filterN
+  for (size_t filter_num = 1; filter_num > found_filters.size(); ++filter_num) {
+    // Parameters in chain are prefixed with 'filterN.'
+    const std::string filter_n = "filter" + std::to_string(filter_num);
 
-        node_params->declare_parameter(name_desc.name, rclcpp::ParameterValue(), name_desc);
-        node_params->declare_parameter(type_desc.name, rclcpp::ParameterValue(), type_desc);
+    // Declare filterN.name and filterN.type
+    rcl_interfaces::msg::ParameterDescriptor name_desc;
+    name_desc.name = norm_param_prefix + filter_n + ".name";
+    name_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
+    name_desc.read_only = false;
+    rcl_interfaces::msg::ParameterDescriptor type_desc;
+    type_desc.name = norm_param_prefix + filter_n + ".type";
+    type_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
+    type_desc.read_only = false;
 
-        rclcpp::Parameter param_name;
-        rclcpp::Parameter param_type;
+    node_params->declare_parameter(name_desc.name, rclcpp::ParameterValue(), name_desc);
+    node_params->declare_parameter(type_desc.name, rclcpp::ParameterValue(), type_desc);
 
-        const bool got_name = node_params->get_parameter(name_desc.name, param_name);
-        const bool got_type = node_params->get_parameter(type_desc.name, param_type);
+    rclcpp::Parameter param_name;
+    rclcpp::Parameter param_type;
 
-        if (!got_name && !got_type) {
-          // Reached end of chain
-          break;
-        } else if (got_name != got_type) {
-          RCLCPP_FATAL(node_logger->get_logger(),
-            "%s and %s are required", name_desc.name.c_str(), type_desc.name.c_str());
-          return false;
-        }
+    const bool got_name = node_params->get_parameter(name_desc.name, param_name);
+    const bool got_type = node_params->get_parameter(type_desc.name, param_type);
 
-        // Make sure 'name' and 'type' are strings
-        if (rclcpp::PARAMETER_STRING != param_name.get_type()) {
-          RCLCPP_FATAL(node_logger->get_logger(),
-            "%s must be a string", name_desc.name.c_str());
-          return false;
-        }
-        if (rclcpp::PARAMETER_STRING != param_type.get_type()) {
-          RCLCPP_FATAL(node_logger->get_logger(),
-            "%s must be a string", type_desc.name.c_str());
-          return false;
-        }
-
-        struct FoundFilter found_filter;
-        found_filter.name = param_name.get_parameter_value().get<std::string>();
-        found_filter.type = param_type.get_parameter_value().get<std::string>();
-
-        // Make sure 'name' is unique
-        for (const auto & filter : found_filters) {
-          if (found_filter.name == filter.name) {
-            RCLCPP_FATAL(node_logger->get_logger(),
-              "A filter with the name %s already exists", filter.name.c_str());
-            return false;
-          }
-        }
-
-        // Make sure 'type' is formated as 'package_name/filtername'
-        if (1 != std::count(found_filter.type.cbegin(), found_filter.type.cend(), '/')) {
-          RCLCPP_FATAL(node_logger->get_logger(),
-            "%s must be of form <package_name>/<filter_name>", found_filter.type .c_str());
-          return false;
-        }
-
-        // Seems ok; store it for now; it will be loaded further down.
-        found_filter.param_prefix = norm_param_prefix + filter_n + ".params";
-        found_filters.push_back(found_filter);
-
-        // Redeclare 'name' and 'type' as read_only
-        node_params->undeclare_parameter(name_desc.name);
-        node_params->undeclare_parameter(type_desc.name);
-        name_desc.read_only = true;
-        type_desc.read_only = true;
-        node_params->declare_parameter(
-          name_desc.name, rclcpp::ParameterValue(found_filter.name), name_desc);
-        node_params->declare_parameter(
-          type_desc.name, rclcpp::ParameterValue(found_filter.type), type_desc);
-      }
-      return true;
+    if (!got_name && !got_type) {
+      // Reached end of chain
+      break;
+    } else if (got_name != got_type) {
+      RCLCPP_FATAL(node_logger->get_logger(),
+        "%s and %s are required", name_desc.name.c_str(), type_desc.name.c_str());
+      return false;
     }
-  }  // namespace impl
+
+    // Make sure 'name' and 'type' are strings
+    if (rclcpp::PARAMETER_STRING != param_name.get_type()) {
+      RCLCPP_FATAL(node_logger->get_logger(),
+        "%s must be a string", name_desc.name.c_str());
+      return false;
+    }
+    if (rclcpp::PARAMETER_STRING != param_type.get_type()) {
+      RCLCPP_FATAL(node_logger->get_logger(),
+        "%s must be a string", type_desc.name.c_str());
+      return false;
+    }
+
+    FoundFilter found_filter;
+    found_filter.name = param_name.get_parameter_value().get<std::string>();
+    found_filter.type = param_type.get_parameter_value().get<std::string>();
+
+    // Make sure 'name' is unique
+    for (const auto & filter : found_filters) {
+      if (found_filter.name == filter.name) {
+        RCLCPP_FATAL(node_logger->get_logger(),
+          "A filter with the name %s already exists", filter.name.c_str());
+        return false;
+      }
+    }
+
+    // Make sure 'type' is formated as 'package_name/filtername'
+    if (1 != std::count(found_filter.type.cbegin(), found_filter.type.cend(), '/')) {
+      RCLCPP_FATAL(node_logger->get_logger(),
+        "%s must be of form <package_name>/<filter_name>", found_filter.type.c_str());
+      return false;
+    }
+
+    // Seems ok; store it for now; it will be loaded further down.
+    found_filter.param_prefix = norm_param_prefix + filter_n + ".params";
+    found_filters.push_back(found_filter);
+
+    // Redeclare 'name' and 'type' as read_only
+    node_params->undeclare_parameter(name_desc.name);
+    node_params->undeclare_parameter(type_desc.name);
+    name_desc.read_only = true;
+    type_desc.read_only = true;
+    node_params->declare_parameter(
+      name_desc.name, rclcpp::ParameterValue(found_filter.name), name_desc);
+    node_params->declare_parameter(
+      type_desc.name, rclcpp::ParameterValue(found_filter.type), type_desc);
+  }
+  return true;
+}
+
+}  // namespace impl
 
 
-/** \brief A class which will construct and sequentially call Filters according to xml
+/**
+ * \brief A class which will construct and sequentially call Filters according to xml
  * This is the primary way in which users are expected to interact with Filters
  */
-template <typename T>
+template<typename T>
 class FilterChain
 {
-private:
-  pluginlib::ClassLoader<filters::FilterBase<T> > loader_;
 public:
-  /** \brief Create the filter chain object */
-  FilterChain(std::string data_type): loader_("filters", std::string("filters::FilterBase<") + data_type + std::string(">")), configured_(false)
+  /**
+   * \brief Create the filter chain object
+   */
+  explicit FilterChain(std::string data_type)
+  : loader_("filters", "filters::FilterBase<" + data_type + ">"),
+    configured_(false)
   {
   }
 
   ~FilterChain()
   {
     clear();
-
   }
 
-  /** \brief process data through each of the filters added sequentially */
-  bool update(const T& data_in, T& data_out)
+  /**
+   * \brief process data through each of the filters added sequentially
+   */
+  bool update(const T & data_in, T & data_out)
   {
-    unsigned int list_size = reference_pointers_.size();
     bool result;
-    if (list_size == 0)
-    {
+    size_t list_size = reference_pointers_.size();
+    if (list_size == 0) {
       data_out = data_in;
       result = true;
-    }
-    else if (list_size == 1)
+    } else if (list_size == 1) {
       result = reference_pointers_[0]->update(data_in, data_out);
-    else if (list_size == 2)
-    {
+    } else if (list_size == 2) {
       result = reference_pointers_[0]->update(data_in, buffer0_);
-      if (result == false) {return false; };//don't keep processing on failure
+      if (result == false) {return false;}  // don't keep processing on failure
       result = result && reference_pointers_[1]->update(buffer0_, data_out);
-    }
-    else
-    {
-      result = reference_pointers_[0]->update(data_in, buffer0_);  //first copy in
-      for (unsigned int i = 1; i <  reference_pointers_.size() - 1; i++) // all but first and last (never called if size=2)
-      {
-        if (i %2 == 1)
+    } else {
+      result = reference_pointers_[0]->update(data_in, buffer0_);  // first copy in
+      for (size_t i = 1; i < reference_pointers_.size() - 1 && result; ++i) {
+        // all but first and last (never called if size=2)
+        if (i % 2 == 1) {
           result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
-        else
+        } else {
           result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
-        
-        if (result == false) {return false; }; //don't keep processing on failure
+        }
       }
-      if (list_size % 2 == 1) // odd number last deposit was in buffer1
+      if (list_size % 2 == 1) {  // odd number last deposit was in buffer1
         result = result && reference_pointers_.back()->update(buffer1_, data_out);
-      else
+      } else {
         result = result && reference_pointers_.back()->update(buffer0_, data_out);
+      }
     }
     return result;
-    
   }
-  /** \brief Clear all filters from this chain */
-  bool clear() 
+
+  /**
+   * \brief Clear all filters from this chain
+   */
+  bool clear()
   {
     configured_ = false;
     reference_pointers_.clear();
     return true;
   }
-  
 
-
-
-  /** \brief Configure the filter chain and all filters which have been addedj
-   * @param param_prefix The parameter name prefix of the filter chain to load
-   * @param node_logger node logging interface to use
-   * @param node_params node parameter interface to use
+  /**
+   * \brief Configure the filter chain and all filters which have been addedj
+   * \param param_prefix The parameter name prefix of the filter chain to load
+   * \param node_logger node logging interface to use
+   * \param node_params node parameter interface to use
    */
   bool configure(
     const std::string & param_prefix,
@@ -243,7 +241,7 @@ public:
 
     std::vector<struct impl::FoundFilter> found_filters;
     if (!impl::load_chain_config(
-          param_prefix, logging_interface_, params_interface_, found_filters))
+        param_prefix, logging_interface_, params_interface_, found_filters))
     {
       // Assume load_chain_config() console logged something sensible
       return false;
@@ -267,7 +265,7 @@ public:
 
       // Try to configure the filter
       if (!loaded_filter || !loaded_filter->configure(
-            filter.param_prefix, filter.name, logging_interface_, params_interface_))
+          filter.param_prefix, filter.name, logging_interface_, params_interface_))
       {
         RCLCPP_FATAL(logging_interface_->get_logger(),
           "Could not configure %s of type %s", filter.name.c_str(), filter.type.c_str());
@@ -283,80 +281,83 @@ public:
   }
 
 private:
+  pluginlib::ClassLoader<filters::FilterBase<T>> loader_;
 
-  // A vector of pointers to currently constructed filters
-  std::vector<pluginlib::UniquePtr<filters::FilterBase<T> > > reference_pointers_;
+  /// A vector of pointers to currently constructed filters
+  std::vector<pluginlib::UniquePtr<filters::FilterBase<T>>> reference_pointers_;
 
-  T buffer0_; ///<! A temporary intermediate buffer
-  T buffer1_; ///<! A temporary intermediate buffer
-  bool configured_; ///<! whether the system is configured  
+  T buffer0_;  ///< A temporary intermediate buffer
+  T buffer1_;  ///< A temporary intermediate buffer
+  bool configured_;  ///< whether the system is configured
 
   rclcpp::node_interfaces::NodeParametersInterface::SharedPtr params_interface_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr logging_interface_;
 };
 
-/** \brief A class which will construct and sequentially call Filters according to xml
+/**
+ * \brief A class which will construct and sequentially call Filters according to xml
+ *
  * This is the primary way in which users are expected to interact with Filters
  */
-template <typename T>
+template<typename T>
 class MultiChannelFilterChain
 {
-private:
-  pluginlib::ClassLoader<filters::MultiChannelFilterBase<T> > loader_;
 public:
-  /** \brief Create the filter chain object */
-  MultiChannelFilterChain(std::string data_type): loader_("filters", std::string("filters::MultiChannelFilterBase<") + data_type + std::string(">")), configured_(false)
+  /**
+   * \brief Create the filter chain object
+   */
+  explicit MultiChannelFilterChain(std::string data_type)
+  : loader_("filters", "filters::MultiChannelFilterBase<" + data_type + ">"),
+    configured_(false)
   {
   }
 
-  /** \brief process data through each of the filters added sequentially */
-  bool update(const std::vector<T>& data_in, std::vector<T>& data_out)
+  /**
+   * \brief process data through each of the filters added sequentially
+   */
+  bool update(const std::vector<T> & data_in, std::vector<T> & data_out)
   {
-    unsigned int list_size = reference_pointers_.size();
     bool result;
-    if (list_size == 0)
-    {
+    size_t list_size = reference_pointers_.size();
+
+    if (list_size == 0) {
       data_out = data_in;
       result = true;
-    }
-    else if (list_size == 1)
+    } else if (list_size == 1) {
       result = reference_pointers_[0]->update(data_in, data_out);
-    else if (list_size == 2)
-    {
+    } else if (list_size == 2) {
       result = reference_pointers_[0]->update(data_in, buffer0_);
-      if (result == false) {return false; };//don't keep processing on failure
-      result = result && reference_pointers_[1]->update(buffer0_, data_out);
-    }
-    else
-    {
-      result = reference_pointers_[0]->update(data_in, buffer0_);  //first copy in
-      for (unsigned int i = 1; i <  reference_pointers_.size() - 1; i++) // all but first and last (never if size = 2)
-      {
-        if (i %2 == 1)
-          result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
-        else
-          result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
-
-        if (result == false) {return false; }; //don't keep processing on failure
+      if (result) {  // don't keep processing on failure
+        result = result && reference_pointers_[1]->update(buffer0_, data_out);
       }
-      if (list_size % 2 == 1) // odd number last deposit was in buffer1
+    } else {
+      result = reference_pointers_[0]->update(data_in, buffer0_);  // first copy in
+      for (size_t i = 1; i < reference_pointers_.size() - 1 && result; ++i) {
+        // all but first and last (never if size = 2)
+        if (i % 2 == 1) {
+          result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
+        } else {
+          result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
+        }
+      }
+      if (list_size % 2 == 1) {  // odd number last deposit was in buffer1
         result = result && reference_pointers_.back()->update(buffer1_, data_out);
-      else
+      } else {
         result = result && reference_pointers_.back()->update(buffer0_, data_out);
+      }
     }
     return result;
-            
   }
-
 
   ~MultiChannelFilterChain()
   {
     clear();
-
   }
 
-  /** \brief Clear all filters from this chain */
-  bool clear() 
+  /**
+   * \brief Clear all filters from this chain
+   */
+  bool clear()
   {
     configured_ = false;
     reference_pointers_.clear();
@@ -364,19 +365,19 @@ public:
     buffer1_.clear();
     return true;
   }
-  
 
-
-  /** \brief Configure the filter chain 
+  /**
+   * \brief Configure the filter chain
+   *
    * This will call configure on all filters which have been added
-   * as well as allocate the buffers*/
+   * as well as allocate the buffers
+   */
   bool configure(
     size_t number_of_channels,
-    const std::string& param_prefix,
+    const std::string & param_prefix,
     const rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr & node_logger,
     const rclcpp::node_interfaces::NodeParametersInterface::SharedPtr & node_params)
   {
-
     if (configured_) {
       RCLCPP_ERROR(logging_interface_->get_logger(), "Filter chain is already configured");
       return false;
@@ -384,9 +385,9 @@ public:
     logging_interface_ = node_logger;
     params_interface_ = node_params;
 
-    std::vector<struct impl::FoundFilter> found_filters;
+    std::vector<impl::FoundFilter> found_filters;
     if (!impl::load_chain_config(
-          param_prefix, logging_interface_, params_interface_, found_filters))
+        param_prefix, logging_interface_, params_interface_, found_filters))
     {
       // Assume load_chain_config() console logged something sensible
       return false;
@@ -410,8 +411,8 @@ public:
 
       // Try to configure the filter
       if (!loaded_filter || !loaded_filter->configure(
-            number_of_channels, filter.param_prefix, filter.name,
-            logging_interface_, params_interface_))
+          number_of_channels, filter.param_prefix, filter.name,
+          logging_interface_, params_interface_))
       {
         RCLCPP_FATAL(logging_interface_->get_logger(),
           "Could not configure %s of type %s", filter.name.c_str(), filter.type.c_str());
@@ -430,17 +431,19 @@ public:
   }
 
 private:
-  // A vector of pointers to currently constructed filters
+  pluginlib::ClassLoader<filters::MultiChannelFilterBase<T>> loader_;
+
+  /// A vector of pointers to currently constructed filters
   std::vector<pluginlib::UniquePtr<filters::MultiChannelFilterBase<T>>> reference_pointers_;
 
-  std::vector<T> buffer0_; ///<! A temporary intermediate buffer
-  std::vector<T> buffer1_; ///<! A temporary intermediate buffer
-  bool configured_; ///<! whether the system is configured  
+  std::vector<T> buffer0_;  ///< A temporary intermediate buffer
+  std::vector<T> buffer1_;  ///< A temporary intermediate buffer
+  bool configured_;  ///< whether the system is configured
 
   rclcpp::node_interfaces::NodeParametersInterface::SharedPtr params_interface_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr logging_interface_;
 };
 
-}
+}  // namespace filters
 
-#endif //#ifndef FILTERS_FILTER_CHAIN_HPP_
+#endif  // FILTERS__FILTER_CHAIN_HPP_

@@ -28,10 +28,15 @@
  */
 
 #include <gtest/gtest.h>
-#include <sys/time.h>
+
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "filters/param_test.hpp"
 
-class ParametersTest : public ::testing::Test {
+class ParametersTest : public ::testing::Test
+{
 protected:
   ParametersTest()
   {
@@ -43,7 +48,7 @@ protected:
     rclcpp::shutdown();
   }
 
-  template <typename T>
+  template<typename T>
   rclcpp::Node::SharedPtr
   make_node_with_one_param(const T & value)
   {
@@ -53,88 +58,88 @@ protected:
   }
 };
 
-using namespace filters ;
-
 TEST_F(ParametersTest, Double)
 {
   double epsilon = 1e-6;
-  
+
   auto node = make_node_with_one_param(4.0);
-  std::shared_ptr<FilterBase<double>> filter = std::make_shared<ParamTest<double>>();
+  std::shared_ptr<filters::FilterBase<double>> filter =
+    std::make_shared<filters::ParamTest<double>>();
   ASSERT_TRUE(
     filter->configure("dummy.prefix", "TestDouble",
-      node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    node->get_node_logging_interface(), node->get_node_parameters_interface()));
   double out;
-  filter -> update(out, out);
-  EXPECT_NEAR(4,  out, epsilon);
+  filter->update(out, out);
+  EXPECT_NEAR(4, out, epsilon);
 }
 
 TEST_F(ParametersTest, Int)
 {
   auto node = make_node_with_one_param(static_cast<int>(4));
-  std::shared_ptr<FilterBase<int>> filter = std::make_shared<ParamTest<int>>();
+  std::shared_ptr<filters::FilterBase<int>> filter =
+    std::make_shared<filters::ParamTest<int>>();
   ASSERT_TRUE(
     filter->configure("dummy.prefix", "TestInt",
-      node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    node->get_node_logging_interface(), node->get_node_parameters_interface()));
   int out;
-  filter -> update(out, out);
-  EXPECT_EQ(4,  out);
+  filter->update(out, out);
+  EXPECT_EQ(4, out);
 }
 
 TEST_F(ParametersTest, UInt)
 {
   auto node = make_node_with_one_param(static_cast<int>(4));  // int because no unsigned param type
-  std::shared_ptr<FilterBase<unsigned int>> filter = std::make_shared<ParamTest<unsigned int>>();
+  std::shared_ptr<filters::FilterBase<unsigned int>> filter =
+    std::make_shared<filters::ParamTest<unsigned int>>();
   ASSERT_TRUE(
     filter->configure("dummy.prefix", "TestUInt",
-      node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    node->get_node_logging_interface(), node->get_node_parameters_interface()));
   unsigned int out;
-  filter -> update(out, out);
-  EXPECT_EQ(4u,  out);
+  filter->update(out, out);
+  EXPECT_EQ(4u, out);
 }
 
 TEST_F(ParametersTest, String)
 {
   auto node = make_node_with_one_param(std::string("four"));
-  std::shared_ptr<FilterBase<std::string>> filter = std::make_shared<ParamTest<std::string>>();
+  std::shared_ptr<filters::FilterBase<std::string>> filter =
+    std::make_shared<filters::ParamTest<std::string>>();
   ASSERT_TRUE(
     filter->configure("dummy.prefix", "TestString",
-      node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    node->get_node_logging_interface(), node->get_node_parameters_interface()));
   std::string out;
-  filter -> update(out, out);
-  EXPECT_STREQ("four",  out.c_str());
+  filter->update(out, out);
+  EXPECT_STREQ("four", out.c_str());
 }
 
 TEST_F(ParametersTest, DoubleVector)
 {
   double epsilon = 1e-6;
-  
+
   auto node = make_node_with_one_param(std::vector<double>({4.0, 4.0, 4.0, 4.0}));
-  std::shared_ptr<FilterBase<std::vector<double>>> filter =
-    std::make_shared<ParamTest<std::vector<double>>>();
+  std::shared_ptr<filters::FilterBase<std::vector<double>>> filter =
+    std::make_shared<filters::ParamTest<std::vector<double>>>();
   ASSERT_TRUE(
     filter->configure("dummy.prefix", "TestDoubleVector",
-      node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    node->get_node_logging_interface(), node->get_node_parameters_interface()));
   std::vector<double> out;
-  filter -> update(out, out);
-  for (std::vector<double>::iterator it = out.begin(); it != out.end(); ++it)
-    {
-      EXPECT_NEAR(4,  *it, epsilon);
-    }
+  filter->update(out, out);
+  for (std::vector<double>::iterator it = out.begin(); it != out.end(); ++it) {
+    EXPECT_NEAR(4, *it, epsilon);
+  }
 }
 
 TEST_F(ParametersTest, StringVector)
 {
   auto node = make_node_with_one_param(std::vector<std::string>({"four", "four", "four", "four"}));
-  std::shared_ptr<FilterBase<std::vector<std::string>>> filter =
-    std::make_shared<ParamTest<std::vector<std::string>>>();
+  std::shared_ptr<filters::FilterBase<std::vector<std::string>>> filter =
+    std::make_shared<filters::ParamTest<std::vector<std::string>>>();
   ASSERT_TRUE(
     filter->configure("dummy.prefix", "TestStringVector",
-      node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    node->get_node_logging_interface(), node->get_node_parameters_interface()));
   std::vector<std::string> out;
-  filter -> update(out, out);
-  for (std::vector<std::string>::iterator it = out.begin(); it != out.end(); ++it)
-    {
-      EXPECT_STREQ("four",  it->c_str());
-    }
+  filter->update(out, out);
+  for (std::vector<std::string>::iterator it = out.begin(); it != out.end(); ++it) {
+    EXPECT_STREQ("four", it->c_str());
+  }
 }

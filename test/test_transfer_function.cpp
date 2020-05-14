@@ -28,11 +28,14 @@
  */
 
 #include <gtest/gtest.h>
-#include <sys/time.h>
+
+#include <memory>
 #include <vector>
+
 #include "filters/transfer_function.hpp"
 
-class TransferFunctionTest : public ::testing::Test {
+class TransferFunctionTest : public ::testing::Test
+{
 protected:
   TransferFunctionTest()
   {
@@ -54,25 +57,23 @@ protected:
   }
 };
 
-using namespace filters ;
-
 TEST_F(TransferFunctionTest, LowPass)
 {
   const size_t channels = 1;
   double epsilon = 1e-4;
-  
+
   auto node = make_node_with_params(
     {1.0, -0.509525449494429},
     {0.245237275252786, 0.245237275252786});
-  std::shared_ptr<MultiChannelFilterBase<double>> filter =
-    std::make_shared<MultiChannelTransferFunctionFilter<double>>();
+  std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
+    std::make_shared<filters::MultiChannelTransferFunctionFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       channels, "dummy.prefix", "LowPass",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
-  
 
-  std::vector<double> in1,in2,in3,in4,in5,in6,in7;
+
+  std::vector<double> in1, in2, in3, in4, in5, in6, in7;
   std::vector<double> out1;
 
   in1.push_back(10.0);
@@ -97,28 +98,28 @@ TEST_F(TransferFunctionTest, LowPass)
 TEST_F(TransferFunctionTest, SingleLowPass)
 {
   double epsilon = 1e-4;
-  
+
   auto node = make_node_with_params(
     {1.0, -0.509525449494429},
     {0.245237275252786, 0.245237275252786});
-  std::shared_ptr<FilterBase<double>> filter =
-    std::make_shared<SingleChannelTransferFunctionFilter<double>>();
+  std::shared_ptr<filters::FilterBase<double>> filter =
+    std::make_shared<filters::SingleChannelTransferFunctionFilter<double>>();
   ASSERT_TRUE(
     filter->configure("dummy.prefix", "LowPassSingle",
-      node->get_node_logging_interface(), node->get_node_parameters_interface()));
-  
+    node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
-  double in1,in2,in3,in4,in5,in6,in7;
+
+  double in1, in2, in3, in4, in5, in6, in7;
   double out1;
 
-  in1=10.0;
-  in2=70.0;
-  in3=10.0;
-  in4=44.0;
-  in5=10.0;
-  in6=5.0;
-  in7=6.0;
-  out1=11.8008;
+  in1 = 10.0;
+  in2 = 70.0;
+  in3 = 10.0;
+  in4 = 44.0;
+  in5 = 10.0;
+  in6 = 5.0;
+  in7 = 6.0;
+  out1 = 11.8008;
   EXPECT_TRUE(filter->update(in1, in1));
   EXPECT_TRUE(filter->update(in2, in2));
   EXPECT_TRUE(filter->update(in3, in3));
@@ -139,14 +140,14 @@ TEST_F(TransferFunctionTest, LowPassNonUnity)
   auto node = make_node_with_params(
     {2.0, -0.509525449494429},
     {0.245237275252786, 0.245237275252786});
-  std::shared_ptr<MultiChannelFilterBase<double>> filter =
-    std::make_shared<MultiChannelTransferFunctionFilter<double>>();
+  std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
+    std::make_shared<filters::MultiChannelTransferFunctionFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       channels, "dummy.prefix", "LowPassNonUnity",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
-    
-  std::vector<double> in1,in2,in3,in4,in5,in6,in7;
+
+  std::vector<double> in1, in2, in3, in4, in5, in6, in7;
   std::vector<double> out1;
 
   in1.push_back(10.0);
@@ -176,16 +177,16 @@ TEST_F(TransferFunctionTest, LowPassMulti)
   auto node = make_node_with_params(
     {1.0, -1.760041880343169, 1.182893262037831, -0.278059917634546},
     {0.018098933007514, 0.245237275252786, 0.054296799022543, 0.018098933007514});
-  std::shared_ptr<MultiChannelFilterBase<double>> filter =
-    std::make_shared<MultiChannelTransferFunctionFilter<double>>();
+  std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
+    std::make_shared<filters::MultiChannelTransferFunctionFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       channels, "dummy.prefix", "LowPassMulti",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
-  std::vector<double> in1,in2,in3,in4,in5,in6,in7;
+  std::vector<double> in1, in2, in3, in4, in5, in6, in7;
   std::vector<double> out1;
-  
+
   in1.push_back(10.0);
   in1.push_back(10.0);
   in1.push_back(10.0);
@@ -225,8 +226,7 @@ TEST_F(TransferFunctionTest, LowPassMulti)
   EXPECT_TRUE(filter->update(in6, in6));
   EXPECT_TRUE(filter->update(in7, in7));
 
-  for(unsigned int i=0; i<out1.size(); i++)
-  {
+  for (size_t i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
 }
@@ -235,18 +235,18 @@ TEST_F(TransferFunctionTest, LowPassIrrational)
 {
   const size_t channels = 3;
   double epsilon = 1e-4;
- 
+
   auto node = make_node_with_params(
     {1.0, -1.760041880343169, 1.182893262037831},
     {0.018098933007514, 0.054296799022543, 0.054296799022543, 0.018098933007514});
-  std::shared_ptr<MultiChannelFilterBase<double>> filter =
-    std::make_shared<MultiChannelTransferFunctionFilter<double>>();
+  std::shared_ptr<filters::MultiChannelFilterBase<double>> filter =
+    std::make_shared<filters::MultiChannelTransferFunctionFilter<double>>();
   ASSERT_TRUE(
     filter->configure(
       channels, "dummy.prefix", "LowPassIrrational",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
- 
-  std::vector<double> in1,in2,in3,in4,in5,in6,in7;
+
+  std::vector<double> in1, in2, in3, in4, in5, in6, in7;
   std::vector<double> out1;
 
   in1.push_back(10.0);
@@ -288,8 +288,7 @@ TEST_F(TransferFunctionTest, LowPassIrrational)
   EXPECT_TRUE(filter->update(in6, in6));
   EXPECT_TRUE(filter->update(in7, in7));
 
-  for(unsigned int i=0; i<out1.size(); i++)
-  {
+  for (size_t i = 0; i < out1.size(); i++) {
     EXPECT_NEAR(out1[i], in7[i], epsilon);
   }
 }
