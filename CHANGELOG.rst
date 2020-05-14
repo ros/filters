@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.0 (2020-05-14)
+------------------
 * Fix a bug in the tests.
 * Fixes for Foxy uncrustify.
 * Address peer review comments.
