@@ -2,6 +2,32 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix a bug in the tests.
+* Fixes for Foxy uncrustify.
+* Address peer review comments.
+* Enforce proper code style.
+* Cleanup types and literals.
+* Lint all sources.
+* Address pending review comments.
+* Misc boost fixes
+* Fix wrong include guard
+* FilterBase<T> to avoid name hiding
+* Include what is used
+* Alphabetize package deps
+* Get rid of unnecessary retval
+* Include what is used
+* remove unnecessary ';'
+* Use `empty()` instead of `size() == 0`
+* `Instal` -> `Install`
+* Add ament_package()
+* Port filters to ROS Eloquent
+* [noetic] deprecate h for hpp (`#34 <https://github.com/ros/filters/issues/34>`_)
+* [noetic] Delete unused code (`#33 <https://github.com/ros/filters/issues/33>`_)
+* Bump CMake version to avoid CMP0048
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Michel Hidalgo, Shane Loretz
+
 1.9.0 (2020-03-10)
 ------------------
 * Reduce dependency on boost (`#30 <https://github.com/ros/filters/issues/30>`_)
