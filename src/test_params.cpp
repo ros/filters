@@ -39,7 +39,9 @@ PLUGINLIB_EXPORT_CLASS(filters::ParamTest<int>, filters::FilterBase<int>)
 PLUGINLIB_EXPORT_CLASS(filters::ParamTest<unsigned int>, filters::FilterBase<unsigned int>)
 PLUGINLIB_EXPORT_CLASS(filters::ParamTest<std::string>, filters::FilterBase<std::string>)
 
-PLUGINLIB_EXPORT_CLASS(filters::ParamTest<std::vector<double>>,
+PLUGINLIB_EXPORT_CLASS(
+  filters::ParamTest<std::vector<double>>,
   filters::FilterBase<std::vector<double>>)
-PLUGINLIB_EXPORT_CLASS(filters::ParamTest<std::vector<std::string>>,
+PLUGINLIB_EXPORT_CLASS(
+  filters::ParamTest<std::vector<std::string>>,
   filters::FilterBase<std::vector<std::string>>)

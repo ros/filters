@@ -64,11 +64,13 @@ TEST_F(ChainTest, multi_channel_configuring) {
 
   std::vector<rclcpp::Parameter> overrides;
   overrides.emplace_back("MultiChannelMeanFilterDouble5.filter1.name", std::string("mean_test"));
-  overrides.emplace_back("MultiChannelMeanFilterDouble5.filter1.type",
+  overrides.emplace_back(
+    "MultiChannelMeanFilterDouble5.filter1.type",
     std::string("filters/MultiChannelMeanFilterDouble"));
   overrides.emplace_back("MultiChannelMeanFilterDouble5.filter1.params.number_of_observations", 5);
   auto node = make_node_with_params(overrides);
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       5, "MultiChannelMeanFilterDouble5",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
@@ -97,7 +99,8 @@ TEST_F(ChainTest, configuring) {
 
   filters::FilterChain<float> chain("float");
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       "MeanFilterFloat5", node->get_node_logging_interface(),
       node->get_node_parameters_interface()));
 
@@ -115,15 +118,19 @@ TEST_F(ChainTest, MisconfiguredNumberOfChannels) {
   filters::MultiChannelFilterChain<double> chain("double");
 
   std::vector<rclcpp::Parameter> overrides;
-  overrides.emplace_back("MultiChannelMedianFilterDouble5.filter1.name",
+  overrides.emplace_back(
+    "MultiChannelMedianFilterDouble5.filter1.name",
     std::string("median_test"));
-  overrides.emplace_back("MultiChannelMedianFilterDouble5.filter1.type",
+  overrides.emplace_back(
+    "MultiChannelMedianFilterDouble5.filter1.type",
     std::string("filters/MultiChannelMedianFilterDouble"));
-  overrides.emplace_back("MultiChannelMedianFilterDouble5.filter1.params.number_of_observations",
+  overrides.emplace_back(
+    "MultiChannelMedianFilterDouble5.filter1.params.number_of_observations",
     5);
   auto node = make_node_with_params(overrides);
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       10, "MultiChannelMedianFilterDouble5",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
@@ -141,16 +148,19 @@ TEST_F(ChainTest, MultiChannelTwoFilters) {
 
   std::vector<rclcpp::Parameter> overrides;
   overrides.emplace_back("TwoFilters.filter1.name", std::string("median_test_unique"));
-  overrides.emplace_back("TwoFilters.filter1.type",
+  overrides.emplace_back(
+    "TwoFilters.filter1.type",
     std::string("filters/MultiChannelMedianFilterDouble"));
   overrides.emplace_back("TwoFilters.filter1.params.number_of_observations", 5);
   overrides.emplace_back("TwoFilters.filter2.name", std::string("median_test2"));
-  overrides.emplace_back("TwoFilters.filter2.type",
+  overrides.emplace_back(
+    "TwoFilters.filter2.type",
     std::string("filters/MultiChannelMedianFilterDouble"));
   overrides.emplace_back("TwoFilters.filter2.params.number_of_observations", 5);
   auto node = make_node_with_params(overrides);
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       5, "TwoFilters",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
@@ -176,15 +186,20 @@ TEST_F(ChainTest, TransferFunction) {
 
   std::vector<rclcpp::Parameter> overrides;
   overrides.emplace_back("TransferFunction.filter1.name", std::string("transfer_function"));
-  overrides.emplace_back("TransferFunction.filter1.type",
+  overrides.emplace_back(
+    "TransferFunction.filter1.type",
     std::string("filters/MultiChannelTransferFunctionFilterDouble"));
-  overrides.emplace_back("TransferFunction.filter1.params.a",
+  overrides.emplace_back(
+    "TransferFunction.filter1.params.a",
     std::vector<double>({1.0, -1.760041880343169, 1.182893262037831}));
-  overrides.emplace_back("TransferFunction.filter1.params.b",
-    std::vector<double>({0.018098933007514, 0.054296799022543, 0.054296799022543,
-      0.018098933007514}));
+  overrides.emplace_back(
+    "TransferFunction.filter1.params.b",
+    std::vector<double>(
+      {0.018098933007514, 0.054296799022543, 0.054296799022543,
+        0.018098933007514}));
   auto node = make_node_with_params(overrides);
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       3, "TransferFunction",
       node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
@@ -252,13 +267,15 @@ TEST_F(ChainTest, ReconfiguringChain) {
   overrides.emplace_back("TwoIncrements.filter2.type", std::string("filters/IncrementFilterInt"));
   auto node = make_node_with_params(overrides);
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       "OneIncrements", node->get_node_logging_interface(), node->get_node_parameters_interface()));
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(2, v1a);
   chain.clear();
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       "TwoIncrements", node->get_node_logging_interface(), node->get_node_parameters_interface()));
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(3, v1a);
@@ -278,7 +295,8 @@ TEST_F(ChainTest, ThreeIncrementChains) {
   overrides.emplace_back("ThreeIncrements.filter3.type", std::string("filters/IncrementFilterInt"));
   auto node = make_node_with_params(overrides);
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       "ThreeIncrements", node->get_node_logging_interface(),
       node->get_node_parameters_interface()));
   EXPECT_TRUE(chain.update(v1, v1a));
@@ -313,7 +331,8 @@ TEST_F(ChainTest, TenIncrementChains) {
   overrides.emplace_back("TenIncrements.filter10.type", std::string("filters/IncrementFilterInt"));
   auto node = make_node_with_params(overrides);
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       "TenIncrements", node->get_node_logging_interface(), node->get_node_parameters_interface()));
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(11, v1a);
@@ -329,38 +348,49 @@ TEST_F(ChainTest, TenMultiChannelIncrementChains) {
 
   std::vector<rclcpp::Parameter> overrides;
   overrides.emplace_back("TenMultiChannelIncrements.filter1.name", std::string("increment1"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter1.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter1.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter2.name", std::string("increment2"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter2.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter2.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter3.name", std::string("increment3"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter3.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter3.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter4.name", std::string("increment4"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter4.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter4.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter5.name", std::string("increment5"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter5.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter5.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter6.name", std::string("increment6"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter6.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter6.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter7.name", std::string("increment7"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter7.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter7.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter8.name", std::string("increment8"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter8.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter8.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter9.name", std::string("increment9"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter9.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter9.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   overrides.emplace_back("TenMultiChannelIncrements.filter10.name", std::string("increment10"));
-  overrides.emplace_back("TenMultiChannelIncrements.filter10.type",
+  overrides.emplace_back(
+    "TenMultiChannelIncrements.filter10.type",
     std::string("filters/MultiChannelIncrementFilterInt"));
   auto node = make_node_with_params(overrides);
 
-  ASSERT_TRUE(chain.configure(
+  ASSERT_TRUE(
+    chain.configure(
       3, "TenMultiChannelIncrements", node->get_node_logging_interface(),
       node->get_node_parameters_interface()));
   EXPECT_TRUE(chain.update(v1, v1a));

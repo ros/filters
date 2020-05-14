@@ -66,8 +66,9 @@ TEST_F(ParametersTest, Double)
   std::shared_ptr<filters::FilterBase<double>> filter =
     std::make_shared<filters::ParamTest<double>>();
   ASSERT_TRUE(
-    filter->configure("dummy.prefix", "TestDouble",
-    node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    filter->configure(
+      "dummy.prefix", "TestDouble",
+      node->get_node_logging_interface(), node->get_node_parameters_interface()));
   double out;
   filter->update(out, out);
   EXPECT_NEAR(4, out, epsilon);
@@ -79,8 +80,9 @@ TEST_F(ParametersTest, Int)
   std::shared_ptr<filters::FilterBase<int>> filter =
     std::make_shared<filters::ParamTest<int>>();
   ASSERT_TRUE(
-    filter->configure("dummy.prefix", "TestInt",
-    node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    filter->configure(
+      "dummy.prefix", "TestInt",
+      node->get_node_logging_interface(), node->get_node_parameters_interface()));
   int out;
   filter->update(out, out);
   EXPECT_EQ(4, out);
@@ -92,8 +94,9 @@ TEST_F(ParametersTest, UInt)
   std::shared_ptr<filters::FilterBase<unsigned int>> filter =
     std::make_shared<filters::ParamTest<unsigned int>>();
   ASSERT_TRUE(
-    filter->configure("dummy.prefix", "TestUInt",
-    node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    filter->configure(
+      "dummy.prefix", "TestUInt",
+      node->get_node_logging_interface(), node->get_node_parameters_interface()));
   unsigned int out;
   filter->update(out, out);
   EXPECT_EQ(4u, out);
@@ -105,8 +108,9 @@ TEST_F(ParametersTest, String)
   std::shared_ptr<filters::FilterBase<std::string>> filter =
     std::make_shared<filters::ParamTest<std::string>>();
   ASSERT_TRUE(
-    filter->configure("dummy.prefix", "TestString",
-    node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    filter->configure(
+      "dummy.prefix", "TestString",
+      node->get_node_logging_interface(), node->get_node_parameters_interface()));
   std::string out;
   filter->update(out, out);
   EXPECT_STREQ("four", out.c_str());
@@ -120,8 +124,9 @@ TEST_F(ParametersTest, DoubleVector)
   std::shared_ptr<filters::FilterBase<std::vector<double>>> filter =
     std::make_shared<filters::ParamTest<std::vector<double>>>();
   ASSERT_TRUE(
-    filter->configure("dummy.prefix", "TestDoubleVector",
-    node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    filter->configure(
+      "dummy.prefix", "TestDoubleVector",
+      node->get_node_logging_interface(), node->get_node_parameters_interface()));
   std::vector<double> out;
   filter->update(out, out);
   for (std::vector<double>::iterator it = out.begin(); it != out.end(); ++it) {
@@ -135,8 +140,9 @@ TEST_F(ParametersTest, StringVector)
   std::shared_ptr<filters::FilterBase<std::vector<std::string>>> filter =
     std::make_shared<filters::ParamTest<std::vector<std::string>>>();
   ASSERT_TRUE(
-    filter->configure("dummy.prefix", "TestStringVector",
-    node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    filter->configure(
+      "dummy.prefix", "TestStringVector",
+      node->get_node_logging_interface(), node->get_node_parameters_interface()));
   std::vector<std::string> out;
   filter->update(out, out);
   for (std::vector<std::string>::iterator it = out.begin(); it != out.end(); ++it) {

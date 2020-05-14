@@ -105,8 +105,9 @@ TEST_F(TransferFunctionTest, SingleLowPass)
   std::shared_ptr<filters::FilterBase<double>> filter =
     std::make_shared<filters::SingleChannelTransferFunctionFilter<double>>();
   ASSERT_TRUE(
-    filter->configure("dummy.prefix", "LowPassSingle",
-    node->get_node_logging_interface(), node->get_node_parameters_interface()));
+    filter->configure(
+      "dummy.prefix", "LowPassSingle",
+      node->get_node_logging_interface(), node->get_node_parameters_interface()));
 
 
   double in1, in2, in3, in4, in5, in6, in7;
