@@ -78,7 +78,7 @@ TEST_F(MeanFilterTest, MultiChannelConfirmIdentityNRows)
     EXPECT_TRUE(filter->update(v1, v1a));
 
     for (size_t j = 1; j < length; ++j) {
-      EXPECT_NEAR(v1[i], v1a[i], epsilon);
+      EXPECT_NEAR(v1[j], v1a[j], epsilon);
     }
   }
 }
