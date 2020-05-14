@@ -30,7 +30,9 @@
 #include "filters/transfer_function.hpp"
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(filters::SingleChannelTransferFunctionFilter<double>,
+PLUGINLIB_EXPORT_CLASS(
+  filters::SingleChannelTransferFunctionFilter<double>,
   filters::FilterBase<double>)
-PLUGINLIB_EXPORT_CLASS(filters::MultiChannelTransferFunctionFilter<double>,
+PLUGINLIB_EXPORT_CLASS(
+  filters::MultiChannelTransferFunctionFilter<double>,
   filters::MultiChannelFilterBase<double>)

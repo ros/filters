@@ -97,19 +97,22 @@ load_chain_config(
       // Reached end of chain
       break;
     } else if (got_name != got_type) {
-      RCLCPP_FATAL(node_logger->get_logger(),
+      RCLCPP_FATAL(
+        node_logger->get_logger(),
         "%s and %s are required", name_desc.name.c_str(), type_desc.name.c_str());
       return false;
     }
 
     // Make sure 'name' and 'type' are strings
     if (rclcpp::PARAMETER_STRING != param_name.get_type()) {
-      RCLCPP_FATAL(node_logger->get_logger(),
+      RCLCPP_FATAL(
+        node_logger->get_logger(),
         "%s must be a string", name_desc.name.c_str());
       return false;
     }
     if (rclcpp::PARAMETER_STRING != param_type.get_type()) {
-      RCLCPP_FATAL(node_logger->get_logger(),
+      RCLCPP_FATAL(
+        node_logger->get_logger(),
         "%s must be a string", type_desc.name.c_str());
       return false;
     }
@@ -121,7 +124,8 @@ load_chain_config(
     // Make sure 'name' is unique
     for (const auto & filter : found_filters) {
       if (found_filter.name == filter.name) {
-        RCLCPP_FATAL(node_logger->get_logger(),
+        RCLCPP_FATAL(
+          node_logger->get_logger(),
           "A filter with the name %s already exists", filter.name.c_str());
         return false;
       }
@@ -129,7 +133,8 @@ load_chain_config(
 
     // Make sure 'type' is formated as 'package_name/filtername'
     if (1 != std::count(found_filter.type.cbegin(), found_filter.type.cend(), '/')) {
-      RCLCPP_FATAL(node_logger->get_logger(),
+      RCLCPP_FATAL(
+        node_logger->get_logger(),
         "%s must be of form <package_name>/<filter_name>", found_filter.type.c_str());
       return false;
     }
@@ -254,11 +259,13 @@ public:
       try {
         loaded_filter = loader_.createUniqueInstance(filter.type);
       } catch (const pluginlib::LibraryLoadException & e) {
-        RCLCPP_FATAL(logging_interface_->get_logger(),
+        RCLCPP_FATAL(
+          logging_interface_->get_logger(),
           "Could not load library for %s: %s", filter.type.c_str(), e.what());
         return false;
       } catch (const pluginlib::CreateClassException & e) {
-        RCLCPP_FATAL(logging_interface_->get_logger(),
+        RCLCPP_FATAL(
+          logging_interface_->get_logger(),
           "Could not construct class %s: %s", filter.type.c_str(), e.what());
         return false;
       }
@@ -267,7 +274,8 @@ public:
       if (!loaded_filter || !loaded_filter->configure(
           filter.param_prefix, filter.name, logging_interface_, params_interface_))
       {
-        RCLCPP_FATAL(logging_interface_->get_logger(),
+        RCLCPP_FATAL(
+          logging_interface_->get_logger(),
           "Could not configure %s of type %s", filter.name.c_str(), filter.type.c_str());
         return false;
       }
@@ -400,11 +408,13 @@ public:
       try {
         loaded_filter = loader_.createUniqueInstance(filter.type);
       } catch (const pluginlib::LibraryLoadException & e) {
-        RCLCPP_FATAL(logging_interface_->get_logger(),
+        RCLCPP_FATAL(
+          logging_interface_->get_logger(),
           "Could not load library for %s: %s", filter.type.c_str(), e.what());
         return false;
       } catch (const pluginlib::CreateClassException & e) {
-        RCLCPP_FATAL(logging_interface_->get_logger(),
+        RCLCPP_FATAL(
+          logging_interface_->get_logger(),
           "Could not construct class %s: %s", filter.type.c_str(), e.what());
         return false;
       }
@@ -414,7 +424,8 @@ public:
           number_of_channels, filter.param_prefix, filter.name,
           logging_interface_, params_interface_))
       {
-        RCLCPP_FATAL(logging_interface_->get_logger(),
+        RCLCPP_FATAL(
+          logging_interface_->get_logger(),
           "Could not configure %s of type %s", filter.name.c_str(), filter.type.c_str());
         return false;
       }
