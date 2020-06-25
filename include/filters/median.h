@@ -94,7 +94,7 @@ elem_type kth_smallest(elem_type a[], int n, int k)
  *
  */
 template <typename T>
-class MedianFilter: public filters::InplaceFilterBase <T>
+class MedianFilter: public filters::FilterBase<T>, public filters::InplaceFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -111,7 +111,8 @@ public:
    * \param data_out double array with length width
    */
   virtual bool update(const T& data_in, T& data_out);
-  
+  bool update(T& data) override;
+
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
   boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_;                       ///< Storage for data between updates
@@ -174,11 +175,18 @@ bool MedianFilter<T>::update(const T& data_in, T& data_out)
 
   return true;
 };
+
+template<typename T>
+bool MedianFilter<T>::update(T& data)
+{
+  return update(data, data);
+}
+
 /** \brief A median filter which works on arrays.
  *
  */
 template <typename T>
-class MultiChannelMedianFilter: public filters::InplaceMultiChannelFilterBase <T>
+class MultiChannelMedianFilter: public filters::MultiChannelFilterBase<T>, public filters::InplaceMultiChannelFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -195,7 +203,8 @@ public:
    * \param data_out double array with length width
    */
   virtual bool update(const std::vector<T>& data_in, std::vector<T>& data_out);
-  
+  bool update(std::vector<T>& data) override;
+
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_;                       ///< Storage for data between updates
@@ -264,6 +273,12 @@ bool MultiChannelMedianFilter<T>::update(const std::vector<T>& data_in, std::vec
 
   return true;
 };
+
+template<typename T>
+bool MultiChannelMedianFilter<T>::update(std::vector<T>& data)
+{
+  return update(data, data);
+}
 
 
 }

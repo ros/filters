@@ -374,18 +374,13 @@ protected:
 };
 
 template <typename T>
-class InplaceFilterBase : public FilterBase<T>
+class InplaceFilterBase
 {
 public:
-  using FilterBase<T>::update;
-
   /** \brief Filter the provided data in-place.
    * \param data A reference to the data.
    */
-  virtual bool update(T& data)
-  {
-    return this->update(data, data);
-  };
+  virtual bool update(T& data) = 0;
 };
 
 
@@ -472,18 +467,13 @@ protected:
 };
 
 template <typename T>
-class InplaceMultiChannelFilterBase : public MultiChannelFilterBase<T>
+class InplaceMultiChannelFilterBase
 {
 public:
-  using MultiChannelFilterBase<T>::update;
-
   /** \brief Filter the provided data in-place.
    * \param data A reference to the data.
    */
-  virtual bool update(std::vector<T>& data)
-  {
-    return this->update(data, data);
-  };
+  virtual bool update(std::vector<T>& data) = 0;
 
   virtual bool update(T& data)
   {

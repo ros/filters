@@ -48,7 +48,7 @@ namespace filters
  *
  */
 template <typename T>
-class MeanFilter: public InplaceFilterBase <T>
+class MeanFilter: public filters::FilterBase<T>, public filters::InplaceFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -65,7 +65,8 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const T & data_in, T& data_out);
-  
+  bool update(T& data) override;
+
 protected:
   boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_; ///< Storage for data between updates
   uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
@@ -127,11 +128,17 @@ bool MeanFilter<T>::update(const T & data_in, T& data_out)
   return true;
 };
 
+template<typename T>
+bool MeanFilter<T>::update(T& data)
+{
+  return update(data, data);
+}
+
 /** \brief A mean filter which works on double arrays.
  *
  */
 template <typename T>
-class MultiChannelMeanFilter: public InplaceMultiChannelFilterBase <T>
+class MultiChannelMeanFilter: public filters::MultiChannelFilterBase<T>, public filters::InplaceMultiChannelFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -148,7 +155,8 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
-  
+  bool update(std::vector<T>& data) override;
+
 protected:
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_; ///< Storage for data between updates
   uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
@@ -226,6 +234,12 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
 
   return true;
 };
+
+template<typename T>
+bool MultiChannelMeanFilter<T>::update(std::vector<T>& data)
+{
+  return update(data, data);
+}
 
 }
 #endif// FILTERS_MEAN_H

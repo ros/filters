@@ -45,7 +45,7 @@ namespace filters
  *
  */
 template <typename T>
-class IncrementFilter: public InplaceFilterBase <T>
+class IncrementFilter: public filters::FilterBase<T>, public filters::InplaceFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -62,7 +62,7 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const T & data_in, T& data_out);
-  
+  bool update(T& data) override;
 };
 
 
@@ -92,11 +92,17 @@ bool IncrementFilter<T>::update(const T & data_in, T& data_out)
   return true;
 };
 
+template<typename T>
+bool IncrementFilter<T>::update(T& data)
+{
+  return this->update(data, data);
+}
+
 /** \brief A increment filter which works on arrays.
  *
  */
 template <typename T>
-class MultiChannelIncrementFilter: public InplaceMultiChannelFilterBase <T>
+class MultiChannelIncrementFilter: public filters::MultiChannelFilterBase<T>, public filters::InplaceMultiChannelFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -113,7 +119,8 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
-  
+  bool update(std::vector<T>& data) override;
+
 protected:
   using MultiChannelFilterBase<T>::number_of_channels_;           ///< Number of elements per observation
 
@@ -160,6 +167,12 @@ bool MultiChannelIncrementFilter<T>::update(const std::vector<T> & data_in, std:
 
   return true;
 };
+
+template<typename T>
+bool MultiChannelIncrementFilter<T>::update(std::vector<T>& data)
+{
+  return this->update(data, data);
+}
 
 }
 #endif// FILTERS_INCREMENT_H
