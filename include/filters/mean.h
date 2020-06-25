@@ -48,7 +48,7 @@ namespace filters
  *
  */
 template <typename T>
-class MeanFilter: public FilterBase <T>
+class MeanFilter: public InplaceFilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -131,7 +131,7 @@ bool MeanFilter<T>::update(const T & data_in, T& data_out)
  *
  */
 template <typename T>
-class MultiChannelMeanFilter: public MultiChannelFilterBase <T>
+class MultiChannelMeanFilter: public InplaceMultiChannelFilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */

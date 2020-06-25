@@ -373,6 +373,21 @@ protected:
   }
 };
 
+template <typename T>
+class InplaceFilterBase : public FilterBase<T>
+{
+public:
+  using FilterBase<T>::update;
+
+  /** \brief Filter the provided data in-place.
+   * \param data A reference to the data.
+   */
+  virtual bool update(T& data)
+  {
+    return this->update(data, data);
+  };
+};
+
 
 template <typename T>
 class MultiChannelFilterBase : public FilterBase<T>
@@ -454,6 +469,27 @@ protected:
   unsigned int number_of_channels_;
   
 
+};
+
+template <typename T>
+class InplaceMultiChannelFilterBase : public MultiChannelFilterBase<T>
+{
+public:
+  using MultiChannelFilterBase<T>::update;
+
+  /** \brief Filter the provided data in-place.
+   * \param data A reference to the data.
+   */
+  virtual bool update(std::vector<T>& data)
+  {
+    return this->update(data, data);
+  };
+
+  virtual bool update(T& data)
+  {
+    ROS_ERROR("THIS IS A MULTI FILTER DON'T CALL SINGLE FORM OF UPDATE");
+    return false;
+  };
 };
 
 }

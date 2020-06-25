@@ -94,7 +94,7 @@ elem_type kth_smallest(elem_type a[], int n, int k)
  *
  */
 template <typename T>
-class MedianFilter: public filters::FilterBase <T>
+class MedianFilter: public filters::InplaceFilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -178,7 +178,7 @@ bool MedianFilter<T>::update(const T& data_in, T& data_out)
  *
  */
 template <typename T>
-class MultiChannelMedianFilter: public filters::MultiChannelFilterBase <T>
+class MultiChannelMedianFilter: public filters::InplaceMultiChannelFilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */

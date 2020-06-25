@@ -71,7 +71,7 @@ namespace filters
 */
 /***************************************************/
 template <typename T>
-class SingleChannelTransferFunctionFilter: public filters::FilterBase <T>
+class SingleChannelTransferFunctionFilter: public filters::InplaceFilterBase <T>
 {
 public:
   /**
@@ -222,7 +222,7 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T  & data_in, T & data
 /***************************************************/
 
 template <typename T>
-class MultiChannelTransferFunctionFilter: public filters::MultiChannelFilterBase <T>
+class MultiChannelTransferFunctionFilter: public filters::InplaceMultiChannelFilterBase <T>
 {
 public:
   /**

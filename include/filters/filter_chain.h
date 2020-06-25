@@ -102,30 +102,91 @@ public:
       result = reference_pointers_[0]->update(data_in, data_out);
     else if (list_size == 2)
     {
-      result = reference_pointers_[0]->update(data_in, buffer0_);
+      const auto inplace_filter1 = dynamic_cast<InplaceFilterBase<T>*>(reference_pointers_[1].get());
+      const auto is_filter1_inplace = inplace_filter1 != nullptr;
+
+      result = reference_pointers_[0]->update(data_in, is_filter1_inplace ? data_out : buffer0_);
       if (result == false) {return false; };//don't keep processing on failure
-      result = result && reference_pointers_[1]->update(buffer0_, data_out);
+
+      if (is_filter1_inplace)
+        result = result && inplace_filter1->update(data_out);
+      else
+        result = result && reference_pointers_[1]->update(buffer0_, data_out);
     }
     else
     {
-      result = reference_pointers_[0]->update(data_in, buffer0_);  //first copy in
+      bool all_filters_are_inplace = true;
+      for (unsigned int i = 1; i < reference_pointers_.size(); i++) // all but first, which can't work inplace
+      {
+        if (dynamic_cast<InplaceFilterBase<T>*>(reference_pointers_[i].get()) == nullptr) {
+          all_filters_are_inplace = false;
+          break;
+        }
+      }
+
+      T* curBuf = all_filters_are_inplace ? &data_out : &buffer0_;
+      T* nextBuf = &buffer1_;
+
+      result = reference_pointers_[0]->update(data_in, *curBuf);  //first copy in
+
       for (unsigned int i = 1; i <  reference_pointers_.size() - 1; i++) // all but first and last (never called if size=2)
       {
-        if (i %2 == 1)
-          result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
-        else
-          result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
-        
+        const auto inplace_filter = dynamic_cast<InplaceFilterBase<T>*>(reference_pointers_[i].get());
+
+        if (inplace_filter != nullptr)
+          result = result && inplace_filter->update(*curBuf);
+        else {
+          result = result && reference_pointers_[i]->update(*curBuf, *nextBuf);
+          std::swap(curBuf, nextBuf);
+        }
+
         if (result == false) {return false; }; //don't keep processing on failure
       }
-      if (list_size % 2 == 1) // odd number last deposit was in buffer1
-        result = result && reference_pointers_.back()->update(buffer1_, data_out);
+
+      // if all filters are inplace, curBuf has been pointed to data_out in the beginning and hasn't been swapped since then
+      if (all_filters_are_inplace)
+        result = result && dynamic_cast<InplaceFilterBase<T>*>(reference_pointers_.back().get())->update(*curBuf);
       else
-        result = result && reference_pointers_.back()->update(buffer0_, data_out);
+        result = result && reference_pointers_.back()->update(*curBuf, data_out);
     }
     return result;
     
   };
+
+  /** \brief process data through each of the filters added sequentially (process them in-place) */
+  bool update(T& data)
+  {
+    bool result;
+    if (reference_pointers_.empty())
+    {
+      result = true;
+    }
+    else
+    {
+      T* curBuf = &data;
+      T* nextBuf = &buffer0_;
+
+      for (const auto& filter : reference_pointers_)
+      {
+        const auto inplace_filter = dynamic_cast<InplaceFilterBase<T>*>(filter.get());
+
+        if (inplace_filter != nullptr)
+          result = result && inplace_filter->update(*curBuf);
+        else {
+          result = result && filter->update(*curBuf, *nextBuf);
+          std::swap(curBuf, nextBuf);
+        }
+
+        if (!result) { break; }; //don't keep processing on failure
+      }
+
+      // if the data ended up in the wrong pointer, we have no way but to copy them
+      if (curBuf != &data)
+        data = *curBuf;
+    }
+    return result;
+  };
+
   /** \brief Clear all filters from this chain */
   bool clear() 
   {
@@ -316,31 +377,89 @@ public:
       result = reference_pointers_[0]->update(data_in, data_out);
     else if (list_size == 2)
     {
-      result = reference_pointers_[0]->update(data_in, buffer0_);
+      const auto inplace_filter1 = dynamic_cast<InplaceMultiChannelFilterBase<T>*>(reference_pointers_[1].get());
+      const auto is_filter1_inplace = inplace_filter1 != nullptr;
+
+      result = reference_pointers_[0]->update(data_in, is_filter1_inplace ? data_out : buffer0_);
       if (result == false) {return false; };//don't keep processing on failure
-      result = result && reference_pointers_[1]->update(buffer0_, data_out);
+
+      if (is_filter1_inplace)
+        result = result && inplace_filter1->update(data_out);
+      else
+        result = result && reference_pointers_[1]->update(buffer0_, data_out);
     }
     else
     {
-      result = reference_pointers_[0]->update(data_in, buffer0_);  //first copy in
+      bool all_filters_are_inplace = true;
+      for (unsigned int i = 1; i < reference_pointers_.size(); i++) // all but first, which can't work inplace
+      {
+        if (dynamic_cast<InplaceMultiChannelFilterBase<T>*>(reference_pointers_[i].get()) == nullptr) {
+          all_filters_are_inplace = false;
+          break;
+        }
+      }
+
+      std::vector<T>* curBuf = all_filters_are_inplace ? &data_out : &buffer0_;
+      std::vector<T>* nextBuf = &buffer1_;
+
+      result = reference_pointers_[0]->update(data_in, *curBuf);  //first copy in
       for (unsigned int i = 1; i <  reference_pointers_.size() - 1; i++) // all but first and last (never if size = 2)
       {
-        if (i %2 == 1)
-          result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
-        else
-          result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
+        const auto inplace_filter = dynamic_cast<InplaceMultiChannelFilterBase<T>*>(reference_pointers_[i].get());
+
+        if (inplace_filter != nullptr)
+          result = result && inplace_filter->update(*curBuf);
+        else {
+          result = result && reference_pointers_[i]->update(*curBuf, *nextBuf);
+          std::swap(curBuf, nextBuf);
+        }
 
         if (result == false) {return false; }; //don't keep processing on failure
       }
-      if (list_size % 2 == 1) // odd number last deposit was in buffer1
-        result = result && reference_pointers_.back()->update(buffer1_, data_out);
+
+      // if all filters are inplace, curBuf has been pointed to data_out in the beginning and hasn't been swapped since then
+      if (all_filters_are_inplace)
+        result = result && dynamic_cast<InplaceMultiChannelFilterBase<T>*>(reference_pointers_.back().get())->update(*curBuf);
       else
-        result = result && reference_pointers_.back()->update(buffer0_, data_out);
+        result = result && reference_pointers_.back()->update(*curBuf, data_out);
     }
     return result;
             
   };
 
+  /** \brief process data through each of the filters added sequentially (process them in-place) */
+  bool update(std::vector<T>& data)
+  {
+    bool result;
+    if (reference_pointers_.empty())
+    {
+      result = true;
+    }
+    else
+    {
+      std::vector<T>* curBuf = &data;
+      std::vector<T>* nextBuf = &buffer0_;
+
+      for (const auto& filter : reference_pointers_)
+      {
+        const auto inplace_filter = dynamic_cast<InplaceMultiChannelFilterBase<T>*>(filter.get());
+
+        if (inplace_filter != nullptr)
+          result = result && inplace_filter->update(*curBuf);
+        else {
+          result = result && filter->update(*curBuf, *nextBuf);
+          std::swap(curBuf, nextBuf);
+        }
+
+        if (!result) { break; }; //don't keep processing on failure
+      }
+
+      // if the data ended up in the wrong pointer, we have no way but to copy them
+      if (curBuf != &data)
+        data = *curBuf;
+    }
+    return result;
+  };
 
   ~MultiChannelFilterChain()
   {

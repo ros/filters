@@ -45,7 +45,7 @@ namespace filters
  *
  */
 template <typename T>
-class IncrementFilter: public FilterBase <T>
+class IncrementFilter: public InplaceFilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -96,7 +96,7 @@ bool IncrementFilter<T>::update(const T & data_in, T& data_out)
  *
  */
 template <typename T>
-class MultiChannelIncrementFilter: public MultiChannelFilterBase <T>
+class MultiChannelIncrementFilter: public InplaceMultiChannelFilterBase <T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
