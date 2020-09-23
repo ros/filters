@@ -100,7 +100,7 @@ public:
   std::string getType() {return filter_type_;};
 
   /** \brief Get the name of the filter as a string */
-  inline const std::string& getName(){return filter_name_;};
+  inline const std::string& getName() const {return filter_name_;};
 
 
 protected:
