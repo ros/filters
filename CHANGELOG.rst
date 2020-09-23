@@ -2,6 +2,16 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* make FilterBase::getName() const
+* Making FilterBase::getParam const
+* narrow down required boost dependencies (`#40 <https://github.com/ros/filters/issues/40>`_)
+* [noetic] deprecate h for hpp (`#34 <https://github.com/ros/filters/issues/34>`_)
+* [noetic] Delete unused code (`#33 <https://github.com/ros/filters/issues/33>`_)
+* Bump CMake version to avoid CMP0048
+* Contributors: Alejandro Hernández Cordero, Mikael Arguedas, Shane Loretz, Tully Foote
+
 1.9.0 (2020-03-10)
 ------------------
 * Reduce dependency on boost (`#30 <https://github.com/ros/filters/issues/30>`_)
