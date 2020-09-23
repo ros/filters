@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.1 (2020-09-23)
+------------------
 * make FilterBase::getName() const
 * Making FilterBase::getParam const
 * narrow down required boost dependencies (`#40 <https://github.com/ros/filters/issues/40>`_)
