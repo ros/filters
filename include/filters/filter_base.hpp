@@ -115,9 +115,9 @@ protected:
    * \param name The name of the parameter
    * \param value The string to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string& name, std::string& value)
+  bool getParam(const std::string& name, std::string& value) const
   {
-    string_map_t::iterator it = params_.find(name);
+    string_map_t::const_iterator it = params_.find(name);
     if (it == params_.end())
     {
       return false;
@@ -128,7 +128,8 @@ protected:
       return false;
     }
 
-    value = std::string(it->second);
+    auto tmp = it->second;
+    value = std::string(tmp);
     return true;
   }
 
@@ -136,9 +137,9 @@ protected:
    * \param name The name of the parameter
    * \param value The boolean to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string& name, bool& value)
+  bool getParam(const std::string& name, bool& value) const
   {
-    string_map_t::iterator it = params_.find(name);
+    string_map_t::const_iterator it = params_.find(name);
     if (it == params_.end())
     {
       return false;
@@ -149,7 +150,8 @@ protected:
       return false;
     }
 
-    value = (bool)(it->second);
+    auto tmp = it->second;
+    value = (bool)(tmp);
     return true;
   }
 
@@ -157,9 +159,9 @@ protected:
    * \param name The name of the parameter
    * \param value The double to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string&name, double& value)
+  bool getParam(const std::string&name, double& value) const
   {
-    string_map_t::iterator it = params_.find(name);
+    string_map_t::const_iterator it = params_.find(name);
     if (it == params_.end())
     {
       return false;
@@ -170,7 +172,8 @@ protected:
       return false;
     }
 
-    value = it->second.getType() == XmlRpc::XmlRpcValue::TypeInt ? (int)(it->second) : (double)(it->second);
+    auto tmp = it->second;
+    value = it->second.getType() == XmlRpc::XmlRpcValue::TypeInt ? (int)(tmp) : (double)(tmp);
     return true;
   }
 
@@ -178,9 +181,9 @@ protected:
    * \param name The name of the parameter
    * \param value The int to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string&name, int& value)
+  bool getParam(const std::string&name, int& value) const
   {
-    string_map_t::iterator it = params_.find(name);
+    string_map_t::const_iterator it = params_.find(name);
     if (it == params_.end())
     {
       return false;
@@ -191,7 +194,8 @@ protected:
       return false;
     }
 
-    value = it->second;
+    auto tmp = it->second;
+    value = tmp;
     return true;
   }
 
@@ -199,7 +203,7 @@ protected:
    * \param name The name of the parameter
    * \param value The int to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string&name, unsigned  int& value)
+  bool getParam(const std::string&name, unsigned  int& value) const
   {
     int signed_value;
     if (!getParam(name, signed_value))
@@ -214,9 +218,9 @@ protected:
    * \param name The name of the parameter
    * \param value The std::vector<double> to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string&name, std::vector<double>& value)
+  bool getParam(const std::string&name, std::vector<double>& value) const
   {
-    string_map_t::iterator it = params_.find(name);
+    string_map_t::const_iterator it = params_.find(name);
     if (it == params_.end())
     {
       return false;
@@ -248,9 +252,9 @@ protected:
    * \param name The name of the parameter
    * \param value The std::vector<sgring> to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string&name, std::vector<std::string>& value)
+  bool getParam(const std::string&name, std::vector<std::string>& value) const
   {
-    string_map_t::iterator it = params_.find(name);
+    string_map_t::const_iterator it = params_.find(name);
     if (it == params_.end())
     {
       return false;
@@ -281,15 +285,16 @@ protected:
    * \param name The name of the parameter
    * \param value The XmlRpcValue to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string& name, XmlRpc::XmlRpcValue& value)
+  bool getParam(const std::string& name, XmlRpc::XmlRpcValue& value) const
   {
-    string_map_t::iterator it = params_.find(name);
+    string_map_t::const_iterator it = params_.find(name);
     if (it == params_.end())
     {
       return false;
     }
 
-    value = it->second;
+    auto tmp = it->second;
+    value = tmp;
     return true;
   }
   
