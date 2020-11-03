@@ -268,7 +268,7 @@ protected:
 
     XmlRpc::XmlRpcValue string_array = it->second;
     
-    for (unsigned int i = 0; i < string_array.size(); ++i){
+    for (int i = 0; i < string_array.size(); ++i){
       if(string_array[i].getType() != XmlRpc::XmlRpcValue::TypeString)
       {
         return false;
@@ -438,7 +438,7 @@ public:
    */
   virtual bool update(const std::vector<T>& data_in, std::vector<T>& data_out)=0;
 
-  virtual bool update(const T& data_in, T& data_out)
+  virtual bool update(const T& /*data_in*/, T& /*data_out*/)
   {
     ROS_ERROR("THIS IS A MULTI FILTER DON'T CALL SINGLE FORM OF UPDATE");
     return false;

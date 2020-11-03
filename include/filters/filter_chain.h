@@ -494,6 +494,6 @@ private:
 
 };
 
-};
+}
 
 #endif //#ifndef FILTERS_FILTER_CHAIN_H_
