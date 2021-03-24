@@ -84,8 +84,8 @@ load_chain_config(
     type_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     type_desc.read_only = false;
 
-    node_params->declare_parameter(name_desc.name, rclcpp::ParameterValue(), name_desc);
-    node_params->declare_parameter(type_desc.name, rclcpp::ParameterValue(), type_desc);
+    node_params->declare_parameter(name_desc.name);
+    node_params->declare_parameter(type_desc.name);
 
     rclcpp::Parameter param_name;
     rclcpp::Parameter param_type;
