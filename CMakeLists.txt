@@ -25,8 +25,10 @@ find_package(Boost REQUIRED)
 
 add_library(real_time_circular_buffer INTERFACE)
 target_include_directories(real_time_circular_buffer INTERFACE
-  include
-  ${Boost_INCLUDE_DIRS})
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${Boost_INCLUDE_DIRS}>
+    $<INSTALL_INTERFACE:include>
+)
 
 # Plugins
 add_library(mean SHARED src/mean.cpp)
@@ -153,15 +155,19 @@ endif()
 
 # Install libraries
 install(
-  TARGETS mean increment median transfer_function
+  TARGETS mean increment median transfer_function real_time_circular_buffer
+  EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
-
 # Install headers
 install(DIRECTORY include/
   DESTINATION include)
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(pluginlib rclcpp)
 
 # Install pluginlib xml
 pluginlib_export_plugin_description_file(filters "default_plugins.xml")
