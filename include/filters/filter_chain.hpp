@@ -59,7 +59,7 @@ struct FoundFilter
 /**
  * \brief Read params and figure out what filters to load
  */
-bool
+inline bool
 load_chain_config(
   const std::string & param_prefix,
   const rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr & node_logger,
