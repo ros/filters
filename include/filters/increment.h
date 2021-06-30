@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FILTERS_MEAN_H
-#define FILTERS_MEAN_H
+#ifndef FILTERS_INCREMENT_H
+#define FILTERS_INCREMENT_H
 
 #include <stdint.h>
 #include <cstring>
@@ -62,9 +62,14 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const T & data_in, T& data_out);
-  
+
 };
 
+template <typename T>
+class InplaceIncrementFilter: public IncrementFilter<T>, public InplaceFilterBase<T>
+{
+  bool updateInplace(T& data) override;
+};
 
 template <typename T>
 IncrementFilter<T>::IncrementFilter()
@@ -92,6 +97,12 @@ bool IncrementFilter<T>::update(const T & data_in, T& data_out)
   return true;
 };
 
+template<typename T>
+bool InplaceIncrementFilter<T>::updateInplace(T& data)
+{
+  return this->update(data, data);
+}
+
 /** \brief A increment filter which works on arrays.
  *
  */
@@ -113,14 +124,19 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
-  
+
 protected:
   using MultiChannelFilterBase<T>::number_of_channels_;           ///< Number of elements per observation
 
-  
-  
+
+
 };
 
+template <typename T>
+class InplaceMultiChannelIncrementFilter: public MultiChannelIncrementFilter<T>, public InplaceMultiChannelFilterBase<T>
+{
+  bool updateInplace(std::vector<T>& data) override;
+};
 
 template <typename T>
 MultiChannelIncrementFilter<T>::MultiChannelIncrementFilter()
@@ -160,6 +176,12 @@ bool MultiChannelIncrementFilter<T>::update(const std::vector<T> & data_in, std:
 
   return true;
 };
+
+template<typename T>
+bool InplaceMultiChannelIncrementFilter<T>::updateInplace(std::vector<T>& data)
+{
+  return this->update(data, data);
+}
 
 }
 #endif// FILTERS_INCREMENT_H
