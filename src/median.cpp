@@ -34,11 +34,15 @@
 
 //Double precision
 PLUGINLIB_EXPORT_CLASS(filters::MedianFilter<double>,filters::FilterBase<double>)
+PLUGINLIB_EXPORT_CLASS(filters::InplaceMedianFilter<double>,filters::FilterBase<double>)
 PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMedianFilter<double>,filters::MultiChannelFilterBase<double>)
+PLUGINLIB_EXPORT_CLASS(filters::InplaceMultiChannelMedianFilter<double>,filters::MultiChannelFilterBase<double>)
 
 //Float precision
 PLUGINLIB_EXPORT_CLASS(filters::MedianFilter<float>,filters::FilterBase<float>)
+PLUGINLIB_EXPORT_CLASS(filters::InplaceMedianFilter<float>,filters::FilterBase<float>)
 PLUGINLIB_EXPORT_CLASS(filters::MultiChannelMedianFilter<float>,filters::MultiChannelFilterBase<float>)
+PLUGINLIB_EXPORT_CLASS(filters::InplaceMultiChannelMedianFilter<float>,filters::MultiChannelFilterBase<float>)
 
 
 

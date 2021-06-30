@@ -71,7 +71,7 @@ namespace filters
 */
 /***************************************************/
 template <typename T>
-class SingleChannelTransferFunctionFilter: public filters::FilterBase<T>, public filters::InplaceFilterBase<T>
+class SingleChannelTransferFunctionFilter: public filters::FilterBase<T>
 {
 public:
   /**
@@ -94,7 +94,6 @@ public:
    * \param data_out vector<T> with number_of_channels elements
    */
   virtual bool update(const T & data_in, T& data_out) ;
-  bool update(T& data) override;
 
 
 
@@ -108,6 +107,12 @@ protected:
   std::vector<double> a_;   //Transfer functon coefficients (output).
   std::vector<double> b_;   //Transfer functon coefficients (input).
 
+};
+
+template <typename T>
+class InplaceSingleChannelTransferFunctionFilter: public SingleChannelTransferFunctionFilter<T>, public InplaceFilterBase<T>
+{
+  bool updateInplace(T& data) override;
 };
 
 template <typename T>
@@ -194,7 +199,7 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T  & data_in, T & data
 };
 
 template<typename T>
-bool SingleChannelTransferFunctionFilter<T>::update(T& data)
+bool InplaceSingleChannelTransferFunctionFilter<T>::updateInplace(T& data)
 {
   return this->update(data, data);
 }
@@ -229,7 +234,7 @@ bool SingleChannelTransferFunctionFilter<T>::update(T& data)
 /***************************************************/
 
 template <typename T>
-class MultiChannelTransferFunctionFilter: public filters::MultiChannelFilterBase<T>, public filters::InplaceMultiChannelFilterBase<T>
+class MultiChannelTransferFunctionFilter: public filters::MultiChannelFilterBase<T>
 {
 public:
   /**
@@ -252,7 +257,6 @@ public:
    * \param data_out vector<T> with number_of_channels elements
    */
   virtual bool update(const std::vector<T> & data_in, std::vector<T>& data_out) ;
-  bool update(std::vector<T>& data) override;
 
 
 
@@ -266,6 +270,12 @@ protected:
   std::vector<double> a_;   //Transfer functon coefficients (output).
   std::vector<double> b_;   //Transfer functon coefficients (input).
 
+};
+
+template <typename T>
+class InplaceMultiChannelTransferFunctionFilter: public MultiChannelTransferFunctionFilter<T>, public InplaceMultiChannelFilterBase<T>
+{
+  bool updateInplace(std::vector<T>& data) override;
 };
 
 template <typename T>
@@ -357,11 +367,11 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
 };
 
 template<typename T>
-bool MultiChannelTransferFunctionFilter<T>::update(std::vector<T>& data)
+bool InplaceMultiChannelTransferFunctionFilter<T>::updateInplace(std::vector<T>& data)
 {
   return this->update(data, data);
 }
 
 }
 
-#endif //#ifndef FILTERS_TRAjNSFER_FUNCTION_H_
+#endif //#ifndef FILTERS_TRANSFER_FUNCTION_H_

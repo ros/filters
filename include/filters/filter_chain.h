@@ -109,7 +109,7 @@ public:
       if (result == false) {return false; };//don't keep processing on failure
 
       if (is_filter1_inplace)
-        result = result && inplace_filter1->update(data_out);
+        result = result && inplace_filter1->updateInplace(data_out);
       else
         result = result && reference_pointers_[1]->update(buffer0_, data_out);
     }
@@ -134,7 +134,7 @@ public:
         const auto inplace_filter = dynamic_cast<InplaceFilterBase<T>*>(reference_pointers_[i].get());
 
         if (inplace_filter != nullptr)
-          result = result && inplace_filter->update(*curBuf);
+          result = result && inplace_filter->updateInplace(*curBuf);
         else {
           result = result && reference_pointers_[i]->update(*curBuf, *nextBuf);
           std::swap(curBuf, nextBuf);
@@ -145,7 +145,7 @@ public:
 
       // if all filters are inplace, curBuf has been pointed to data_out in the beginning and hasn't been swapped since then
       if (all_filters_are_inplace)
-        result = result && dynamic_cast<InplaceFilterBase<T>*>(reference_pointers_.back().get())->update(*curBuf);
+        result = result && dynamic_cast<InplaceFilterBase<T>*>(reference_pointers_.back().get())->updateInplace(*curBuf);
       else
         result = result && reference_pointers_.back()->update(*curBuf, data_out);
     }
@@ -171,7 +171,7 @@ public:
         const auto inplace_filter = dynamic_cast<InplaceFilterBase<T>*>(filter.get());
 
         if (inplace_filter != nullptr)
-          result = result && inplace_filter->update(*curBuf);
+          result = result && inplace_filter->updateInplace(*curBuf);
         else {
           result = result && filter->update(*curBuf, *nextBuf);
           std::swap(curBuf, nextBuf);
@@ -384,7 +384,7 @@ public:
       if (result == false) {return false; };//don't keep processing on failure
 
       if (is_filter1_inplace)
-        result = result && inplace_filter1->update(data_out);
+        result = result && inplace_filter1->updateInplace(data_out);
       else
         result = result && reference_pointers_[1]->update(buffer0_, data_out);
     }
@@ -408,7 +408,7 @@ public:
         const auto inplace_filter = dynamic_cast<InplaceMultiChannelFilterBase<T>*>(reference_pointers_[i].get());
 
         if (inplace_filter != nullptr)
-          result = result && inplace_filter->update(*curBuf);
+          result = result && inplace_filter->updateInplace(*curBuf);
         else {
           result = result && reference_pointers_[i]->update(*curBuf, *nextBuf);
           std::swap(curBuf, nextBuf);
@@ -419,7 +419,7 @@ public:
 
       // if all filters are inplace, curBuf has been pointed to data_out in the beginning and hasn't been swapped since then
       if (all_filters_are_inplace)
-        result = result && dynamic_cast<InplaceMultiChannelFilterBase<T>*>(reference_pointers_.back().get())->update(*curBuf);
+        result = result && dynamic_cast<InplaceMultiChannelFilterBase<T>*>(reference_pointers_.back().get())->updateInplace(*curBuf);
       else
         result = result && reference_pointers_.back()->update(*curBuf, data_out);
     }
@@ -445,7 +445,7 @@ public:
         const auto inplace_filter = dynamic_cast<InplaceMultiChannelFilterBase<T>*>(filter.get());
 
         if (inplace_filter != nullptr)
-          result = result && inplace_filter->update(*curBuf);
+          result = result && inplace_filter->updateInplace(*curBuf);
         else {
           result = result && filter->update(*curBuf, *nextBuf);
           std::swap(curBuf, nextBuf);
