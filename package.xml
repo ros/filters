@@ -8,6 +8,7 @@
   </description>
 
   <maintainer email="tfoote@openrobotics.org">Tully Foote</maintainer>
+  <maintainer email="jon.binney@gmail.com">Jon Binney</maintainer>
   <license>BSD</license>
   <url>https://wiki.ros.org/filters</url>
 
