@@ -1,5 +1,5 @@
 <class_libraries>
-  <library path="lib/libmedian">
+  <library path="median">
     <class name="filters/MultiChannelMedianFilterDouble" type="filters::MultiChannelMedianFilter&lt;double&gt;"
 	    base_class_type="filters::MultiChannelFilterBase&lt;double&gt;">
       <description>
@@ -25,7 +25,7 @@
       </description>
     </class>
   </library>
-  <library path="lib/libmean">
+  <library path="mean">
     <class name="filters/MeanFilterDouble" type="filters::MeanFilter&lt;double&gt;"
 	    base_class_type="filters::FilterBase&lt;double&gt;">
       <description>
@@ -51,7 +51,7 @@
       </description>
     </class>
   </library>
-  <library path="lib/libincrement">
+  <library path="increment">
     <class name="filters/IncrementFilterInt" type="filters::IncrementFilter&lt;int&gt;"
 	    base_class_type="filters::FilterBase&lt;int&gt;">
       <description>
@@ -65,7 +65,7 @@
       </description>
     </class>
   </library>
-  <library path="lib/libtransfer_function">
+  <library path="transfer_function">
     <class name="filters/MultiChannelTransferFunctionFilterDouble" type="filters::MultiChannelTransferFunctionFilter&lt;double&gt;"
 	    base_class_type="filters::MultiChannelFilterBase&lt;double&gt;">
       <description>
