@@ -2,6 +2,14 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add Jon binney as a maintainer (`#54 <https://github.com/ros/filters/issues/54>`_)
+* missing export includes (`#50 <https://github.com/ros/filters/issues/50>`_)
+* changed free functions to be inline (`#43 <https://github.com/ros/filters/issues/43>`_)
+* Update default_plugins.xml (fix plugin names)
+* Contributors: Hang, Jonathan Binney, Marwan Taher, Steve Macenski
+
 2.0.0 (2020-05-14)
 ------------------
 * Fix a bug in the tests.
