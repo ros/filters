@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.1 (2021-07-08)
+------------------
 * Add Jon binney as a maintainer (`#54 <https://github.com/ros/filters/issues/54>`_)
 * missing export includes (`#50 <https://github.com/ros/filters/issues/50>`_)
 * changed free functions to be inline (`#43 <https://github.com/ros/filters/issues/43>`_)
