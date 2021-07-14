@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.2 (2021-07-13)
+------------------
 * Solve statically parameter error (`#48 <https://github.com/ros/filters/issues/48>`_)
 * Contributors: Patrick Lascombz
 
