@@ -2,6 +2,12 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix compiler warnings+test failures on CI (`#56 <https://github.com/ros/filters/issues/56>`_)
+* Solve statically parameter error (`#48 <https://github.com/ros/filters/issues/48>`_)
+* Contributors: Jon Binney, Patrick Lascombz
+
 2.0.1 (2021-07-08)
 ------------------
 * Add Jon binney as a maintainer (`#54 <https://github.com/ros/filters/issues/54>`_)
