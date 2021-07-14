@@ -86,13 +86,13 @@ ParamTest<T>::~ParamTest()
 
 
 template <typename T>
-bool ParamTest<T>::update(const T & data_in, T& data_out)
+bool ParamTest<T>::update(const T & /*data_in*/, T& data_out)
 {
   T temp;
   this->getParam("key", temp);
   data_out = temp;
   return true;
-};
+}
 
 }
 #endif

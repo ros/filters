@@ -88,7 +88,7 @@ bool IncrementFilter<T>::update(const T & data_in, T& data_out)
   data_out = data_in + 1;  
 
   return true;
-};
+}
 
 /** \brief A increment filter which works on arrays.
  *
@@ -155,7 +155,7 @@ bool MultiChannelIncrementFilter<T>::update(const std::vector<T> & data_in, std:
   }
 
   return true;
-};
+}
 
 }
 #endif// FILTERS_INCREMENT_HPP_
