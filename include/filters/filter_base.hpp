@@ -212,11 +212,11 @@ protected:
   }
 
   /**
-   * \brief Get a filter parameter as a size_t
+   * \brief Get a filter parameter as an unsigned long
    * \param name The name of the parameter
    * \param value The int to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, size_t & value)
+  bool getParam(const std::string & name, unsigned long & value)
   {
     int signed_value;
     if (!getParam(name, signed_value)) {
