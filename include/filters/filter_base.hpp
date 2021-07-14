@@ -440,7 +440,7 @@ public:
    */
   virtual bool update(const std::vector<T>& data_in, std::vector<T>& data_out)=0;
 
-  virtual bool update(const T& data_in, T& data_out)
+  virtual bool update(const T& /*data_in*/, T& /*data_out*/)
   {
     ROS_ERROR("THIS IS A MULTI FILTER DON'T CALL SINGLE FORM OF UPDATE");
     return false;

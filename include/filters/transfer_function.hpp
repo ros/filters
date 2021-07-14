@@ -111,12 +111,12 @@ protected:
 template <typename T>
 SingleChannelTransferFunctionFilter<T>::SingleChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 SingleChannelTransferFunctionFilter<T>::~SingleChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 bool SingleChannelTransferFunctionFilter<T>::configure()
@@ -162,7 +162,7 @@ bool SingleChannelTransferFunctionFilter<T>::configure()
   }
 
   return true;
-};
+}
 
 
 template <typename T>
@@ -189,7 +189,7 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T  & data_in, T & data
   output_buffer_->push_front(data_out);
 
   return true;
-};
+}
 
 
 
@@ -262,12 +262,12 @@ protected:
 template <typename T>
 MultiChannelTransferFunctionFilter<T>::MultiChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 MultiChannelTransferFunctionFilter<T>::~MultiChannelTransferFunctionFilter()
 {
-};
+}
 
 template <typename T>
 bool MultiChannelTransferFunctionFilter<T>::configure()
@@ -313,7 +313,7 @@ bool MultiChannelTransferFunctionFilter<T>::configure()
   }
 
   return true;
-};
+}
 
 
 template <typename T>
@@ -345,7 +345,7 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
   input_buffer_->push_front(temp_);
   output_buffer_->push_front(data_out);
   return true;
-};
+}
 
 }
 

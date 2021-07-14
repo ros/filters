@@ -128,12 +128,12 @@ MedianFilter<T>::MedianFilter():
   number_of_observations_(0)
 {
   
-};
+}
 
 template <typename T>
 MedianFilter<T>::~MedianFilter()
 {
-};
+}
 
 
 template <typename T>
@@ -151,7 +151,7 @@ bool MedianFilter<T>::configure()
   temp_storage_.resize(number_of_observations_);
   
   return true;
-};
+}
 
 template <typename T>
 bool MedianFilter<T>::update(const T& data_in, T& data_out)
@@ -173,7 +173,7 @@ bool MedianFilter<T>::update(const T& data_in, T& data_out)
   
 
   return true;
-};
+}
 /** \brief A median filter which works on arrays.
  *
  */
@@ -212,12 +212,12 @@ MultiChannelMedianFilter<T>::MultiChannelMedianFilter():
   number_of_observations_(0)
 {
   
-};
+}
 
 template <typename T>
 MultiChannelMedianFilter<T>::~MultiChannelMedianFilter()
 {
-};
+}
 
 
 template <typename T>
@@ -236,7 +236,7 @@ bool MultiChannelMedianFilter<T>::configure()
   temp_storage_.resize(number_of_observations_);
   
   return true;
-};
+}
 
 template <typename T>
 bool MultiChannelMedianFilter<T>::update(const std::vector<T>& data_in, std::vector<T>& data_out)
@@ -263,7 +263,7 @@ bool MultiChannelMedianFilter<T>::update(const std::vector<T>& data_in, std::vec
   }
 
   return true;
-};
+}
 
 
 }

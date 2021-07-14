@@ -125,7 +125,7 @@ bool MeanFilter<T>::update(const T & data_in, T& data_out)
   
 
   return true;
-};
+}
 
 /** \brief A mean filter which works on double arrays.
  *
@@ -223,7 +223,7 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
   }
 
   return true;
-};
+}
 
 }
 #endif// FILTERS_MEAN_HPP_
