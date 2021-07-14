@@ -79,13 +79,21 @@ load_chain_config(
     name_desc.name = norm_param_prefix + filter_n + ".name";
     name_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     name_desc.read_only = false;
+    // Must be dynamically typed because later we undeclare it and redeclare
+    // it read-only, but statically typed params cannot be undeclared.
+    name_desc.dynamic_typing = true;
     rcl_interfaces::msg::ParameterDescriptor type_desc;
     type_desc.name = norm_param_prefix + filter_n + ".type";
     type_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     type_desc.read_only = false;
+    // Must be dynamically typed because later we undeclare it and redeclare
+    // it read-only, but statically typed params cannot be undeclared.
+    type_desc.dynamic_typing = true;
 
-    node_params->declare_parameter(name_desc.name);
-    node_params->declare_parameter(type_desc.name);
+    node_params->declare_parameter(
+      name_desc.name, rclcpp::ParameterValue(), name_desc);
+    node_params->declare_parameter(
+      type_desc.name, rclcpp::ParameterValue(), type_desc);
 
     rclcpp::Parameter param_name;
     rclcpp::Parameter param_type;

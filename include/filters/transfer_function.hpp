@@ -311,7 +311,7 @@ bool MultiChannelTransferFunctionFilter<T>::update(
   if (data_in.size() != this->number_of_channels_ || data_out.size() != this->number_of_channels_) {
     RCLCPP_ERROR(
       this->logging_interface_->get_logger(),
-      "Number of channels is %d, but data_in.size() = %ld and data_out.size() = %ld. "
+      "Number of channels is %zu, but data_in.size() = %zu and data_out.size() = %zu. "
       "They must match", this->number_of_channels_, data_in.size(), data_out.size());
     return false;
   }
