@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.2 (2021-10-13)
+------------------
 * Make FilterBase::getName() const.
 * Make getParam() functions of FilterBase const
 * [Windows][lunar] Fix run_tests build breaks on Windows\MSVC (`#26 <https://github.com/ros/filters/issues/26>`_)
