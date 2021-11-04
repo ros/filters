@@ -62,7 +62,7 @@ namespace filters
   Series: Prentice-Hall Series in Automatic Computation
   ---------------------------------------------------------------------------*/
 template<typename elem_type>
-elem_type kth_smallest(elem_type a[], int n, int k)
+elem_type kth_smallest(elem_type * a, int n, int k)
 {
   int i, j, l, m;
   elem_type x;
@@ -86,7 +86,7 @@ elem_type kth_smallest(elem_type a[], int n, int k)
 }
 
 template<typename elem_type>
-elem_type median(elem_type a[], int n)
+elem_type median(elem_type * a, int n)
 {
   return kth_smallest(a, n, (((n) & 1) ? ((n) / 2) : (((n) / 2) - 1)));
 }
