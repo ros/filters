@@ -114,19 +114,19 @@ TEST(MultiChannelFilterChain, TwoFilters){
 TEST(MultiChannelFilterChain, GetFilters){
   filters::MultiChannelFilterChain<double> chain("double");
 
-	EXPECT_EQ(0u, chain.getFilters().size());
-	
+  EXPECT_EQ(0u, chain.getFilters().size());
+  
   EXPECT_TRUE(chain.configure(5, "TwoFilters"));
-	
-	ASSERT_EQ(2u, chain.getFilters().size());
-	EXPECT_EQ("median_test_unique", chain.getFilters()[0]->getName());
-	EXPECT_EQ("filters/MultiChannelMedianFilterDouble", chain.getFilters()[0]->getType());
-	EXPECT_EQ("median_test2", chain.getFilters()[1]->getName());
-	EXPECT_EQ("filters/MultiChannelMedianFilterDouble", chain.getFilters()[1]->getType());
-	
+  
+  ASSERT_EQ(2u, chain.getFilters().size());
+  EXPECT_EQ("median_test_unique", chain.getFilters()[0]->getName());
+  EXPECT_EQ("filters/MultiChannelMedianFilterDouble", chain.getFilters()[0]->getType());
+  EXPECT_EQ("median_test2", chain.getFilters()[1]->getName());
+  EXPECT_EQ("filters/MultiChannelMedianFilterDouble", chain.getFilters()[1]->getType());
+  
   chain.clear();
-
-	EXPECT_EQ(0u, chain.getFilters().size());
+  
+  EXPECT_EQ(0u, chain.getFilters().size());
 }
 
 
@@ -207,19 +207,19 @@ TEST(FilterChain, ReconfiguringChain){
 TEST(FilterChain, GetFilters){
   filters::FilterChain<int> chain("int");
 
-	EXPECT_EQ(0u, chain.getFilters().size());
-	
+  EXPECT_EQ(0u, chain.getFilters().size());
+  
   EXPECT_TRUE(chain.configure("TwoIncrements"));
 
-	ASSERT_EQ(2u, chain.getFilters().size());
-	EXPECT_EQ("increment1", chain.getFilters()[0]->getName());
-	EXPECT_EQ("filters/IncrementFilterInt", chain.getFilters()[0]->getType());
-	EXPECT_EQ("increment2", chain.getFilters()[1]->getName());
-	EXPECT_EQ("filters/IncrementFilterInt", chain.getFilters()[1]->getType());
-	
+  ASSERT_EQ(2u, chain.getFilters().size());
+  EXPECT_EQ("increment1", chain.getFilters()[0]->getName());
+  EXPECT_EQ("filters/IncrementFilterInt", chain.getFilters()[0]->getType());
+  EXPECT_EQ("increment2", chain.getFilters()[1]->getName());
+  EXPECT_EQ("filters/IncrementFilterInt", chain.getFilters()[1]->getType());
+  
   chain.clear();
 
-	EXPECT_EQ(0u, chain.getFilters().size());
+  EXPECT_EQ(0u, chain.getFilters().size());
   
 }
 

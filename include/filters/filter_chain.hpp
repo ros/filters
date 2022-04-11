@@ -232,7 +232,7 @@ public:
       auto p(loader_.createUnmanagedInstance(config[i]["type"]));
       if (p == nullptr)
         return false;
-			std::shared_ptr<filters::FilterBase<T>> ptr(p);
+      std::shared_ptr<filters::FilterBase<T>> ptr(p);
       result = result &&  ptr->configure(config[i]);    
       reference_pointers_.push_back(ptr);
       std::string type = config[i]["type"];
@@ -248,10 +248,10 @@ public:
     return result;
   };
 
-	const std::vector<std::shared_ptr<filters::FilterBase<T>>>& getFilters() const
-	{
-		return reference_pointers_;
-	}
+  const std::vector<std::shared_ptr<filters::FilterBase<T>>>& getFilters() const
+  {
+    return reference_pointers_;
+  }
 
 private:
 
@@ -475,7 +475,7 @@ public:
       auto p(loader_.createUnmanagedInstance(config[i]["type"]));
       if (p == nullptr)
         return false;
-			std::shared_ptr<filters::MultiChannelFilterBase<T>> ptr(p);
+      std::shared_ptr<filters::MultiChannelFilterBase<T>> ptr(p);
       result = result &&  ptr->configure(size, config[i]);    
       reference_pointers_.push_back(ptr);
       std::string type = config[i]["type"];
@@ -491,10 +491,10 @@ public:
     return result;
   };
 
-	const std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T>>>& getFilters() const
-	{
-		return reference_pointers_;
-	}
+  const std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T>>>& getFilters() const
+  {
+    return reference_pointers_;
+  }
 
 private:
 
