@@ -232,8 +232,9 @@ public:
       auto p(loader_.createUnmanagedInstance(config[i]["type"]));
       if (p == nullptr)
         return false;
-      result = result &&  p->configure(config[i]);    
-      reference_pointers_.push_back(std::shared_ptr<filters::FilterBase<T>>(p));
+			std::shared_ptr<filters::FilterBase<T>> ptr(p);
+      result = result &&  ptr->configure(config[i]);    
+      reference_pointers_.push_back(ptr);
       std::string type = config[i]["type"];
       std::string name = config[i]["name"];
       ROS_DEBUG("%s: Configured %s:%s filter at %p\n", filter_ns.c_str(), type.c_str(),
@@ -474,8 +475,9 @@ public:
       auto p(loader_.createUnmanagedInstance(config[i]["type"]));
       if (p == nullptr)
         return false;
-      result = result &&  p->configure(size, config[i]);    
-      reference_pointers_.push_back(std::shared_ptr<filters::MultiChannelFilterBase<T>>(p));
+			std::shared_ptr<filters::MultiChannelFilterBase<T>> ptr(p);
+      result = result &&  ptr->configure(size, config[i]);    
+      reference_pointers_.push_back(ptr);
       std::string type = config[i]["type"];
       std::string name = config[i]["name"];
       ROS_DEBUG("Configured %s:%s filter at %p\n", type.c_str(),
