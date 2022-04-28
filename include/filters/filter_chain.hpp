@@ -229,6 +229,9 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
+      // The unmanaged instance created here is later passed to std::shared_ptr
+      // to handle its lifetime (this is done because pluginlib does not support
+      // creating std::shared_ptr pointers).
       auto p(loader_.createUnmanagedInstance(config[i]["type"]));
       if (p == nullptr)
         return false;
@@ -248,7 +251,9 @@ public:
     return result;
   };
 
-  const std::vector<std::shared_ptr<filters::FilterBase<T>>>& getFilters() const
+  /** \brief Return a copy of the vector of loaded filters (the pointers point
+   * to the actual filters used by the chain). */
+  std::vector<std::shared_ptr<filters::FilterBase<T>>> getFilters() const
   {
     return reference_pointers_;
   }
@@ -472,6 +477,9 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
+      // The unmanaged instance created here is later passed to std::shared_ptr
+      // to handle its lifetime (this is done because pluginlib does not support
+      // creating std::shared_ptr pointers).
       auto p(loader_.createUnmanagedInstance(config[i]["type"]));
       if (p == nullptr)
         return false;
@@ -491,7 +499,9 @@ public:
     return result;
   };
 
-  const std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T>>>& getFilters() const
+  /** \brief Return a copy of the vector of loaded filters (the pointers point
+   * to the actual filters used by the chain). */
+  std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T>>> getFilters() const
   {
     return reference_pointers_;
   }
