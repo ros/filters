@@ -111,6 +111,43 @@ TEST(MultiChannelFilterChain, TwoFilters){
   }
 }
 
+TEST(MultiChannelFilterChain, GetFilters){
+  filters::MultiChannelFilterChain<double> chain("double");
+
+  EXPECT_EQ(0u, chain.getFilters().size());
+  
+  auto filtersBefore = chain.getFilters();
+  
+  EXPECT_TRUE(chain.configure(5, "TwoFilters"));
+
+  auto filtersAfter = chain.getFilters();
+  
+  ASSERT_EQ(2u, chain.getFilters().size());
+  ASSERT_EQ(2u, filtersAfter.size());
+  EXPECT_EQ(0u, filtersBefore.size());  // Test that getFilters() returns a copy of the vector 
+  EXPECT_EQ("median_test_unique", chain.getFilters()[0]->getName());
+  EXPECT_EQ("filters/MultiChannelMedianFilterDouble", chain.getFilters()[0]->getType());
+  EXPECT_EQ("median_test2", chain.getFilters()[1]->getName());
+  EXPECT_EQ("filters/MultiChannelMedianFilterDouble", chain.getFilters()[1]->getType());
+  
+  // Check that changing our copy of the list of filters does not change the
+  // filters handled by the chain.
+  filtersAfter.clear();
+  EXPECT_EQ(2u, chain.getFilters().size());
+  
+  filtersAfter = chain.getFilters();
+  
+  chain.clear();
+  
+  EXPECT_EQ(0u, chain.getFilters().size());
+  ASSERT_EQ(2u, filtersAfter.size());
+
+  // Check that the filter pointers survive clearing the filter chain (if we
+  // hold a copy of the filter vector).
+  EXPECT_EQ("median_test_unique", filtersAfter[0]->getName());
+  EXPECT_EQ("median_test2", filtersAfter[1]->getName());
+}
+
 
 TEST(MultiChannelFilterChain, TransferFunction){
   double epsilon = 1e-4;
@@ -199,7 +236,43 @@ TEST(FilterChain, ReconfiguringChain){
   EXPECT_TRUE(chain.update(v1, v1a));
   EXPECT_EQ(3, v1a);
   chain.clear();
+}
+
+TEST(FilterChain, GetFilters){
+  filters::FilterChain<int> chain("int");
+
+  EXPECT_EQ(0u, chain.getFilters().size());
+
+  auto filtersBefore = chain.getFilters();
   
+  EXPECT_TRUE(chain.configure("TwoIncrements"));
+
+  auto filtersAfter = chain.getFilters();
+
+  ASSERT_EQ(2u, chain.getFilters().size());
+  ASSERT_EQ(2u, filtersAfter.size());
+  EXPECT_EQ(0u, filtersBefore.size());  // Test that getFilters() returns a copy of the vector
+  EXPECT_EQ("increment1", chain.getFilters()[0]->getName());
+  EXPECT_EQ("filters/IncrementFilterInt", chain.getFilters()[0]->getType());
+  EXPECT_EQ("increment2", chain.getFilters()[1]->getName());
+  EXPECT_EQ("filters/IncrementFilterInt", chain.getFilters()[1]->getType());
+
+  // Check that changing our copy of the list of filters does not change the
+  // filters handled by the chain.
+  filtersAfter.clear();
+  EXPECT_EQ(2u, chain.getFilters().size());
+
+  filtersAfter = chain.getFilters();
+
+  chain.clear();
+
+  EXPECT_EQ(0u, chain.getFilters().size());
+  ASSERT_EQ(2u, filtersAfter.size());
+
+  // Check that the filter pointers survive clearing the filter chain (if we
+  // hold a copy of the filter vector).
+  EXPECT_EQ("increment1", filtersAfter[0]->getName());
+  EXPECT_EQ("increment2", filtersAfter[1]->getName());
 }
 
 TEST(FilterChain, ThreeIncrementChains){
