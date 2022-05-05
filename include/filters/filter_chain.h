@@ -33,9 +33,9 @@
 #include "ros/ros.h"
 #include "filters/filter_base.h"
 #include <pluginlib/class_loader.h>
+#include <memory>
 #include <sstream>
 #include <vector>
-#include "boost/shared_ptr.hpp"
 
 namespace filters
 {
@@ -229,15 +229,19 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::FilterBase<T> > p(loader_.createInstance(config[i]["type"]));
-      if (p.get() == NULL)
+      // The unmanaged instance created here is later passed to std::shared_ptr
+      // to handle its lifetime (this is done because pluginlib does not support
+      // creating std::shared_ptr pointers).
+      auto p(loader_.createUnmanagedInstance(config[i]["type"]));
+      if (p == nullptr)
         return false;
-      result = result &&  p.get()->configure(config[i]);    
-      reference_pointers_.push_back(p);
+      std::shared_ptr<filters::FilterBase<T>> ptr(p);
+      result = result &&  ptr->configure(config[i]);    
+      reference_pointers_.push_back(ptr);
       std::string type = config[i]["type"];
       std::string name = config[i]["name"];
       ROS_DEBUG("%s: Configured %s:%s filter at %p\n", filter_ns.c_str(), type.c_str(),
-                name.c_str(),  p.get());
+                name.c_str(),  p);
     }
     
     if (result == true)
@@ -247,9 +251,16 @@ public:
     return result;
   };
 
+  /** \brief Return a copy of the vector of loaded filters (the pointers point
+   * to the actual filters used by the chain). */
+  std::vector<std::shared_ptr<filters::FilterBase<T>>> getFilters() const
+  {
+    return reference_pointers_;
+  }
+
 private:
 
-  std::vector<boost::shared_ptr<filters::FilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
+  std::vector<std::shared_ptr<filters::FilterBase<T>>> reference_pointers_;   ///<! A vector of pointers to currently constructed filters
 
   T buffer0_; ///<! A temporary intermediate buffer
   T buffer1_; ///<! A temporary intermediate buffer
@@ -466,15 +477,19 @@ public:
        
     for (int i = 0; i < config.size(); ++i)
     {
-      boost::shared_ptr<filters::MultiChannelFilterBase<T> > p(loader_.createInstance(config[i]["type"]));
-      if (p.get() == NULL)
+      // The unmanaged instance created here is later passed to std::shared_ptr
+      // to handle its lifetime (this is done because pluginlib does not support
+      // creating std::shared_ptr pointers).
+      auto p(loader_.createUnmanagedInstance(config[i]["type"]));
+      if (p == nullptr)
         return false;
-      result = result &&  p.get()->configure(size, config[i]);    
-      reference_pointers_.push_back(p);
+      std::shared_ptr<filters::MultiChannelFilterBase<T>> ptr(p);
+      result = result &&  ptr->configure(size, config[i]);    
+      reference_pointers_.push_back(ptr);
       std::string type = config[i]["type"];
       std::string name = config[i]["name"];
       ROS_DEBUG("Configured %s:%s filter at %p\n", type.c_str(),
-                name.c_str(),  p.get());
+                name.c_str(),  p);
     }
     
     if (result == true)
@@ -484,9 +499,16 @@ public:
     return result;
   };
 
+  /** \brief Return a copy of the vector of loaded filters (the pointers point
+   * to the actual filters used by the chain). */
+  std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T>>> getFilters() const
+  {
+    return reference_pointers_;
+  }
+
 private:
 
-  std::vector<boost::shared_ptr<filters::MultiChannelFilterBase<T> > > reference_pointers_;   ///<! A vector of pointers to currently constructed filters
+  std::vector<std::shared_ptr<filters::MultiChannelFilterBase<T>>> reference_pointers_;   ///<! A vector of pointers to currently constructed filters
 
   std::vector<T> buffer0_; ///<! A temporary intermediate buffer
   std::vector<T> buffer1_; ///<! A temporary intermediate buffer
