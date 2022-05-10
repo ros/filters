@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.3 (2022-05-09)
+------------------
 * Backport PR-60 to lunar-devel
   Add getFilters() function to provide access to FilterChain's filters
   to child classes.
