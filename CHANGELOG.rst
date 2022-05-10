@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.2 (2022-05-09)
+------------------
 * Give access to FilterChain list of loaded filters
 * Fix warnings and problem with illegal xml characters
 * Contributors: Markus Vieth, Martin Pecka
