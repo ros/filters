@@ -2,6 +2,12 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Give access to FilterChain list of loaded filters
+* Fix warnings and problem with illegal xml characters
+* Contributors: Markus Vieth, Martin Pecka
+
 1.9.1 (2020-09-23)
 ------------------
 * make FilterBase::getName() const
