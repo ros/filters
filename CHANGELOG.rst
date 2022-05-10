@@ -2,6 +2,13 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Backport PR-60 to lunar-devel
+  Add getFilters() function to provide access to FilterChain's filters
+  to child classes.
+* Contributors: Jon Binney, Martin Pecka:
+
 1.8.2 (2021-10-13)
 ------------------
 * Make FilterBase::getName() const.
