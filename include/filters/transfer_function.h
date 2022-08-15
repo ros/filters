@@ -71,7 +71,7 @@ namespace filters
 */
 /***************************************************/
 template <typename T>
-class SingleChannelTransferFunctionFilter: public filters::FilterBase <T>
+class SingleChannelTransferFunctionFilter: public filters::FilterBase<T>
 {
 public:
   /**
@@ -107,6 +107,12 @@ protected:
   std::vector<double> a_;   //Transfer functon coefficients (output).
   std::vector<double> b_;   //Transfer functon coefficients (input).
 
+};
+
+template <typename T>
+class InplaceSingleChannelTransferFunctionFilter: public SingleChannelTransferFunctionFilter<T>, public InplaceFilterBase<T>
+{
+  bool updateInplace(T& data) override;
 };
 
 template <typename T>
@@ -192,6 +198,12 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T  & data_in, T & data
   return true;
 };
 
+template<typename T>
+bool InplaceSingleChannelTransferFunctionFilter<T>::updateInplace(T& data)
+{
+  return this->update(data, data);
+}
+
 
 
 /***************************************************/
@@ -222,7 +234,7 @@ bool SingleChannelTransferFunctionFilter<T>::update(const T  & data_in, T & data
 /***************************************************/
 
 template <typename T>
-class MultiChannelTransferFunctionFilter: public filters::MultiChannelFilterBase <T>
+class MultiChannelTransferFunctionFilter: public filters::MultiChannelFilterBase<T>
 {
 public:
   /**
@@ -258,6 +270,12 @@ protected:
   std::vector<double> a_;   //Transfer functon coefficients (output).
   std::vector<double> b_;   //Transfer functon coefficients (input).
 
+};
+
+template <typename T>
+class InplaceMultiChannelTransferFunctionFilter: public MultiChannelTransferFunctionFilter<T>, public InplaceMultiChannelFilterBase<T>
+{
+  bool updateInplace(std::vector<T>& data) override;
 };
 
 template <typename T>
@@ -348,6 +366,12 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
   return true;
 };
 
+template<typename T>
+bool InplaceMultiChannelTransferFunctionFilter<T>::updateInplace(std::vector<T>& data)
+{
+  return this->update(data, data);
 }
 
-#endif //#ifndef FILTERS_TRAjNSFER_FUNCTION_H_
+}
+
+#endif //#ifndef FILTERS_TRANSFER_FUNCTION_H_

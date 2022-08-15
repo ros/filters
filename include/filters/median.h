@@ -94,7 +94,7 @@ elem_type kth_smallest(elem_type a[], int n, int k)
  *
  */
 template <typename T>
-class MedianFilter: public filters::FilterBase <T>
+class MedianFilter: public filters::FilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -111,7 +111,7 @@ public:
    * \param data_out double array with length width
    */
   virtual bool update(const T& data_in, T& data_out);
-  
+
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
   boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_;                       ///< Storage for data between updates
@@ -121,6 +121,12 @@ protected:
 
   uint32_t number_of_observations_;             ///< Number of observations over which to filter
 
+};
+
+template <typename T>
+class InplaceMedianFilter: public MedianFilter<T>, public InplaceFilterBase<T>
+{
+  bool updateInplace(T& data) override;
 };
 
 template <typename T>
@@ -174,11 +180,18 @@ bool MedianFilter<T>::update(const T& data_in, T& data_out)
 
   return true;
 };
+
+template<typename T>
+bool InplaceMedianFilter<T>::updateInplace(T& data)
+{
+  return this->update(data, data);
+}
+
 /** \brief A median filter which works on arrays.
  *
  */
 template <typename T>
-class MultiChannelMedianFilter: public filters::MultiChannelFilterBase <T>
+class MultiChannelMedianFilter: public filters::MultiChannelFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -195,7 +208,7 @@ public:
    * \param data_out double array with length width
    */
   virtual bool update(const std::vector<T>& data_in, std::vector<T>& data_out);
-  
+
 protected:
   std::vector<T> temp_storage_;                       ///< Preallocated storage for the list to sort
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_;                       ///< Storage for data between updates
@@ -205,6 +218,12 @@ protected:
 
   uint32_t number_of_observations_;             ///< Number of observations over which to filter
 
+};
+
+template <typename T>
+class InplaceMultiChannelMedianFilter: public MultiChannelMedianFilter<T>, public InplaceMultiChannelFilterBase<T>
+{
+  bool updateInplace(std::vector<T>& data) override;
 };
 
 template <typename T>
@@ -264,6 +283,12 @@ bool MultiChannelMedianFilter<T>::update(const std::vector<T>& data_in, std::vec
 
   return true;
 };
+
+template<typename T>
+bool InplaceMultiChannelMedianFilter<T>::updateInplace(std::vector<T>& data)
+{
+  return this->update(data, data);
+}
 
 
 }

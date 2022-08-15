@@ -43,6 +43,16 @@ namespace filters
 
 typedef std::map<std::string, XmlRpc::XmlRpcValue> string_map_t;
 
+template <typename T>
+class InplaceFilterBase
+{
+public:
+  /** \brief Filter the provided data in-place.
+   * \param data A reference to the data.
+   */
+  virtual bool updateInplace(T& data) = 0;
+};
+
 /** \brief A Base filter class to provide a standard interface for all filters
  *
  */
@@ -98,6 +108,15 @@ public:
    * \param data_out A reference to the data output location
    */
   virtual bool update(const T& data_in, T& data_out)=0;
+
+  bool update(T& data)
+  {
+    auto inplace = dynamic_cast<InplaceFilterBase<T>*>(this);
+    if (inplace)
+      return inplace->updateInplace(data);
+    else
+      return this->update(data, data);
+  }
 
   /** \brief Get the type of the filter as a string */
   std::string getType() {return filter_type_;};
@@ -379,6 +398,17 @@ protected:
 };
 
 
+
+template <typename T>
+class InplaceMultiChannelFilterBase
+{
+  public:
+  /** \brief Filter the provided data in-place.
+   * \param data A reference to the data.
+   */
+  virtual bool updateInplace(std::vector<T>& data) = 0;
+};
+
 template <typename T>
 class MultiChannelFilterBase : public FilterBase<T>
 {
@@ -442,6 +472,15 @@ public:
    * This funciton must be implemented in the derived class.
    */
   virtual bool update(const std::vector<T>& data_in, std::vector<T>& data_out)=0;
+
+  bool update(std::vector<T>& data)
+  {
+    auto inplace = dynamic_cast<InplaceMultiChannelFilterBase<T>*>(this);
+    if (inplace)
+      return inplace->updateInplace(data);
+    else
+      return this->update(data, data);
+  }
 
   virtual bool update(const T& data_in, T& data_out)
   {

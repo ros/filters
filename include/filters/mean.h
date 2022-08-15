@@ -48,7 +48,7 @@ namespace filters
  *
  */
 template <typename T>
-class MeanFilter: public FilterBase <T>
+class MeanFilter: public filters::FilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -65,7 +65,7 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const T & data_in, T& data_out);
-  
+
 protected:
   boost::scoped_ptr<RealtimeCircularBuffer<T > > data_storage_; ///< Storage for data between updates
   uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
@@ -74,6 +74,11 @@ protected:
   
 };
 
+template <typename T>
+class InplaceMeanFilter: public MeanFilter<T>, public InplaceFilterBase<T>
+{
+  bool updateInplace(T& data) override;
+};
 
 template <typename T>
 MeanFilter<T>::MeanFilter():
@@ -127,11 +132,17 @@ bool MeanFilter<T>::update(const T & data_in, T& data_out)
   return true;
 };
 
+template<typename T>
+bool InplaceMeanFilter<T>::updateInplace(T& data)
+{
+  return this->update(data, data);
+}
+
 /** \brief A mean filter which works on double arrays.
  *
  */
 template <typename T>
-class MultiChannelMeanFilter: public MultiChannelFilterBase <T>
+class MultiChannelMeanFilter: public filters::MultiChannelFilterBase<T>
 {
 public:
   /** \brief Construct the filter with the expected width and height */
@@ -148,7 +159,7 @@ public:
    * \param data_out T array with length width
    */
   virtual bool update( const std::vector<T> & data_in, std::vector<T>& data_out);
-  
+
 protected:
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > data_storage_; ///< Storage for data between updates
   uint32_t last_updated_row_;                     ///< The last row to have been updated by the filter
@@ -162,6 +173,11 @@ protected:
   
 };
 
+template <typename T>
+class InplaceMultiChannelMeanFilter: public MultiChannelMeanFilter<T>, public InplaceMultiChannelFilterBase<T>
+{
+  bool updateInplace(std::vector<T>& data) override;
+};
 
 template <typename T>
 MultiChannelMeanFilter<T>::MultiChannelMeanFilter():
@@ -226,6 +242,12 @@ bool MultiChannelMeanFilter<T>::update(const std::vector<T> & data_in, std::vect
 
   return true;
 };
+
+template<typename T>
+bool InplaceMultiChannelMeanFilter<T>::updateInplace(std::vector<T>& data)
+{
+  return this->update(data, data);
+}
 
 }
 #endif// FILTERS_MEAN_H
