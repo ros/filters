@@ -29,7 +29,7 @@
 
 
 #include "filters/param_test.hpp"
-#include "pluginlib/class_list_macros.h"
+#include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(filters::ParamTest<double>, filters::FilterBase<double>)
 PLUGINLIB_EXPORT_CLASS(filters::ParamTest<int>, filters::FilterBase<int>)
