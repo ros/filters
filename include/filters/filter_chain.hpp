@@ -32,7 +32,7 @@
 
 #include "ros/ros.h"
 #include "filters/filter_base.hpp"
-#include <pluginlib/class_loader.h>
+#include <pluginlib/class_loader.hpp>
 #include <memory>
 #include <sstream>
 #include <vector>
