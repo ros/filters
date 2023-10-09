@@ -80,6 +80,14 @@ public:
 
   void set_capacity(unsigned int order, const T & value);
 
+  auto begin(){
+  	return cb_.begin();
+  }
+
+  auto end(){
+  	return cb_.end();
+  }
+
   T & front()
   {
     return cb_.front();
