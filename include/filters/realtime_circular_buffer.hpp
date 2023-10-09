@@ -82,12 +82,12 @@ public:
 
   auto begin()
   {
-  	return cb_.begin();
+    return cb_.begin();
   }
 
   auto end()
   {
-  	return cb_.end();
+    return cb_.end();
   }
 
   T & front()
