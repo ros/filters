@@ -80,11 +80,13 @@ public:
 
   void set_capacity(unsigned int order, const T & value);
 
-  auto begin(){
+  auto begin()
+  {
   	return cb_.begin();
   }
 
-  auto end(){
+  auto end()
+  {
   	return cb_.end();
   }
 
