@@ -80,14 +80,14 @@ public:
 
   void set_capacity(unsigned int order, const T & value);
 
-  auto begin()
+  boost::circular_buffer<T>::const_iterator cbegin()
   {
-    return cb_.begin();
+    return cb_.cbegin();
   }
 
-  auto end()
+  boost::circular_buffer<T>::const_iterator cend()
   {
-    return cb_.end();
+    return cb_.cend();
   }
 
   T & front()
