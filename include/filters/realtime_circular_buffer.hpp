@@ -80,11 +80,19 @@ public:
 
   void set_capacity(unsigned int order, const T & value);
 
+  // The returned iterator is considered to be invalidated if the pointed
+  // element had been removed or overwritten by an another element.
+  // Please consider invalid any iterator obtained
+  // prior to the last push_front() or push_back() call.
   boost::circular_buffer<T>::const_iterator cbegin()
   {
     return cb_.cbegin();
   }
 
+  // The returned iterator is considered to be invalidated if the pointed
+  // element had been removed or overwritten by an another element.
+  // Please consider invalid any iterator obtained
+  // prior to the last push_front() or push_back() call.
   boost::circular_buffer<T>::const_iterator cend()
   {
     return cb_.cend();
