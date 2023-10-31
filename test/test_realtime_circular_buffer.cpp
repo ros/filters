@@ -31,6 +31,7 @@
 #include <sys/time.h>
 
 #include <vector>
+#include <utility>
 #include "filters/realtime_circular_buffer.hpp"
 
 TEST(RealtimeCircularBuffer, InitializationScalar)
@@ -54,4 +55,14 @@ TEST(RealtimeCircularBuffer, InitializationVector)
       EXPECT_EQ(vec_buf[i][j], j);
     }
   }
+}
+
+TEST(RealtimeCircularBuffer, RangeBasedLoop)
+{
+  filters::RealtimeCircularBuffer<int> vec_buf(100, 1);
+  int sum = 0;
+  for (const auto & i : vec_buf) {
+    sum += i;
+  }
+  EXPECT_EQ(sum, 100);
 }

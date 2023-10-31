@@ -86,7 +86,7 @@ public:
   // element had been removed or overwritten by an another element.
   // Please consider invalid any iterator obtained
   // prior to the last push_front() or push_back() call.
-  const_iterator cbegin()
+  const_iterator begin() const
   {
     return cb_.cbegin();
   }
@@ -95,7 +95,7 @@ public:
   // element had been removed or overwritten by an another element.
   // Please consider invalid any iterator obtained
   // prior to the last push_front() or push_back() call.
-  const_iterator cend()
+  const_iterator end() const
   {
     return cb_.cend();
   }
