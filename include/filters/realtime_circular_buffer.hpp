@@ -47,6 +47,8 @@ template<typename T>
 class RealtimeCircularBuffer
 {
 public:
+  using const_iterator = typename boost::circular_buffer<T>::const_iterator;
+
   RealtimeCircularBuffer(size_t size, const T & default_val)
   : counter_(0), cb_(size)
   {
@@ -79,6 +81,24 @@ public:
   void clear() {counter_ = 0;}
 
   void set_capacity(unsigned int order, const T & value);
+
+  // The returned iterator is considered to be invalidated if the pointed
+  // element had been removed or overwritten by an another element.
+  // Please consider invalid any iterator obtained
+  // prior to the last push_front() or push_back() call.
+  const_iterator begin() const
+  {
+    return cb_.cbegin();
+  }
+
+  // The returned iterator is considered to be invalidated if the pointed
+  // element had been removed or overwritten by an another element.
+  // Please consider invalid any iterator obtained
+  // prior to the last push_front() or push_back() call.
+  const_iterator end() const
+  {
+    return cb_.cend();
+  }
 
   T & front()
   {
