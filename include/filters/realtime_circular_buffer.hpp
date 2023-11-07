@@ -88,7 +88,7 @@ public:
   // prior to the last push_front() or push_back() call.
   const_iterator begin() const
   {
-    return cb_.cbegin();
+    return cb_.begin();
   }
 
   // The returned iterator is considered to be invalidated if the pointed
@@ -97,7 +97,7 @@ public:
   // prior to the last push_front() or push_back() call.
   const_iterator end() const
   {
-    return cb_.cend();
+    return cb_.end();
   }
 
   T & front()
