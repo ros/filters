@@ -92,8 +92,8 @@ load_chain_config(
     rclcpp::Parameter param_type;
 
     const bool got_name = node_params->get_parameter(name_desc.name, param_name);
-    //more_filters_available = !name_desc.name.empty();
     const bool got_type = node_params->get_parameter(type_desc.name, param_type);
+
     if (!got_name && !got_type) {
       // Reached end of chain
       break;
@@ -144,7 +144,6 @@ load_chain_config(
     // Seems ok; store it for now; it will be loaded further down.
     found_filter.param_prefix = norm_param_prefix + filter_n + ".params";
     found_filters.push_back(found_filter);
-
   }
   return true;
 }
