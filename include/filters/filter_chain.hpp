@@ -70,8 +70,7 @@ load_chain_config(
   const std::string norm_param_prefix = impl::normalize_param_prefix(param_prefix);
 
   // Read parameters for filter1..filterN
-  bool more_filters_available = true;
-  for (size_t filter_num = 1; more_filters_available; ++filter_num) {
+  for (size_t filter_num = 1; ; ++filter_num) {
     // Parameters in chain are prefixed with 'filterN.'
     const std::string filter_n = "filter" + std::to_string(filter_num);
 
