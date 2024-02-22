@@ -32,11 +32,6 @@ target_link_libraries(realtime_circular_buffer
   INTERFACE
     Boost::boost
 )
-target_include_directories(realtime_circular_buffer
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-)
 
 add_library(filter_base
   INTERFACE
@@ -46,11 +41,6 @@ add_library(filter_base
 target_link_libraries(filter_base
   INTERFACE
     rclcpp::rclcpp
-)
-target_include_directories(filter_base
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 
 add_library(filter_chain
@@ -63,11 +53,17 @@ target_link_libraries(filter_chain
     filter_base
     pluginlib::pluginlib
 )
-target_include_directories(filter_chain
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-)
+
+set(targets realtime_circular_buffer filter_base filter_chain)
+foreach(target ${targets})
+  target_include_directories(${target}
+    INTERFACE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+      $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  )
+endforeach()
+
+
 
 # Plugins
 add_library(mean SHARED src/mean.cpp)
