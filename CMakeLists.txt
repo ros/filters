@@ -54,8 +54,8 @@ target_link_libraries(filter_chain
     pluginlib::pluginlib
 )
 
-set(targets realtime_circular_buffer filter_base filter_chain)
-foreach(target ${targets})
+set(interface_targets realtime_circular_buffer filter_base filter_chain)
+foreach(target ${interface_targets})
   target_include_directories(${target}
     INTERFACE
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -73,22 +73,12 @@ target_link_libraries(mean
     filter_base
     pluginlib::pluginlib
 )
-target_include_directories(mean
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-)
 
 add_library(params SHARED src/test_params.cpp)
 target_link_libraries(params
   PUBLIC
     filter_base
     pluginlib::pluginlib
-)
-target_include_directories(params
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 
 add_library(increment SHARED src/increment.cpp)
@@ -98,11 +88,6 @@ target_link_libraries(increment
     filter_base
     pluginlib::pluginlib
 )
-target_include_directories(increment
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-)
 
 add_library(median SHARED src/median.cpp)
 target_link_libraries(median
@@ -110,11 +95,6 @@ target_link_libraries(median
     realtime_circular_buffer
     filter_base
     pluginlib::pluginlib
-)
-target_include_directories(median
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 
 add_library(transfer_function SHARED src/transfer_function.cpp)
@@ -124,13 +104,17 @@ target_link_libraries(transfer_function
     filter_base
     pluginlib::pluginlib
 )
-target_include_directories(transfer_function
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-)
 
-install(TARGETS realtime_circular_buffer filter_base filter_chain mean increment median transfer_function
+set(plugin_targets mean params increment median transfer_function)
+foreach(target ${plugin_targets})
+  target_include_directories(${target}
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+      $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  )
+endforeach()
+
+install(TARGETS ${interface_targets} ${plugin_targets}
   EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
