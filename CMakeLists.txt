@@ -68,9 +68,10 @@ endforeach()
 # Plugins
 add_library(mean SHARED src/mean.cpp)
 target_link_libraries(mean
-  realtime_circular_buffer
-  filter_base
-  pluginlib::pluginlib
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
 target_include_directories(mean
   PUBLIC
@@ -80,8 +81,9 @@ target_include_directories(mean
 
 add_library(params SHARED src/test_params.cpp)
 target_link_libraries(params
-  filter_base
-  pluginlib::pluginlib
+  PUBLIC
+    filter_base
+    pluginlib::pluginlib
 )
 target_include_directories(params
   PUBLIC
@@ -91,9 +93,10 @@ target_include_directories(params
 
 add_library(increment SHARED src/increment.cpp)
 target_link_libraries(increment
-  realtime_circular_buffer
-  filter_base
-  pluginlib::pluginlib
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
 target_include_directories(increment
   PUBLIC
@@ -103,9 +106,10 @@ target_include_directories(increment
 
 add_library(median SHARED src/median.cpp)
 target_link_libraries(median
-  realtime_circular_buffer
-  filter_base
-  pluginlib::pluginlib
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
 target_include_directories(median
   PUBLIC
@@ -115,9 +119,10 @@ target_include_directories(median
 
 add_library(transfer_function SHARED src/transfer_function.cpp)
 target_link_libraries(transfer_function
-  realtime_circular_buffer
-  filter_base
-  pluginlib::pluginlib
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
 target_include_directories(transfer_function
   PUBLIC
