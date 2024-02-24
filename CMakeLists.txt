@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14.4)
 project(filters)
 
 # Default to C++14
@@ -17,57 +17,111 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS headers)
 
 ##############################################################################
 # Build
 ##############################################################################
 
-add_library(real_time_circular_buffer INTERFACE)
-target_include_directories(real_time_circular_buffer INTERFACE
-  include
-  ${Boost_INCLUDE_DIRS})
+add_library(realtime_circular_buffer
+  INTERFACE
+    include/filters/realtime_circular_buffer.h
+    include/filters/realtime_circular_buffer.hpp
+)
+target_link_libraries(realtime_circular_buffer
+  INTERFACE
+    Boost::boost
+)
+
+add_library(filter_base
+  INTERFACE
+    include/filters/filter_base.h
+    include/filters/filter_base.hpp
+)
+target_link_libraries(filter_base
+  INTERFACE
+    rclcpp::rclcpp
+)
+
+add_library(filter_chain
+  INTERFACE
+    include/filters/filter_chain.h
+    include/filters/filter_chain.hpp
+)
+target_link_libraries(filter_chain
+  INTERFACE
+    filter_base
+    pluginlib::pluginlib
+)
+
+set(interface_targets realtime_circular_buffer filter_base filter_chain)
+foreach(target ${interface_targets})
+  target_include_directories(${target}
+    INTERFACE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+      $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  )
+endforeach()
+
+
 
 # Plugins
 add_library(mean SHARED src/mean.cpp)
 target_link_libraries(mean
-  real_time_circular_buffer)
-ament_target_dependencies(mean
-  "pluginlib"
-  "rclcpp"
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
 
 add_library(params SHARED src/test_params.cpp)
 target_link_libraries(params
-  real_time_circular_buffer)
-ament_target_dependencies(params
-  "pluginlib"
-  "rclcpp"
+  PUBLIC
+    filter_base
+    pluginlib::pluginlib
 )
 
 add_library(increment SHARED src/increment.cpp)
 target_link_libraries(increment
-  real_time_circular_buffer)
-ament_target_dependencies(increment
-  "pluginlib"
-  "rclcpp"
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
 
 add_library(median SHARED src/median.cpp)
 target_link_libraries(median
-  real_time_circular_buffer)
-ament_target_dependencies(median
-  "pluginlib"
-  "rclcpp"
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
 
 add_library(transfer_function SHARED src/transfer_function.cpp)
 target_link_libraries(transfer_function
-  real_time_circular_buffer)
-ament_target_dependencies(transfer_function
-  "pluginlib"
-  "rclcpp"
+  PUBLIC
+    realtime_circular_buffer
+    filter_base
+    pluginlib::pluginlib
 )
+
+set(plugin_targets mean params increment median transfer_function)
+foreach(target ${plugin_targets})
+  target_include_directories(${target}
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+      $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  )
+endforeach()
+
+install(TARGETS ${interface_targets} ${plugin_targets}
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   # TODO(hidmic): use ament_lint_common once ament_copyright complains are resolved
@@ -104,7 +158,7 @@ if(BUILD_TESTING)
 
   # Test realtime safe buffer class
   ament_add_gtest(realtime_buffer_test test/test_realtime_circular_buffer.cpp)
-  target_link_libraries(realtime_buffer_test real_time_circular_buffer)
+  target_link_libraries(realtime_buffer_test realtime_circular_buffer)
 
   # Pluginlib specific testing for filter chain
   set(test_prefix "${CMAKE_CURRENT_BINARY_DIR}/pluginlib_test_prefix")
@@ -141,9 +195,8 @@ if(BUILD_TESTING)
   foreach(test_plugin_target IN LISTS test_plugin_targets)
     add_dependencies(chain_test "copy_${test_plugin_target}_for_testing")
   endforeach()
-  ament_target_dependencies(chain_test
-    "rclcpp"
-    "pluginlib"
+  target_link_libraries(chain_test
+    filter_chain
   )
 endif()
 
@@ -151,19 +204,19 @@ endif()
 # Install
 ##############################################################################
 
-# Install libraries
-install(
-  TARGETS mean increment median transfer_function
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
+# Export old-style CMake variables
+ament_export_include_directories("include/${PROJECT_NAME}")
+ament_export_libraries(${PROJECT_NAME})
 
-# Install headers
-install(DIRECTORY include/
-  DESTINATION include)
+# Export modern CMake targets
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+
+ament_export_dependencies(
+  Boost
+  pluginlib
+  rclcpp
+)
 
 # Install pluginlib xml
 pluginlib_export_plugin_description_file(filters "default_plugins.xml")
-ament_export_include_directories(include)
 ament_package()
