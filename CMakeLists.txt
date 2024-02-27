@@ -204,9 +204,8 @@ endif()
 # Install
 ##############################################################################
 
-# Export old-style CMake variables
+# Export old-style CMake variables for includes
 ament_export_include_directories("include/${PROJECT_NAME}")
-ament_export_libraries(${interface_targets} ${plugin_targets})
 
 # Export modern CMake targets
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
