@@ -13,8 +13,6 @@ add_library(my_library)
 target_link_libraries(my_library PUBLIC filters::filter_base)
 ```
 
-Do NOT use the `filters_LIBRARIES` anymore.
-
 For more information, 
 see the [ament_cmake](https://docs.ros.org/en/rolling/How-To-Guides/Ament-CMake-Documentation.html)
 tutorial.
