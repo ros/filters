@@ -33,6 +33,11 @@ target_link_libraries(realtime_circular_buffer
     Boost::boost
 )
 
+# filter_base is an INTERFACE library because it only has header files.
+# It is not compiled, but sets up the following properties for consumers
+# to link to a target.
+# For more info, see the CMake Wiki on INTERFACE targets.
+# https://cmake.org/cmake/help/latest/command/add_library.html#interface-libraries
 add_library(filter_base
   INTERFACE
     include/filters/filter_base.h
