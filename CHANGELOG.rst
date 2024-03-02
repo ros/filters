@@ -2,6 +2,17 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Provide target based dependencies in cmake for filter_base and libraries.
+* Support Boost 1.71 (Ubuntu 20.04 Humble)
+* Allow to iterate over RealtimeCircularBuffer.
+* Change function signature to use pointer instead of array.
+  This really has no downstream consequence, but makes it so that
+  rosdoc2 can successfully generate documentation.
+* Contributors: Chris Lalancette, Daisuke Nishimatsu, Jonathan Binney,
+  Patrick Roncagliolo, Ryan Friedman, wep21
+
 2.1.0 (2021-07-14)
 ------------------
 * Fix compiler warnings+test failures on CI (`#56 <https://github.com/ros/filters/issues/56>`_)
