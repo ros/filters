@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.1 (2024-03-02)
+------------------
 * Provide target based dependencies in cmake for filter_base and libraries.
 * Support Boost 1.71 (Ubuntu 20.04 Humble)
 * Allow to iterate over RealtimeCircularBuffer.
