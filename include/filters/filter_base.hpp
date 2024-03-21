@@ -277,6 +277,11 @@ public:
    */
   virtual ~MultiChannelFilterBase() = default;
 
+  virtual bool configure()
+  {
+    return true;
+  }
+
   /**
    * \brief Configure the filter from the parameter server
    * \param number_of_channels How many parallel channels the filter will process
