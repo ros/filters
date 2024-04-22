@@ -70,30 +70,22 @@ load_chain_config(
   const std::string norm_param_prefix = impl::normalize_param_prefix(param_prefix);
 
   // Read parameters for filter1..filterN
-  for (size_t filter_num = 1; filter_num > found_filters.size(); ++filter_num) {
+  for (size_t filter_num = 1; ; ++filter_num) {
     // Parameters in chain are prefixed with 'filterN.'
     const std::string filter_n = "filter" + std::to_string(filter_num);
 
-    // Declare filterN.name and filterN.type
+    // Declare filterN.name
     rcl_interfaces::msg::ParameterDescriptor name_desc;
     name_desc.name = norm_param_prefix + filter_n + ".name";
     name_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     name_desc.read_only = false;
-    // Must be dynamically typed because later we undeclare it and redeclare
-    // it read-only, but statically typed params cannot be undeclared.
-    name_desc.dynamic_typing = true;
+    node_params->declare_parameter(name_desc.name, rclcpp::PARAMETER_STRING);
     rcl_interfaces::msg::ParameterDescriptor type_desc;
+    // Declare filterN.type
     type_desc.name = norm_param_prefix + filter_n + ".type";
     type_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     type_desc.read_only = false;
-    // Must be dynamically typed because later we undeclare it and redeclare
-    // it read-only, but statically typed params cannot be undeclared.
-    type_desc.dynamic_typing = true;
-
-    node_params->declare_parameter(
-      name_desc.name, rclcpp::ParameterValue(), name_desc);
-    node_params->declare_parameter(
-      type_desc.name, rclcpp::ParameterValue(), type_desc);
+    node_params->declare_parameter(type_desc.name, rclcpp::PARAMETER_STRING);
 
     rclcpp::Parameter param_name;
     rclcpp::Parameter param_type;
@@ -139,6 +131,7 @@ load_chain_config(
       }
     }
 
+
     // Make sure 'type' is formated as 'package_name/filtername'
     if (1 != std::count(found_filter.type.cbegin(), found_filter.type.cend(), '/')) {
       RCLCPP_FATAL(
@@ -150,16 +143,6 @@ load_chain_config(
     // Seems ok; store it for now; it will be loaded further down.
     found_filter.param_prefix = norm_param_prefix + filter_n + ".params";
     found_filters.push_back(found_filter);
-
-    // Redeclare 'name' and 'type' as read_only
-    node_params->undeclare_parameter(name_desc.name);
-    node_params->undeclare_parameter(type_desc.name);
-    name_desc.read_only = true;
-    type_desc.read_only = true;
-    node_params->declare_parameter(
-      name_desc.name, rclcpp::ParameterValue(found_filter.name), name_desc);
-    node_params->declare_parameter(
-      type_desc.name, rclcpp::ParameterValue(found_filter.type), type_desc);
   }
   return true;
 }
