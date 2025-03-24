@@ -69,7 +69,7 @@ inline bool auto_declare_string(
   rcl_interfaces::msg::ParameterDescriptor param_desc;
   param_desc.name = param_name;
   param_desc.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
-  param_desc.read_only = false;
+  param_desc.read_only = true;
   param_desc.dynamic_typing = false;
 
   rclcpp::ParameterValue param_value;
