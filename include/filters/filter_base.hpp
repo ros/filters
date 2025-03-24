@@ -114,11 +114,28 @@ public:
    */
   virtual bool update(const T & data_in, T & data_out) = 0;
 
+    /**
+   * \brief reconfigureCB 
+   * can be overridden in the derived class
+   * \param parameters A vector parameters to be reconfigured
+   */
+  virtual rcl_interfaces::msg::SetParametersResult reconfigureCB(std::vector<rclcpp::Parameter> parameters) 
+  {
+    auto result = rcl_interfaces::msg::SetParametersResult();
+    result.successful = true;
+    return result;
+  };
+
   /**
    * \brief Get the name of the filter as a string
    */
   inline const std::string & getName() {return filter_name_;}
 
+    /**
+   * \brief Get the parameter_prefix of the filter as a string
+   */
+  inline const std::string & getParamPrefix() {return param_prefix_;}
+  
 private:
   template<typename PT>
   bool getParamImpl(const std::string & name, const uint8_t type, PT default_value, PT & value_out)
@@ -131,7 +148,7 @@ private:
       rcl_interfaces::msg::ParameterDescriptor desc;
       desc.name = name;
       desc.type = type;
-      desc.read_only = true;
+      desc.read_only = false;
 
       if (name.empty()) {
         throw std::runtime_error("Parameter must have a name");
