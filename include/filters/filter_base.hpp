@@ -157,10 +157,10 @@ protected:
    * \param name The name of the parameter
    * \param value The string to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, std::string & value)
+  bool getParam(const std::string & name, std::string & value, std::string default_value = std::string())
   {
     return getParamImpl(
-      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING, std::string(), value);
+      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING, default_value, value);
   }
 
   /**
@@ -168,9 +168,9 @@ protected:
    * \param name The name of the parameter
    * \param value The boolean to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, bool & value)
+  bool getParam(const std::string & name, bool & value, bool default_value = false)
   {
-    return getParamImpl(name, rcl_interfaces::msg::ParameterType::PARAMETER_BOOL, false, value);
+    return getParamImpl(name, rcl_interfaces::msg::ParameterType::PARAMETER_BOOL, default_value, value);
   }
 
   /**
@@ -178,9 +178,9 @@ protected:
    * \param name The name of the parameter
    * \param value The double to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, double & value)
+  bool getParam(const std::string & name, double & value, double default_value = 0.0)
   {
-    return getParamImpl(name, rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE, 0.0, value);
+    return getParamImpl(name, rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE, default_value, value);
   }
 
   /**
@@ -188,9 +188,9 @@ protected:
    * \param name The name of the parameter
    * \param value The int to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, int & value)
+  bool getParam(const std::string & name, int & value, int default_value = 0)
   {
-    return getParamImpl(name, rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER, 0, value);
+    return getParamImpl(name, rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER, default_value, value);
   }
 
   /**
@@ -234,10 +234,10 @@ protected:
    * \param name The name of the parameter
    * \param value The std::vector<double> to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, std::vector<double> & value)
+  bool getParam(const std::string & name, std::vector<double> & value, std::vector<double> default_value = {})
   {
     return getParamImpl(
-      name, rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE_ARRAY, {}, value);
+      name, rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE_ARRAY, default_value, value);
   }
 
   /**
@@ -245,10 +245,10 @@ protected:
    * \param name The name of the parameter
    * \param value The std::vector<sgring> to set with the value
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, std::vector<std::string> & value)
+  bool getParam(const std::string & name, std::vector<std::string> & value, std::vector<std::string> default_value = {})
   {
     return getParamImpl(
-      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY, {}, value);
+      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY, default_value, value);
   }
 
   /// The name of the filter
