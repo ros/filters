@@ -156,6 +156,7 @@ protected:
    * \brief Get a filter parameter as a string
    * \param name The name of the parameter
    * \param value The string to set with the value
+   * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
   bool getParam(const std::string & name, std::string & value, std::string default_value = std::string())
   {
@@ -167,6 +168,7 @@ protected:
    * \brief Get a filter parameter as a boolean
    * \param name The name of the parameter
    * \param value The boolean to set with the value
+   * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
   bool getParam(const std::string & name, bool & value, bool default_value = false)
   {
@@ -177,6 +179,7 @@ protected:
    * \brief Get a filter parameter as a double
    * \param name The name of the parameter
    * \param value The double to set with the value
+   * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
   bool getParam(const std::string & name, double & value, double default_value = 0.0)
   {
@@ -187,6 +190,7 @@ protected:
    * \brief Get a filter parameter as a int
    * \param name The name of the parameter
    * \param value The int to set with the value
+   * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
   bool getParam(const std::string & name, int & value, int default_value = 0)
   {
@@ -233,6 +237,7 @@ protected:
    * \brief Get a filter parameter as a std::vector<double>
    * \param name The name of the parameter
    * \param value The std::vector<double> to set with the value
+   * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
   bool getParam(const std::string & name, std::vector<double> & value, std::vector<double> default_value = {})
   {
@@ -244,6 +249,7 @@ protected:
    * \brief Get a filter parameter as a std::vector<string>
    * \param name The name of the parameter
    * \param value The std::vector<sgring> to set with the value
+   * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
   bool getParam(const std::string & name, std::vector<std::string> & value, std::vector<std::string> default_value = {})
   {
