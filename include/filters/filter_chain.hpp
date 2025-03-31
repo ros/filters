@@ -248,7 +248,7 @@ public:
     logging_interface_ = node_logger;
     params_interface_ = node_params;
     on_set_parameters_callback_handle_ = params_interface_->add_on_set_parameters_callback(
-              std::bind(&FilterChain<T>::reconfigureCB, this, std::placeholders::_1));
+      std::bind(&FilterChain<T>::reconfigureCB, this, std::placeholders::_1));
 
     std::vector<struct impl::FoundFilter> found_filters;
     if (!impl::load_chain_config(
@@ -299,20 +299,16 @@ public:
     auto result = rcl_interfaces::msg::SetParametersResult();
     result.successful = true;
 
-    for(auto& ref_ptr : reference_pointers_)
-    {
-        std::vector<rclcpp::Parameter> parameters_subset;
-        for(auto parameter : parameters)
-        {
-            if (parameter.get_name().find(ref_ptr->getParamPrefix()) != std::string::npos)
-            {
-                parameters_subset.push_back(parameter);
-            }
+    for (auto & ref_ptr : reference_pointers_) {
+      std::vector<rclcpp::Parameter> parameters_subset;
+      for (auto parameter : parameters) {
+        if (parameter.get_name().find(ref_ptr->getParamPrefix()) != std::string::npos) {
+          parameters_subset.push_back(parameter);
         }
-        if(!parameters_subset.empty() && !ref_ptr->reconfigureCB(parameters_subset).successful)
-        {
-            result.successful = false;
-        }
+      }
+      if (!parameters_subset.empty() && !ref_ptr->reconfigureCB(parameters_subset).successful) {
+        result.successful = false;
+      }
     }
     return result;
   }
@@ -329,7 +325,8 @@ private:
 
   rclcpp::node_interfaces::NodeParametersInterface::SharedPtr params_interface_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr logging_interface_;
-  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+    on_set_parameters_callback_handle_;
 };
 
 /**
@@ -478,20 +475,16 @@ public:
     auto result = rcl_interfaces::msg::SetParametersResult();
     result.successful = true;
 
-    for(auto& ref_ptr : reference_pointers_)
-    {
-        std::vector<rclcpp::Parameter> parameters_subset;
-        for(auto parameter : parameters)
-        {
-            if (parameter.get_name().find(ref_ptr->getParamPrefix()) != std::string::npos)
-            {
-                parameters_subset.push_back(parameter);
-            }
+    for (auto & ref_ptr : reference_pointers_) {
+      std::vector<rclcpp::Parameter> parameters_subset;
+      for (auto parameter : parameters) {
+        if (parameter.get_name().find(ref_ptr->getParamPrefix()) != std::string::npos) {
+          parameters_subset.push_back(parameter);
         }
-        if(!parameters_subset.empty() && !ref_ptr->reconfigureCB(parameters_subset).successful)
-        {
-            result.successful = false;
-        }
+      }
+      if (!parameters_subset.empty() && !ref_ptr->reconfigureCB(parameters_subset).successful) {
+        result.successful = false;
+      }
     }
     return result;
   }
@@ -508,7 +501,8 @@ private:
 
   rclcpp::node_interfaces::NodeParametersInterface::SharedPtr params_interface_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr logging_interface_;
-  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+    on_set_parameters_callback_handle_;
 };
 
 }  // namespace filters
