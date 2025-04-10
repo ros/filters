@@ -2,6 +2,12 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [ROS-O] update pluginlib include names (`#64 <https://github.com/ros/filters/issues/64>`_)
+* [ROS-O] remove obsolete register keyword (`#63 <https://github.com/ros/filters/issues/63>`_)
+* Contributors: Jonathan Binney, v4hn
+
 1.9.2 (2022-05-09)
 ------------------
 * Give access to FilterChain list of loaded filters
