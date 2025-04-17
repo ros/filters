@@ -139,7 +139,9 @@ public:
 
 private:
   template<typename PT>
-  bool getParamImpl(const std::string & name, const uint8_t type, PT default_value, PT & value_out)
+  bool getParamImpl(
+    const std::string & name, const uint8_t type, PT default_value, PT & value_out,
+    bool read_only)
   {
     std::string param_name = param_prefix_ + name;
 
@@ -149,7 +151,7 @@ private:
       rcl_interfaces::msg::ParameterDescriptor desc;
       desc.name = name;
       desc.type = type;
-      desc.read_only = false;
+      desc.read_only = read_only;
 
       if (name.empty()) {
         throw std::runtime_error("Parameter must have a name");
@@ -177,11 +179,11 @@ protected:
    * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
   bool getParam(
-    const std::string & name, std::string & value,
+    const std::string & name, std::string & value, bool read_only = true,
     std::string default_value = std::string())
   {
     return getParamImpl(
-      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING, default_value, value);
+      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING, default_value, value, read_only);
   }
 
   /**
@@ -190,11 +192,13 @@ protected:
    * \param value The boolean to set with the value
    * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, bool & value, bool default_value = false)
+  bool getParam(
+    const std::string & name, bool & value,
+    bool read_only = true, bool default_value = false)
   {
     return getParamImpl(
       name, rcl_interfaces::msg::ParameterType::PARAMETER_BOOL, default_value,
-      value);
+      value, read_only);
   }
 
   /**
@@ -203,11 +207,13 @@ protected:
    * \param value The double to set with the value
    * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, double & value, double default_value = 0.0)
+  bool getParam(
+    const std::string & name, double & value,
+    bool read_only = true, double default_value = 0.0)
   {
     return getParamImpl(
       name, rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE, default_value,
-      value);
+      value, read_only);
   }
 
   /**
@@ -216,11 +222,13 @@ protected:
    * \param value The int to set with the value
    * \param default_value The default value to use if the parameter is not set
    * \return Whether or not the parameter of name/type was set */
-  bool getParam(const std::string & name, int & value, int default_value = 0)
+  bool getParam(
+    const std::string & name, int & value,
+    bool read_only = true, int default_value = 0)
   {
     return getParamImpl(
       name, rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER, default_value,
-      value);
+      value, read_only);
   }
 
   /**
@@ -267,10 +275,12 @@ protected:
    * \return Whether or not the parameter of name/type was set */
   bool getParam(
     const std::string & name, std::vector<double> & value,
+    bool read_only = true,
     std::vector<double> default_value = {})
   {
     return getParamImpl(
-      name, rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE_ARRAY, default_value, value);
+      name, rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE_ARRAY, default_value, value,
+      read_only);
   }
 
   /**
@@ -281,10 +291,12 @@ protected:
    * \return Whether or not the parameter of name/type was set */
   bool getParam(
     const std::string & name, std::vector<std::string> & value,
+    bool read_only = true,
     std::vector<std::string> default_value = {})
   {
     return getParamImpl(
-      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY, default_value, value);
+      name, rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY, default_value, value,
+      read_only);
   }
 
   /// The name of the filter
