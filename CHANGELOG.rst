@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2025-05-01)
+------------------
 * Handle dynamic reconfiguration of parameters
 * Enable the use of a default for parameters
 * Configure github action that runs tests
