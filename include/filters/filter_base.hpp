@@ -122,6 +122,8 @@ public:
   virtual rcl_interfaces::msg::SetParametersResult reconfigureCB(
     std::vector<rclcpp::Parameter> parameters)
   {
+    // Avoid unused parameter warning
+    (void)parameters;
     auto result = rcl_interfaces::msg::SetParametersResult();
     result.successful = true;
     return result;
