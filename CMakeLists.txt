@@ -31,7 +31,7 @@ find_package(ament_cmake REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 
-if(POLICY CMP0167)
+if(WIN32 AND POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 find_package(Boost QUIET COMPONENTS headers)
