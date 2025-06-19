@@ -165,7 +165,7 @@ bool MedianFilter<T>::update(const T & data_in, T & data_out)
   for (size_t row = 0; row < length; ++row) {
     temp_storage_[row] = (*data_storage_)[row];
   }
-  data_out = median(&temp_storage_[0], length);
+  data_out = median(&temp_storage_[0], static_cast<int>(length));
 
   return true;
 }

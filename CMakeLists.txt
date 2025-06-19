@@ -11,6 +11,19 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+if(WIN32)
+  add_compile_definitions(
+    # For math constants
+    # https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=vs-2019
+    _USE_MATH_DEFINES
+    # Minimize Windows namespace collision
+    NOMINMAX
+    WIN32_LEAN_AND_MEAN
+  )
+  # set the same behavior for windows as it is on linux
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
 ##############################################################################
 # Find dependencies
 ##############################################################################
@@ -18,6 +31,10 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 find_package(ament_cmake REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+
+if(WIN32 AND POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
 find_package(Boost QUIET COMPONENTS headers)
 if(NOT Boost_headers_FOUND)
   find_package(Boost REQUIRED)

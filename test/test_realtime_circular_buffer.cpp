@@ -28,10 +28,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <sys/time.h>
 
 #include <vector>
-#include <utility>
+
 #include "filters/realtime_circular_buffer.hpp"
 
 TEST(RealtimeCircularBuffer, InitializationScalar)
