@@ -140,8 +140,7 @@ private:
       params_interface_->declare_parameter(param_name, default_parameter_value, desc);
     }
 
-    value_out =
-      static_cast<PT>(params_interface_->get_parameter(param_name).get_parameter_value().get<PT>());
+    value_out = static_cast<PT>(params_interface_->get_parameter(param_name).get_parameter_value().get<PT>());
     // TODO(sloretz) seems to be no way to tell if parameter was initialized or not
     return true;
   }
