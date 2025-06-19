@@ -224,6 +224,7 @@ if(BUILD_TESTING)
     set(_output "${test_prefix}/lib/$<TARGET_FILE_NAME:${test_plugin_target}>")
     add_custom_command(TARGET ${test_plugin_target}
       COMMENT "Copying target ${test_plugin_target} for testing"
+      DEPENDS "${_resource}"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${_resource}"
         "${_output}"
