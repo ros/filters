@@ -31,6 +31,7 @@
 #define FILTERS__FILTER_CHAIN_HPP_
 
 #include <algorithm>
+#include <cstddef>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -294,6 +295,14 @@ public:
     return true;
   }
 
+  /**
+   * \brief Get the length of the chain (number of configured filters)
+   */
+  size_t get_length()
+  {
+    return reference_pointers_.size();
+  }
+
   rcl_interfaces::msg::SetParametersResult reconfigureCB(std::vector<rclcpp::Parameter> parameters)
   {
     auto result = rcl_interfaces::msg::SetParametersResult();
@@ -468,6 +477,14 @@ public:
     buffer1_.resize(number_of_channels);
     configured_ = true;
     return true;
+  }
+
+  /**
+   * \brief Get the length of the chain (number of configured filters)
+   */
+  size_t get_length()
+  {
+    return reference_pointers_.size();
   }
 
   rcl_interfaces::msg::SetParametersResult reconfigureCB(std::vector<rclcpp::Parameter> parameters)
