@@ -191,6 +191,9 @@ public:
    */
   bool update(const T & data_in, T & data_out)
   {
+    if (!configured_) {
+      throw std::runtime_error("The update cannot be called without configuring the filter chain!");
+    }
     bool result;
     size_t list_size = reference_pointers_.size();
     if (list_size == 0) {
@@ -361,6 +364,9 @@ public:
    */
   bool update(const std::vector<T> & data_in, std::vector<T> & data_out)
   {
+    if (!configured_) {
+      throw std::runtime_error("The update cannot be called without configuring the filter chain!");
+    }
     bool result;
     size_t list_size = reference_pointers_.size();
 
