@@ -2,8 +2,8 @@
 Changelog for package filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.2 (2025-07-20)
+------------------
 * Added throw on unconfigured update call
 * Added chain length getter with tests
 * Make filters compile with MSVC
