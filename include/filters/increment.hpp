@@ -89,6 +89,54 @@ bool IncrementFilter<T>::update(const T & data_in, T & data_out)
 }
 
 /**
+ * \brief A increment filter which updates data in place.
+ */
+template<typename T>
+class InPlaceIncrementFilter : public InPlaceFilter<T>
+{
+public:
+  /**
+   * \brief Construct the filter with the expected width and height
+   */
+  InPlaceIncrementFilter();
+
+  /**
+   * \brief Destructor to clean up
+   */
+  ~InPlaceIncrementFilter() override;
+
+  bool configure() override;
+
+  /**
+   * \brief Update the filter in place
+   */
+  bool update(T & data) override;
+};
+
+template<typename T>
+InPlaceIncrementFilter<T>::InPlaceIncrementFilter()
+{
+}
+
+template<typename T>
+InPlaceIncrementFilter<T>::~InPlaceIncrementFilter()
+{
+}
+
+template<typename T>
+bool InPlaceIncrementFilter<T>::configure()
+{
+  return true;
+}
+
+template<typename T>
+bool InPlaceIncrementFilter<T>::update(T & data)
+{
+  ++data;
+  return true;
+}
+
+/**
  * \brief A increment filter which works on arrays.
  */
 template<typename T>

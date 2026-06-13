@@ -312,6 +312,29 @@ protected:
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr logging_interface_;
 };
 
+/**
+ * \brief Optional base class for filters that can update data in place.
+ */
+template<typename T>
+class InPlaceFilter : public FilterBase<T>
+{
+public:
+  /**
+   * \brief Update data in place.
+   * \param data A reference to the data to be filtered.
+   */
+  virtual bool update(T & data) = 0;
+
+  /**
+   * \brief Compatibility implementation for the standard FilterBase API.
+   */
+  bool update(const T & data_in, T & data_out) override
+  {
+    data_out = data_in;
+    return update(data_out);
+  }
+};
+
 
 template<typename T>
 class MultiChannelFilterBase : public FilterBase<T>

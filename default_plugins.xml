@@ -58,6 +58,12 @@
 	This is a increment filter which works on a stream of ints.
       </description>
     </class>
+    <class name="filters/InPlaceIncrementFilterInt" type="filters::InPlaceIncrementFilter&lt;int&gt;"
+	    base_class_type="filters::FilterBase&lt;int&gt;">
+      <description>
+	This is a increment filter which updates a stream of ints in place.
+      </description>
+    </class>
     <class name="filters/MultiChannelIncrementFilterInt" type="filters::MultiChannelIncrementFilter&lt;int&gt;"
 	    base_class_type="filters::MultiChannelFilterBase&lt;int&gt;">
       <description>

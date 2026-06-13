@@ -194,34 +194,67 @@ public:
     if (!configured_) {
       throw std::runtime_error("The update cannot be called without configuring the filter chain!");
     }
-    bool result;
-    size_t list_size = reference_pointers_.size();
-    if (list_size == 0) {
+
+    if (reference_pointers_.empty()) {
       data_out = data_in;
-      result = true;
-    } else if (list_size == 1) {
-      result = reference_pointers_[0]->update(data_in, data_out);
-    } else if (list_size == 2) {
-      result = reference_pointers_[0]->update(data_in, buffer0_);
-      if (result == false) {return false;}  // don't keep processing on failure
-      result = result && reference_pointers_[1]->update(buffer0_, data_out);
-    } else {
-      result = reference_pointers_[0]->update(data_in, buffer0_);  // first copy in
-      for (size_t i = 1; i < reference_pointers_.size() - 1 && result; ++i) {
-        // all but first and last (never called if size=2)
-        if (i % 2 == 1) {
-          result = result && reference_pointers_[i]->update(buffer0_, buffer1_);
-        } else {
-          result = result && reference_pointers_[i]->update(buffer1_, buffer0_);
+      return true;
+    }
+
+    // The first filter cannot update in place because the chain input is const.
+    bool result = reference_pointers_[0]->update(data_in, data_out);
+    if (!result) {
+      return false;
+    }
+
+    T * current = &data_out;
+    T * next = &buffer0_;
+    for (size_t i = 1; i < reference_pointers_.size(); ++i) {
+      auto in_place_filter =
+        dynamic_cast<filters::InPlaceFilter<T> *>(reference_pointers_[i].get());
+      if (in_place_filter) {
+        result = in_place_filter->update(*current);
+      } else {
+        // Fall back to the existing two-buffer path for filters without in-place support.
+        result = reference_pointers_[i]->update(*current, *next);
+        if (result) {
+          std::swap(current, next);
         }
       }
-      if (list_size % 2 == 1) {  // odd number last deposit was in buffer1
-        result = result && reference_pointers_.back()->update(buffer1_, data_out);
-      } else {
-        result = result && reference_pointers_.back()->update(buffer0_, data_out);
+      if (!result) {
+        return false;
       }
     }
-    return result;
+
+    if (current != &data_out) {
+      data_out = std::move(*current);
+    }
+    return true;
+  }
+
+  /**
+   * \brief process data in place through each of the filters added sequentially
+   */
+  bool update(T & data)
+  {
+    if (!configured_) {
+      throw std::runtime_error("The update cannot be called without configuring the filter chain!");
+    }
+
+    for (auto & filter : reference_pointers_) {
+      auto in_place_filter = dynamic_cast<filters::InPlaceFilter<T> *>(filter.get());
+      if (in_place_filter) {
+        if (!in_place_filter->update(data)) {
+          return false;
+        }
+      } else {
+        // Filters without in-place support still work by using an internal buffer.
+        if (!filter->update(data, buffer0_)) {
+          return false;
+        }
+        data = std::move(buffer0_);
+      }
+    }
+    return true;
   }
 
   /**
@@ -304,6 +337,18 @@ public:
   size_t get_length()
   {
     return reference_pointers_.size();
+  }
+
+  /**
+   * \brief Check whether every configured filter supports in-place updates.
+   */
+  bool can_update_fully_in_place() const
+  {
+    return std::all_of(
+      reference_pointers_.begin(), reference_pointers_.end(),
+      [](const auto & filter) {
+        return dynamic_cast<const filters::InPlaceFilter<T> *>(filter.get()) != nullptr;
+      });
   }
 
   rcl_interfaces::msg::SetParametersResult reconfigureCB(std::vector<rclcpp::Parameter> parameters)
