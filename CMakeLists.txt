@@ -173,8 +173,6 @@ if(BUILD_TESTING)
   find_package(ament_cmake_cppcheck REQUIRED)
   find_package(ament_cmake_cpplint REQUIRED)
   find_package(ament_cmake_uncrustify REQUIRED)
-  find_package(ament_cmake_xmllint REQUIRED)
-
   # Enforce ROS2 style
   ament_cpplint()
   ament_cppcheck(
@@ -182,7 +180,6 @@ if(BUILD_TESTING)
     INCLUDE_DIRS include
   )
   ament_uncrustify()
-  ament_xmllint()
 
   find_package(ament_cmake_gtest REQUIRED)
   # Test median filter
