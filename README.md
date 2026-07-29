@@ -28,3 +28,4 @@ Filters creates all of the following CMake targets, including:
 
 It is recommended to only link to the libraries needed.
 Linking to `filters::filter_base` pulls in all necessary libraries and include directories for targets with classes that extend `FilterBase`. This is useful if you are writing your own filter.
+
