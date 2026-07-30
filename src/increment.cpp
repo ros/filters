@@ -32,6 +32,7 @@
 
 
 PLUGINLIB_EXPORT_CLASS(filters::IncrementFilter<int>, filters::FilterBase<int>)
+PLUGINLIB_EXPORT_CLASS(filters::InPlaceIncrementFilter<int>, filters::FilterBase<int>)
 PLUGINLIB_EXPORT_CLASS(
   filters::MultiChannelIncrementFilter<int>,
   filters::MultiChannelFilterBase<int>)

@@ -378,6 +378,76 @@ TEST_F(ChainTest, TenIncrementChains) {
   EXPECT_EQ(11, v1a);
 }
 
+TEST_F(ChainTest, InPlaceFallbackUpdate) {
+  filters::FilterChain<int> chain("int");
+
+  std::vector<rclcpp::Parameter> overrides;
+  overrides.emplace_back("InPlaceFallback.filter1.name", std::string("increment1"));
+  overrides.emplace_back(
+    "InPlaceFallback.filter1.type", std::string("filters/InPlaceIncrementFilterInt"));
+  auto node = make_node_with_params(overrides);
+
+  ASSERT_TRUE(
+    chain.configure(
+      "InPlaceFallback", node->get_node_logging_interface(),
+      node->get_node_parameters_interface()));
+  EXPECT_TRUE(chain.can_update_fully_in_place());
+
+  int v1 = 1;
+  int v1a = 9;
+  EXPECT_TRUE(chain.update(v1, v1a));
+  EXPECT_EQ(1, v1);
+  EXPECT_EQ(2, v1a);
+}
+
+TEST_F(ChainTest, InPlaceUpdate) {
+  filters::FilterChain<int> chain("int");
+
+  std::vector<rclcpp::Parameter> overrides;
+  overrides.emplace_back("InPlaceIncrements.filter1.name", std::string("increment1"));
+  overrides.emplace_back(
+    "InPlaceIncrements.filter1.type", std::string("filters/InPlaceIncrementFilterInt"));
+  overrides.emplace_back("InPlaceIncrements.filter2.name", std::string("increment2"));
+  overrides.emplace_back(
+    "InPlaceIncrements.filter2.type", std::string("filters/InPlaceIncrementFilterInt"));
+  auto node = make_node_with_params(overrides);
+
+  ASSERT_TRUE(
+    chain.configure(
+      "InPlaceIncrements", node->get_node_logging_interface(),
+      node->get_node_parameters_interface()));
+  EXPECT_TRUE(chain.can_update_fully_in_place());
+
+  int v1 = 1;
+  EXPECT_TRUE(chain.update(v1));
+  EXPECT_EQ(3, v1);
+}
+
+TEST_F(ChainTest, MixedInPlaceUpdate) {
+  filters::FilterChain<int> chain("int");
+
+  std::vector<rclcpp::Parameter> overrides;
+  overrides.emplace_back("MixedIncrements.filter1.name", std::string("increment1"));
+  overrides.emplace_back(
+    "MixedIncrements.filter1.type", std::string("filters/InPlaceIncrementFilterInt"));
+  overrides.emplace_back("MixedIncrements.filter2.name", std::string("increment2"));
+  overrides.emplace_back("MixedIncrements.filter2.type", std::string("filters/IncrementFilterInt"));
+  overrides.emplace_back("MixedIncrements.filter3.name", std::string("increment3"));
+  overrides.emplace_back(
+    "MixedIncrements.filter3.type", std::string("filters/InPlaceIncrementFilterInt"));
+  auto node = make_node_with_params(overrides);
+
+  ASSERT_TRUE(
+    chain.configure(
+      "MixedIncrements", node->get_node_logging_interface(),
+      node->get_node_parameters_interface()));
+  EXPECT_FALSE(chain.can_update_fully_in_place());
+
+  int v1 = 1;
+  EXPECT_TRUE(chain.update(v1));
+  EXPECT_EQ(4, v1);
+}
+
 TEST_F(ChainTest, TenMultiChannelIncrementChains) {
   filters::MultiChannelFilterChain<int> chain("int");
   std::vector<int> v1;
@@ -467,6 +537,7 @@ TEST_F(ChainTest, TestChainLength) {
     chain.configure(
       "ZeroFilters", node->get_node_logging_interface(), node->get_node_parameters_interface()));
   EXPECT_EQ(chain.get_length(), 0);
+  EXPECT_TRUE(chain.can_update_fully_in_place());
   chain.clear();
 
   ASSERT_TRUE(
