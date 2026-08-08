@@ -149,21 +149,21 @@ private:
 
     if (!params_interface_->has_parameter(param_name)) {
       // Declare parameter
-      rclcpp::ParameterValue default_parameter_value(default_value);
+      if (name.empty()) {
+        throw std::runtime_error("Parameter must have a name");
+      }
       rcl_interfaces::msg::ParameterDescriptor desc;
       desc.name = name;
       desc.type = type;
       desc.read_only = read_only;
-
-      if (name.empty()) {
-        throw std::runtime_error("Parameter must have a name");
-      }
-
-      params_interface_->declare_parameter(param_name, default_parameter_value, desc);
+      params_interface_->declare_parameter(param_name, rclcpp::ParameterType(type), desc);
     }
-
-    value_out = params_interface_->get_parameter(param_name).get_parameter_value().get<PT>();
-    // TODO(sloretz) seems to be no way to tell if parameter was initialized or not
+    rclcpp::Parameter param_value;
+    if (!params_interface_->get_parameter(param_name, param_value)) {
+      value_out = default_value;
+      return false;
+    }
+    value_out = param_value.get_parameter_value().get<PT>();
     return true;
   }
 
